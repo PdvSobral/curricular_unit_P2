@@ -33,4 +33,19 @@ class teste2 extends teste {
 	public teste2(){
 		super();
 	}
+
+	/*
+	private <T> void setProperty(String name, T value) {
+		if (name.equals("brilho")) {
+			this.__brilho = convertValue(value);
+		} else if (name.equals("cor")) {
+			this.__cor = convertValue(value);
+		}
+	}
+
+	private Object convertValue(Object value) {
+		// Conversion logic here
+		return value;
+	}
+	*/
 }
