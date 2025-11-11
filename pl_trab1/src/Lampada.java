@@ -5,7 +5,7 @@ public class Lampada {
 	private boolean __estado;
 
 	private void __setDefaults(){
-		this.__brilho = 155;
+		this.__brilho = 50;
 		this.__cor = "#FFFFFF";
 		this.__estado = false;
 	}
@@ -14,32 +14,32 @@ public class Lampada {
 	public Lampada(){
 		this.__setDefaults();
 	}
-	public Lampada(int __brilho) {
+	public Lampada(int brilho) {
 		this.__setDefaults();
-		this.__brilho = __brilho;
+		this.__brilho = brilho;
 	}
-	public Lampada(String __cor) {
+	public Lampada(String cor) {
 		this.__setDefaults();
-		this.__cor = __cor;
+		this.__cor = cor;
 	}
-	public Lampada(boolean __estado) {
+	public Lampada(boolean estado) {
 		this.__setDefaults();
-		this.__estado = __estado;
+		this.__estado = estado;
 	}
-	public Lampada(int __brilho, String __cor) {
+	public Lampada(int brilho, String cor) {
 		this.__setDefaults();
-		this.__brilho = __brilho;
-		this.__cor = __cor;
+		this.__brilho = brilho;
+		this.__cor = cor;
 	}
-	public Lampada(int __brilho, boolean __estado) {
+	public Lampada(int brilho, boolean estado) {
 		this.__setDefaults();
-		this.__brilho = __brilho;
-		this.__estado = __estado;
+		this.__brilho = brilho;
+		this.__estado = estado;
 	}
-	public Lampada(String __cor, boolean __estado) {
+	public Lampada(String cor, boolean estado){
 		this.__setDefaults();
-		this.__cor = __cor;
-		this.__estado = __estado;
+		this.__cor = cor;
+		this.__estado = estado;
 	}
 
 	//// METHODS RELATED TO this.__estado ////
@@ -89,7 +89,12 @@ public class Lampada {
 
 	//// METHODS RELATED TO this.__estado ////
 	private void __setBrilho(int novo_brilho){
-		this.__brilho = novo_brilho;
+		if (novo_brilho >= 0 && novo_brilho <= 100){
+			this.__brilho = novo_brilho;
+		} else {
+			System.out.println("\033[93m[?] Warning (by __setBrilho): Provided value is not within accepted interval [0-100]! Skipping!\033[m");
+		}
+		return;
 	}
 	public void setBrilho(String novo_brilho){
 		this.__setBrilho(Integer.parseInt(novo_brilho));
@@ -112,7 +117,7 @@ public class Lampada {
 		return;
 	}
 	public void setBrilho(){
-		this.__setBrilho(150);
+		this.__setBrilho(50);
 		return;
 	}
 	public int getBrilho(){
