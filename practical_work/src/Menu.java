@@ -1,0 +1,3 @@
+public class Menu {
+	// will contain the strings to print, if last option = 0, input checks, etc...
+}

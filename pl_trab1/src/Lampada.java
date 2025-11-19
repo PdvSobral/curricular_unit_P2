@@ -123,5 +123,4 @@ public class Lampada {
 	public int getBrilho(){
 		return this.__brilho;
 	}
-
 }
