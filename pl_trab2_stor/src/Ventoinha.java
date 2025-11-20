@@ -1,4 +1,5 @@
 // ===== Subclasse: Ventoinha =====
+@SuppressWarnings("preview")
 class Ventoinha extends Dispositivo {
 	private int velocidade; // 0..3
 
@@ -23,11 +24,11 @@ class Ventoinha extends Dispositivo {
 			case "medio":
 			case "médio":setVelocidade(2); break;
 			case "alto": setVelocidade(3); break;
-			default: System.out.println("Modo de ventoinha inválido: " + modo);
+			default: System.out.println(STR."Modo de ventoinha inválido: \{modo}");
 		}
 	}
 
 	@Override public String toString() {
-		return "Ventoinha{nome='" + getNome() + "', ligado=" + isLigado() + ", velocidade=" + velocidade + "}";
+		return STR."Ventoinha{nome='\{getNome()}', ligado=\{isLigado()}, velocidade=\{velocidade}}";
 	}
 }

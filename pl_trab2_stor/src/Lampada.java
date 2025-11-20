@@ -1,4 +1,5 @@
 // ===== Subclasse: Lampada =====
+@SuppressWarnings("preview")
 class Lampada extends Dispositivo {
 	private int intensidade; // 0..100
 
@@ -19,7 +20,7 @@ class Lampada extends Dispositivo {
 			case "medio":
 			case "médio": setIntensidade(60); break;
 			case "alto": setIntensidade(90); break;
-			default: System.out.println("Modo de lâmpada inválido: " + modo);
+			default: System.out.println(STR."Modo de lâmpada inválido: \{modo}");
 		}
 	}
 
@@ -31,6 +32,6 @@ class Lampada extends Dispositivo {
 	}
 
 	@Override public String toString() {
-		return "Lampada{nome='" + getNome() + "', ligado=" + isLigado() + ", intensidade=" + intensidade + "%}";
+		return STR."Lampada{nome='\{getNome()}', ligado=\{isLigado()}, intensidade=\{intensidade}%}";
 	}
 }

@@ -1,4 +1,5 @@
 // ===== Subclasse: Termostato =====
+@SuppressWarnings("preview")
 class Termostato extends Dispositivo {
 	private double temperatura; // 10.0..30.0 °C
 
@@ -15,6 +16,7 @@ class Termostato extends Dispositivo {
 		ligar(); // ao definir um alvo, assume-se ligado
 	}
 	// Sobrecarga: aceita "21.5C" ou "70F"
+	@SuppressWarnings("DuplicateExpressions")
 	public void setTemperatura(String texto) {
 		if (texto == null || texto.isBlank()) return;
 		String s = texto.trim().toUpperCase();
@@ -29,11 +31,11 @@ class Termostato extends Dispositivo {
 				setTemperatura(Double.parseDouble(s)); // assume Celsius
 			}
 		} catch (NumberFormatException e) {
-			System.out.println("Temperatura inválida: " + texto);
+			System.out.println(STR."Temperatura inválida: \{texto}");
 		}
 	}
 
 	@Override public String toString() {
-		return "Termostato{nome='" + getNome() + "', ligado=" + isLigado() + ", temperatura=" + temperatura + "°C}";
+		return STR."Termostato{nome='\{getNome()}', ligado=\{isLigado()}, temperatura=\{temperatura}°C}";
 	}
 }

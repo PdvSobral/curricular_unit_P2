@@ -1,4 +1,5 @@
 // ===== Classe base: Conta =====
+@SuppressWarnings("preview")
 class Conta {
 	private final String titular;
 	private double saldo;
@@ -32,6 +33,6 @@ class Conta {
 	public String getTitular() { return titular; }
 
 	@Override public String toString() {
-		return "Conta{titular='" + titular + "', saldo=" + String.format("%.2f", saldo) + "}";
+		return STR."Conta{titular='\{titular}', saldo=\{String.format("%.2f", saldo)}}";
 	}
 }

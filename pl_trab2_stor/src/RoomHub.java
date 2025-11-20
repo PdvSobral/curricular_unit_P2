@@ -1,19 +1,14 @@
 // ===== Controlador: RoomHub =====
-class RoomHub {
-	private final Lampada lampada;
-	private final Ventoinha ventoinha;
-	private final Termostato termostato;
+@SuppressWarnings("preview")
+record RoomHub(Lampada lampada, Ventoinha ventoinha, Termostato termostato) {
 
-	public RoomHub(Lampada l, Ventoinha v, Termostato t) {
-		this.lampada = l;
-		this.ventoinha = v;
-		this.termostato = t;
-	}
+	public void aplicarCena(String nome){
+		aplicarCena(nome, 50);
+	} // default
 
-	public void aplicarCena(String nome) { aplicarCena(nome, 50); } // default
-	public void aplicarCena(String nome, int intensidade) {
+	public void aplicarCena(String nome, int intensidade){
 		String n = (nome == null) ? "" : nome.toLowerCase();
-		switch (n) {
+		switch (n){
 			case "filme":
 				lampada.ajustarIntensidade(intensidade); // tipicamente 30
 				ventoinha.setVelocidade(1);
@@ -31,12 +26,13 @@ class RoomHub {
 				termostato.desligar();
 				break;
 			default:
-				System.out.println("Cena desconhecida: " + nome);
+				System.out.println(STR."Cena desconhecida: \{nome}");
 		}
-		System.out.println("Cena \"" + nome + "\" aplicada com intensidade " + intensidade);
+		System.out.println(STR."Cena \"\{nome}\" aplicada com intensidade \{intensidade}");
 	}
 
-	@Override public String toString() {
-		return lampada + "\n" + ventoinha + "\n" + termostato;
+	@Override
+	public String toString(){
+		return STR."\n\{lampada}\n\{ventoinha}\n\{termostato}";
 	}
 }

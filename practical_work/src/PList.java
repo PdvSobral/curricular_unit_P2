@@ -50,11 +50,6 @@ public class PList<T> extends ArrayList<T> {
 		return super.contains(item);  // Uses ArrayList's contains method
 	}
 
-	// Mimic Python's clear method
-	public void clear() {
-		super.clear();  // Uses ArrayList's clear method
-	}
-
 	// Mimic Python's slicing (with simple range)
 	public PList<T> slice(int start, int end) {
 		PList<T> slicedList = new PList<>();

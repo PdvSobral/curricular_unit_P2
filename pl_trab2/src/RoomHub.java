@@ -1,23 +1,18 @@
 import java.util.ArrayList;
 
+@SuppressWarnings("preview")
 public class RoomHub {
-	private Lampada __lampada;
-	private Ventoinha __ventoinha;
-	private Termostato __termostato;
-	private ArrayList<Scene> __scenes;
+	private final Lampada __lampada;
+	private final Ventoinha __ventoinha;
+	private final Termostato __termostato;
+	private final ArrayList<Scene> __scenes;
 
-	private class Scene {
-		public String nome;
-		public int intensidade;  // For Lampada
-		public int velocidade;   // For Ventoinha
-		public double temperatura; // For Termostato
-
-		public Scene(String nome, int intensidade, int velocidade, double temperatura) {
-			this.nome = nome;
-			this.intensidade = intensidade;
-			this.velocidade = velocidade;
-			this.temperatura = temperatura;
-		}
+	/**
+	 * @param intensidade For Lampada
+	 * @param velocidade  For Ventoinha
+	 * @param temperatura For Termostato
+	 */
+	private record Scene(String nome, int intensidade, int velocidade, double temperatura) {
 	}
 
 	public RoomHub(Lampada lampada, Ventoinha ventoinha, Termostato termostato){
@@ -52,18 +47,18 @@ public class RoomHub {
 				System.out.print("ºC | ligada=");
 				System.out.print(this.__termostato.isLigado());
 				System.out.println("]");
-				System.out.println("Cena \"" + scene.nome + "\" aplicada com intensidade " + scene.intensidade);
+				System.out.println(STR."Cena \"\{scene.nome}\" aplicada com intensidade \{scene.intensidade}");
 				return;
 			}
 		}
-		System.out.println("Cena \"" + nome + "\" não encontrada.");
+		System.out.println(STR."Cena \"\{nome}\" não encontrada.");
 
 	}
 
 	public void addScene(String nome, int intensidade, int velocidade, double temperatura) {
 		Scene newScene = new Scene(nome, intensidade, velocidade, temperatura);
 		this.__scenes.add(newScene);
-		System.out.println("Cena \"" + nome + "\" adicionada.");
+		System.out.println(STR."Cena \"\{nome}\" adicionada.");
 	}
 
 	/*

@@ -1,4 +1,5 @@
 // ===== Subclasse: ContaPoupanca =====
+@SuppressWarnings("preview")
 class ContaPoupanca extends Conta {
 	private double taxaJuro; // ex: 0.03 = 3%/ano
 
@@ -26,7 +27,6 @@ class ContaPoupanca extends Conta {
 	}
 
 	@Override public String toString() {
-		return "ContaPoupanca{titular='" + getTitular() + "', saldo=" +
-				String.format("%.2f", getSaldo()) + ", taxaJuro=" + taxaJuro + "}";
+		return STR."ContaPoupanca{titular='\{getTitular()}', saldo=\{String.format("%.2f", getSaldo())}, taxaJuro=\{taxaJuro}}";
 	}
 }

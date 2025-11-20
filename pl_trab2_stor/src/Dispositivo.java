@@ -1,4 +1,5 @@
 // ===== Classe base: Dispositivo =====
+@SuppressWarnings("preview")
 class Dispositivo {
 	private final String nome; // Encapsulado: imutável após construção
 	private boolean ligado;
@@ -19,6 +20,6 @@ class Dispositivo {
 	public String getNome() { return nome; }
 
 	@Override public String toString() {
-		return getClass().getSimpleName() + "{" + "nome='" + nome + "', ligado =" + ligado + "}";
+		return STR."\{getClass().getSimpleName()}{nome='\{nome}', ligado =\{ligado}}";
 	}
 }

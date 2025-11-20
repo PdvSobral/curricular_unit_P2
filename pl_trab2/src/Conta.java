@@ -5,7 +5,7 @@ public class Conta {
 	public Conta(String titular){
 		this.__titular = titular;
 		this.__saldo = 0.0;
-	};
+	}
 	public Conta(String titular, double valor){ // saldo inicial
 		this.__titular = titular;
 		this.__saldo = valor;

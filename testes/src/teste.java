@@ -4,7 +4,6 @@ public class teste {
 
 	public void setNumber(int newNumber){
 		this.number = newNumber;
-		return;
 	}
 
 	public int getNumber(){
@@ -13,7 +12,6 @@ public class teste {
 
 	public void setName(String newName){
 		this.name = newName;
-		return;
 	}
 
 	public String getName(){
@@ -29,6 +27,7 @@ public class teste {
 	}
 }
 
+@SuppressWarnings("CommentedOutCode")
 class teste2 extends teste {
 	public teste2(){
 		super();

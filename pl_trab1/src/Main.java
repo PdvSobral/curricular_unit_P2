@@ -1,7 +1,4 @@
-// import java.util.Scanner;
-// final Scanner terminal_input = new Scanner(System.in);
-// int userInput = terminal_input.nextInt();
-
+@SuppressWarnings("UnnecessaryModifier")
 public class Main {
     public static void main(String[] args) {
 		System.out.println("[*] Starting...");
@@ -30,6 +27,5 @@ public class Main {
 		casa_inteli.desligarTudo();
 		System.out.println("[*] \tDone!");
 		System.out.println("[*] Exiting...");
-		return;
-    }
+	}
 }

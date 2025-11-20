@@ -2,6 +2,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.io.Serializable; // to save in binary
 
+@SuppressWarnings({"ClassCanBeRecord", "preview"})
 public class Game implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L; // For serialization version control
@@ -51,14 +52,7 @@ public class Game implements Serializable {
 	// Method to display game information. Overrides normal function
 	@Override
 	public String toString() {
-		return "Game@" + Integer.toHexString(hashCode())+ "{" +
-				"year=" + __year +
-				", name='" + __name + '\'' +
-				", allowedPlayers=" + __allowedPlayers +
-				", genre='" + __genre + '\'' +
-				", developer='" + __developer + '\'' +
-				", description='" + __description + '\'' +
-				'}';
+		return STR."Game@\{Integer.toHexString(hashCode())}{year=\{__year}, name='\{__name}', allowedPlayers=\{__allowedPlayers}, genre='\{__genre}', developer='\{__developer}', description='\{__description}'}";
 	}
 
 	public void save(){

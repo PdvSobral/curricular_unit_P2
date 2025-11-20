@@ -1,5 +1,5 @@
 public class Dispositivo {
-	private String __nome;
+	private final String __nome;
 	private boolean __ligado;
 
 	public Dispositivo(String nome){

@@ -1,4 +1,5 @@
 // ===== Classe base: Bilhete =====
+@SuppressWarnings("preview")
 class Bilhete {
 	private final double base; // preço base (mínimo 3.0)
 	public Bilhete(double base) {
@@ -32,6 +33,6 @@ class Bilhete {
 	protected double max3(double valor) { return (valor < 3.0) ? 3.0 : round2(valor); }
 	protected double round2(double v) { return Math.round(v * 100.0) / 100.0; }
 	@Override public String toString() {
-		return "Bilhete{base=" + base + "}";
+		return STR."Bilhete{base=\{base}}";
 	}
 }

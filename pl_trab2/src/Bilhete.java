@@ -6,8 +6,7 @@ public class Bilhete {
 	}
 
 	private double parseOut(double out){
-		if (out < 3.0) return 3.0;
-		return out;
+		return Math.max(out, 3.0);
 	}
 
 	public double preco(int idade){

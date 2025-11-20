@@ -18,6 +18,7 @@ public class Termostato extends Dispositivo {
 		}
 	}
 
+	@SuppressWarnings("DuplicateExpressions")
 	public void setTemperatura(String texto){ // ex: "21.5C" ou "70F"
 		float temperature;
 		char t = texto.charAt(texto.length() - 1);

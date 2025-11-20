@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("UnnecessaryModifier")
 public class Main {
 	static void receivedCTRLD() {
 		System.out.print("\n[!!] CTRL+D (EOF) received!. Translating to SIGINT...");
@@ -10,7 +11,7 @@ public class Main {
 
 	static final int DEBUG = -2;
 
-	static List<String> MAINMENU = List.of("Option 1", "Option 2", "Option 3", "Exit");
+	static final List<String> MAINMENU = List.of("Option 1", "Option 2", "Option 3", "Exit");
 
 	public static void main(String[] args) throws IOException{
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
