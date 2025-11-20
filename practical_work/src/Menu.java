@@ -32,20 +32,19 @@ public class Menu {
 			System.out.println(STR." [\{optionsList.size()}] - \{optionsList.get(optionsList.size()-1)}");
 		}
 
-		BufferedReader scanner = new Reader(System.in);
+		Reader scanner = new Reader(System.in);
+		scanner.setHandler(Main::receivedCTRLD);
+
 		int selected;
 		// Input loop until a valid selection is made
 		while (true) {
 			System.out.print("Select an option: ");
 			String input = scanner.readLine();
 			try {
-				if (input == null) Main.receivedCTRLD();
-				else {
-					selected = Integer.parseInt(input);
-					if (selected == Main.DEBUG && debug == Main.DEBUG) return -2;
-					if (selected >= 1 - last_zero && selected <= optionsList.size() - last_zero) return selected;
-					else System.out.println("Invalid option. Please choose a valid option.");
-				}
+				selected = Integer.parseInt(input);
+				if (selected == Main.DEBUG && debug == Main.DEBUG) return -2;
+				if (selected >= 1 - last_zero && selected <= optionsList.size() - last_zero) return selected;
+				else System.out.println("Invalid option. Please choose a valid option.");
 			} catch (NumberFormatException e) {
 				System.out.println("Invalid input. Please try again.");
 			}
