@@ -1,9 +1,15 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args){
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			System.out.println("\n\n[!!] SIGINT received!. Shutting workers and saving...");
+			// TODO: Add a save here for what is needed
+			System.out.println("[!!] Exiting...");
+			return;
+		}));
+
 		while (true){
 			int temp = Menu.getInstance().menu(List.of("Debug", "Option 2", "Option 3", "Exit"), "MAIN MENU", (char) 1);
 			if (temp == 0) break;

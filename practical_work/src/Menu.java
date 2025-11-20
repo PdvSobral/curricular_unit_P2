@@ -1,3 +1,5 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Scanner;
 
@@ -27,7 +29,7 @@ public class Menu {
 		Scanner scanner = new Scanner(System.in);
 		// Input loop until a valid selection is made
 		while (true) {
-			System.out.print(STR."Select an option: ");
+			System.out.print("Select an option: ");
 			String input = scanner.nextLine();
 			try {
 				int selected = Integer.parseInt(input);
@@ -37,8 +39,28 @@ public class Menu {
 					System.out.println("Invalid option. Please choose a valid option.");
 				}
 			} catch (NumberFormatException e) {
-				System.out.println("Invalid input. Please enter a number.");
+				System.out.println("Invalid input. Please try again.");
 			}
 		}
+	}
+}
+
+try{
+	BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+	System.out.println("Type something (Ctrl+D to disable EOF, Ctrl+C to quit):");
+	String line;
+	while(true){
+		line =reader.
+		readLine();
+		// Check if Ctrl+D is pressed (EOF) but block it
+		if(line ==null){
+			if(!allowCtrlD){
+			System.out.println("Ctrl+D is disabled. Please enter valid input.");
+			continue; // Skip EOF handling
+		}else{
+			break;  // Exit gracefully if Ctrl+D is allowed (EOF)
+		}
+	}
+	System.out.println("You entered: "+line);
 	}
 }
