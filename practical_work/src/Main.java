@@ -10,8 +10,16 @@ public class Main {
 	}
 
 	static final int DEBUG = -2;
+	static final int NORMAL = 0;
+	static final int RUNNING_MODE = DEBUG;
 
-	static final List<String> MAINMENU = List.of("Option 1", "Option 2", "Option 3", "Exit");
+	static final List<String> MAINMENU = List.of("Management", "Checks", "Exit");
+	static final List<String> MANGEGMENU = List.of("Machine Management", "Game Management", "Player Management", "Leaderboard Management", "Return");
+	static final List<String> MACHINEMANGEG = List.of("Add Machine", "Remove Machine", "Return");
+	static final List<String> GAMEMANGEG = List.of("Add Game", "Remove Game", "Return");
+	static final List<String> PLAYERMANGEG = List.of("Add Player", "Edit Player", "Remove Player", "Reset Player Highscores", "Return");
+
+	static final List<String> CHECKSMENU = List.of("Machine/Game Checks", "Player Checks", "Leaderboard Checks", "Return");
 
 	public static void main(String[] args) throws IOException{
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -21,7 +29,7 @@ public class Main {
 		}));
 		int temp;
 		while (true){
-			temp = Menu.getInstance().menu(MAINMENU, "MAIN MENU", (char) 1, DEBUG);
+			temp = Menu.getInstance().menu(MAINMENU, "MAIN MENU", (char) 1, RUNNING_MODE);
 			if (temp == 0) break;
 			if (temp == DEBUG){
 				Database.getInstance().setMainSaveDirectory("./practical_work/db");
@@ -41,5 +49,9 @@ public class Main {
 			}
 		}
 		System.out.println("Exiting...");
+	}
+
+	private void management_menu(){
+
 	}
 }

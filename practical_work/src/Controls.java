@@ -1,3 +1,7 @@
-public class Controls {
-	// like weapon, joystick, 8but, 4but, etc
+enum Controls {
+	WEAPON,
+	JOYSTICK,
+	EIGHT_BUTTON,
+	SIX_BUTTON,
+	FOUR_BUTTON
 }

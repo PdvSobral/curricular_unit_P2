@@ -6,4 +6,3 @@ public enum MACHINE_STATE {
 	COMING_SOON,	// The machine is set to be available shortly
 	OUT_OF_TICKETS	// The machine has run out of tokens and can't be played
 }
-
