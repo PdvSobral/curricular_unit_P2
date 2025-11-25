@@ -1,33 +1,31 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.util.List;
 
 public class InterfaceWrapper {
 
-	private JFrame frame;
+	private static InterfaceWrapper instance = new InterfaceWrapper();
+	private final JFrame frame;
 
-	public InterfaceWrapper() {
+	// Private constructor to prevent instantiation from other classes
+	private InterfaceWrapper() {
 		frame = new JFrame("Main Interface");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(400, 300);
+		frame.setLocationRelativeTo(null);  // null centers it on the screen
 		frame.setLayout(new BorderLayout());
+		frame.setVisible(true);
 	}
 
-	// Creates and displays the menu
-	public void displayMenu(List<String> optionsList, String menu_name, char last_zero, int debug) {
-		cleanWindow();
+	public void setName(String new_name){
+		frame.setTitle(new_name);
+	}
 
-		try {
-			int choice = Menu.getInstance().menu(optionsList, menu_name, last_zero, debug);
-			if (choice != -1) {
-				JOptionPane.showMessageDialog(frame, STR."You selected option \{choice}");
-			} else {
-				JOptionPane.showMessageDialog(frame, "No option was selected.");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+	// Public method to get the singleton instance
+	public static InterfaceWrapper getInstance() {
+		if (instance == null) {
+			instance = new InterfaceWrapper();
 		}
+		return instance;
 	}
 
 	// Clears the current content of the window (for reuse)
@@ -38,7 +36,12 @@ public class InterfaceWrapper {
 	}
 
 	// Displays the window
-	public void showWindow() {
+	public void setVisible(boolean visible) {
 		frame.setVisible(true);
+	}
+
+	// Getter for the JFrame, in case you need to access the main window directly
+	public JFrame getFrame() {
+		return frame;
 	}
 }

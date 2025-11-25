@@ -36,6 +36,9 @@ public class Main {
 			// TODO: Add a save here for what is needed
 			System.out.println("[!!] Exiting...");
 		}));
+		// Get the singleton instance of InterfaceWrapper
+		InterfaceWrapper window = InterfaceWrapper.getInstance();
+		window.setVisible(true);  // Force the show
 		int __temp;
 		while (true){
 			clearScreen();

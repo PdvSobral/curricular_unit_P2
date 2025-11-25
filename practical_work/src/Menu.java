@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +26,18 @@ public class Menu {
 			optionsList.addFirst("DEBUG");
 		}
 
-		// Create the GUI components
+		// Get the singleton instance of InterfaceWrapper
+		InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
+		interfaceWrapper.cleanWindow(); // Clear the existing content of the window
+
+		// Create a panel to hold the buttons
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));  // Vertical layout for buttons
+
+		// Set up the window title and/or menu name
+		interfaceWrapper.setName(menu_name);
+		JLabel menuLabel = new JLabel(menu_name, JLabel.CENTER);
+		panel.add(menuLabel);
 
 		// Create a button for each option
 		ButtonGroup buttonGroup = new ButtonGroup();  // Ensure only one button is selected at a time
@@ -40,11 +48,11 @@ public class Menu {
 
 		if (debug==Main.DEBUG) {
 			JButton button = new JButton(optionsList.removeFirst());
-			button.setActionCommand(String.valueOf(-2));  // Set the action command to the option's index
+			button.setActionCommand(String.valueOf(Main.DEBUG));  // Set the action command to the option's index
 			button.addActionListener(e -> {
 				// Action when a button is clicked
 				selectedOption[0] = Integer.parseInt(e.getActionCommand());  // Store the selected option
-				dialog.dispose();  // Close the dialog after selection
+				updateWindow(panel);  // Update the window content based on the selection
 			});
 			panel.add(button);
 		}
@@ -56,17 +64,16 @@ public class Menu {
 			button.addActionListener(e -> {
 				// Action when a button is clicked
 				selectedOption[0] = Integer.parseInt(e.getActionCommand());  // Store the selected option
-				dialog.dispose();  // Close the dialog after selection
+				updateWindow(panel);  // Update the window content based on the selection
 			});
 			panel.add(button);
 			buttonIndex++;
 		}
 
-		// Create the dialog to show the buttons
-		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		dialog.add(panel);
-		dialog.pack();
-		dialog.setVisible(true);
+		// Update the window with the newly created panel
+		interfaceWrapper.getFrame().getContentPane().add(panel);
+		interfaceWrapper.getFrame().revalidate();
+		interfaceWrapper.getFrame().repaint();
 
 		// Wait for the user to select an option
 		while (selectedOption[0] == -1) {
@@ -80,5 +87,15 @@ public class Menu {
 
 		// Return the selected option value
 		return selectedOption[0];
+	}
+
+	// Update the window content when an option is selected
+	private void updateWindow(JPanel panel) {
+		// Clear the panel and revalidate to refresh the display
+		InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
+		interfaceWrapper.cleanWindow();
+		interfaceWrapper.getFrame().getContentPane().add(panel);
+		interfaceWrapper.getFrame().revalidate();
+		interfaceWrapper.getFrame().repaint();
 	}
 }
