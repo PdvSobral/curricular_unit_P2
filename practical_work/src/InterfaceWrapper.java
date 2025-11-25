@@ -14,10 +14,7 @@ public class InterfaceWrapper {
 		frame.setLocationRelativeTo(null);  // null centers it on the screen
 		frame.setLayout(new BorderLayout());
 		frame.setVisible(true);
-	}
-
-	public void setName(String new_name){
-		frame.setTitle(new_name);
+		frame.setResizable(false);
 	}
 
 	// Public method to get the singleton instance
@@ -33,11 +30,6 @@ public class InterfaceWrapper {
 		frame.getContentPane().removeAll();
 		frame.revalidate();
 		frame.repaint();
-	}
-
-	// Displays the window
-	public void setVisible(boolean visible) {
-		frame.setVisible(true);
 	}
 
 	// Getter for the JFrame, in case you need to access the main window directly

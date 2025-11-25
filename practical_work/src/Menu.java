@@ -1,11 +1,12 @@
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Menu {
 	private static final Menu __instance = new Menu();
-	private int[] selectedOption = {-1};  // Store the selected option index
+	private final int[] selectedOption = {-1};  // Store the selected option index
 
 	// Private constructor to ensure singleton
 	private Menu() {}
@@ -32,15 +33,19 @@ public class Menu {
 
 		// Create a panel to hold the buttons
 		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));  // Vertical layout for buttons
+		panel.setLayout(null);  // Absolute Layout
+
+		final int height_step = 30;
+		int current_height = 40; // height da label  + offset buttons para a label + space buttons-label
 
 		// Set up the window title and/or menu name
-		interfaceWrapper.setName(menu_name);
-		JLabel menuLabel = new JLabel(menu_name, JLabel.CENTER);
+		interfaceWrapper.getFrame().setTitle(menu_name);
+		JLabel menuLabel = new JLabel(menu_name, SwingConstants.CENTER);
+		menuLabel.setBounds(((Main.WINDOW_WIDTH - Main.BORDER_LOSS)/2) - 100, 10, 200, 30);
 		panel.add(menuLabel);
 
+
 		// Create a button for each option
-		ButtonGroup buttonGroup = new ButtonGroup();  // Ensure only one button is selected at a time
 		int buttonIndex = 1;  // Start button index from 1 (1-based index)
 
 		// Declare dialog variable here to be accessible in the action listener
@@ -48,17 +53,17 @@ public class Menu {
 
 		if (debug==Main.DEBUG) {
 			JButton button = new JButton(optionsList.removeFirst());
-			button.setActionCommand(String.valueOf(Main.DEBUG));  // Set the action command to the option's index
+			button.setActionCommand(String.valueOf(Main.DEBUG)); // Set the action command to the option's index
 			button.addActionListener(e -> {
 				// Action when a button is clicked
-				selectedOption[0] = Integer.parseInt(e.getActionCommand());  // Store the selected option
-				updateWindow(panel);  // Update the window content based on the selection
+				selectedOption[0] = Integer.parseInt(e.getActionCommand()); // Store the selected option
 			});
+			button.setBounds(((Main.WINDOW_WIDTH - Main.BORDER_LOSS)/2) - 100, current_height, 200, 30);
 			panel.add(button);
+			current_height += height_step;
 		}
 		for (String option : optionsList) {
 			JButton button = new JButton(option);
-
 			if (buttonIndex == optionsList.size() && last_zero == 1) button.setActionCommand("0");
 			else button.setActionCommand(String.valueOf(buttonIndex));  // Set the action command to the option's index
 			button.addActionListener(e -> {
@@ -66,7 +71,9 @@ public class Menu {
 				selectedOption[0] = Integer.parseInt(e.getActionCommand());  // Store the selected option
 				updateWindow(panel);  // Update the window content based on the selection
 			});
+			button.setBounds(((Main.WINDOW_WIDTH - Main.BORDER_LOSS)/2) - 100, current_height, 200, 30);
 			panel.add(button);
+			current_height += height_step;
 			buttonIndex++;
 		}
 

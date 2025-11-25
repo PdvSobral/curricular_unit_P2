@@ -1,8 +1,9 @@
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("UnnecessaryModifier")
+@SuppressWarnings({"UnnecessaryModifier", "SwitchStatementWithTooFewBranches"})
 public class Main {
 	static final int DEBUG = -2;
 	static final int NORMAL = 0;
@@ -30,6 +31,10 @@ public class Main {
 
 	static final List<String> CHECKSMENU = List.of("Machine/Game Checks", "Player Checks", "Leaderboard Checks", "Return");
 
+	static final int WINDOW_WIDTH = 1100;
+	static final int WINDOW_HIGHT = 700;
+	static final int BORDER_LOSS = 10;
+
 	public static void main(String[] args) throws IOException{
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			System.out.println("\n[!!] SIGINT received!. Shutting workers and saving...");
@@ -38,7 +43,10 @@ public class Main {
 		}));
 		// Get the singleton instance of InterfaceWrapper
 		InterfaceWrapper window = InterfaceWrapper.getInstance();
-		window.setVisible(true);  // Force the show
+		Frame frame = window.getFrame();
+		frame.setSize(WINDOW_WIDTH, WINDOW_HIGHT);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true); // Force the show
 		int __temp;
 		while (true){
 			clearScreen();
