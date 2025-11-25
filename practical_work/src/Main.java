@@ -39,7 +39,10 @@ public class Main {
 			__temp = Menu.getInstance().menu(MAINMENU, "MAIN MENU", (char) 1, RUNNING_MODE);
 			if (__temp == 0) break;
 			if (__temp == DEBUG){
-				pass();
+				//InterfaceWrapper.basicInterface();
+				//InterfaceWrapper.borderLayout();
+				//InterfaceWrapper.threadSafe();
+				//InterfaceWrapper.withIcons();
 			} else if (__temp == 1){
 				managementMenu();
 			} else if (__temp == 2){
