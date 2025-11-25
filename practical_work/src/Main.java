@@ -43,10 +43,7 @@ public class Main {
 			if (__temp == 0) break;
 			switch (__temp){
 				case DEBUG:
-					InterfaceWrapper.basicInterface();
-					InterfaceWrapper.borderLayout();
-					InterfaceWrapper.threadSafe();
-					InterfaceWrapper.withIcons();
+					pass();
 					break;
 				case 1:
 					managementMenu();
