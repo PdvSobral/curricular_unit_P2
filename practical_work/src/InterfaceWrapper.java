@@ -74,25 +74,25 @@ public class InterfaceWrapper {
 			JButton button = new CircularButton(Main.BUTTON_SIZE);
 			button.setBackground(Color.RED); // Set the button color
 			int x = switch (i){
-				case 0: yield 30;
-				case 1: yield 75;
-				case 2: yield 60;
-				case 3: yield 125;
-				case 4: yield ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10; // 10 = 20/2 (20 spacing between buttons)
-				case 5: yield ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10;
-				case 6, 7: yield (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30;
-				case 8: yield (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40; // base: -30
-				case 9: yield (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20; // base: -30
-				default: yield 0;
+				case 0 -> 30;
+				case 1 -> 75;
+				case 2 -> 60;
+				case 3 -> 125;
+				case 4 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10; // 10 = 20/2 (20 spacing between buttons)
+				case 5 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10;
+				case 6, 7 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30;
+				case 8 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40; // base: -30
+				case 9 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20; // base: -30
+				default -> 0;
 			};
 			int y = switch (i){
-				case 0, 1: yield 75;
-				case 2, 3: yield 135;
-				case 4, 5: yield 10;
-				case 6: yield 50;
-				case 7: yield 149;
-				case 8, 9: yield 101;
-				default: yield 0;
+				case 0, 1 -> 75;
+				case 2, 3 -> 135;
+				case 4, 5 -> 10;
+				case 6 -> 50;
+				case 7 -> 149;
+				case 8, 9 -> 101;
+				default -> 0;
 			};
 			// Absolute positioning of the buttons
 			button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE); // Set position and keep size
