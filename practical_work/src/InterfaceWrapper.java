@@ -40,17 +40,17 @@ public class InterfaceWrapper {
 		// Create border panels
 		JPanel topBorder = new JPanel();
 		topBorder.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH)); // 45px height
-		topBorder.setBackground(Color.BLACK); // Set color as desired
+		topBorder.setBackground(Color.MAGENTA); // Set color as desired
 		frame.add(topBorder, BorderLayout.NORTH);
 
 		JPanel leftBorder = new JPanel();
 		leftBorder.setPreferredSize(new Dimension(Main.BORDER_WIDTH, frame.getHeight())); // 45px width
-		leftBorder.setBackground(Color.BLACK); // Set color as desired
+		leftBorder.setBackground(Color.MAGENTA); // Set color as desired
 		frame.add(leftBorder, BorderLayout.WEST);
 
 		JPanel rightBorder = new JPanel();
 		rightBorder.setPreferredSize(new Dimension(Main.BORDER_WIDTH, frame.getHeight())); // 45px width
-		rightBorder.setBackground(Color.BLACK); // Set color as desired
+		rightBorder.setBackground(Color.MAGENTA); // Set color as desired
 		frame.add(rightBorder, BorderLayout.EAST);
 
 		// Create the central content panel where we will add components
@@ -62,7 +62,7 @@ public class InterfaceWrapper {
 
 		JPanel bottomBorder = new JPanel();
 		bottomBorder.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH)); // 45px height
-		bottomBorder.setBackground(Color.BLACK); // Set color as desired
+		bottomBorder.setBackground(Color.MAGENTA); // Set color as desired
 		fullBottom.add(bottomBorder, BorderLayout.NORTH);
 
 		JPanel commandsPanel = new JPanel(null);
@@ -73,25 +73,35 @@ public class InterfaceWrapper {
 		for (int i = 0; i < 10; i++) {
 			JButton button = new CircularButton(Main.BUTTON_SIZE);
 			button.setBackground(Color.RED); // Set the button color
-
+			int x;
+			int y;
 			// Absolute positioning of the buttons
-			if (i < 4) {
-				// Slanted 2x2 layout on the left side
-				int x = 50 + (i % 2) * 60; // Position 50, 110, 50, 110 for the slant
-				int y = 50 + (i / 2) * 60; // Position 50, 110, 50, 110 for the slant
-				button.setBounds(x, y, 50, 50); // Set position and size
-			} else if (i == 4 || i == 5) {
-				// Buttons on top middle
-				int x = 330 + (i - 4) * 60; // Positions 330 and 390
-				int y = 20; // Top row
-				button.setBounds(x, y, 50, 50);
-			} else {
-				// 4 buttons on the right side (2, 4, 6, 8 positions)
-				int x = 570 + (i - 6) * 60; // Positions 570, 630, 690, 750
-				int y = 50 + ((i - 6) % 2) * 60; // Top or bottom positions
-				button.setBounds(x, y, 50, 50);
+			switch (i) {
+				case 0: x = 30; y = 75; break;
+				case 1: x = 95; y = 75; break;
+				case 2: x = 60; y = 135; break;
+				case 3: x = 125; y = 135; break;
+				case 4:
+					x = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10; // 10 = 20/2 (20 spacing between buttons)
+					y = 10; break;
+				case 5:
+					x = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10;
+					y = 10; break;
+				case 6: // up
+					x = (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30;
+					y = 50; break;
+				case 7: // down
+					x = (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30;
+					y = 149; break;
+				case 8: // right
+					x = (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40; // base: -30
+					y = 101; break;
+				case 9: // left
+					x = (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20; // base: -30
+					y = 101; break;
+				default: x = 0; y = 0;
 			}
-
+			button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE); // Set position and keep size
 			// Add the button to the panel
 			commandsPanel.add(button);
 		}
@@ -107,9 +117,9 @@ public class InterfaceWrapper {
 	}
 
 	// Returns the content space (the middle JPanel)
-	public JPanel getContentSpace() {
-		return contentPanel;
-	}
+	public JPanel getContentSpace() { return contentPanel; }
+
+	public JPanel getControlSpace() { return fullBottom; }
 
 	// Getter for the JFrame, in case you need to access the main window directly
 	public JFrame getFrame() {
@@ -123,8 +133,8 @@ class CircularButton extends JButton {
 	public CircularButton(int size) {
 		super();
 		setContentAreaFilled(false); // Remove the default rectangle
-		setFocusPainted(false);
-		setBorderPainted(false);
+		// setFocusPainted(false);
+		setBorderPainted(false); // no border
 	}
 
 	public void setSize(int size){
