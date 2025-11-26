@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 
 public class InterfaceWrapper {
 
@@ -19,7 +20,7 @@ public class InterfaceWrapper {
 		// Use BorderLayout to manage the layout of the window
 		frame.setLayout(new BorderLayout());
 
-		// Add borders to the window (45px width)
+		// Design interface
 		fullBottom = new JPanel(new BorderLayout());
 		contentPanel = new JPanel(null);
 		setUpInterface();
@@ -35,11 +36,11 @@ public class InterfaceWrapper {
 		return instance;
 	}
 
-	// Adds panels to simulate borders around the window (with a width of 45px)
+	// Adds panels to simulate borders around the window
 	private void setUpInterface() {
 		// Create border panels
 		JPanel topBorder = new JPanel();
-		topBorder.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH)); // 45px height
+		topBorder.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH));
 		topBorder.setBackground(Color.MAGENTA); // Set color as desired
 		frame.add(topBorder, BorderLayout.NORTH);
 
@@ -61,7 +62,7 @@ public class InterfaceWrapper {
 		frame.add(fullBottom, BorderLayout.SOUTH);
 
 		JPanel bottomBorder = new JPanel();
-		bottomBorder.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH)); // 45px height
+		bottomBorder.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH));
 		bottomBorder.setBackground(Color.MAGENTA); // Set color as desired
 		fullBottom.add(bottomBorder, BorderLayout.NORTH);
 
@@ -70,8 +71,10 @@ public class InterfaceWrapper {
 		commandsPanel.setBackground(Color.CYAN);
 		fullBottom.add(commandsPanel, BorderLayout.SOUTH);
 
+		ImageIcon icon = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/meme.jpeg"); // Load the image (based on root)
+
 		for (int i = 0; i < 10; i++) {
-			JButton button = new CircularButton(Main.BUTTON_SIZE);
+			CircularButton button = new CircularButton(Main.BUTTON_SIZE);
 			button.setBackground(Color.RED); // Set the button color
 			int x = switch (i){
 				case 0 -> 30;
@@ -96,11 +99,14 @@ public class InterfaceWrapper {
 			};
 			// Absolute positioning of the buttons
 			button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE); // Set position and keep size
+			button.setImage(icon);
+			button.revalidate();
+			button.repaint();
 			// Add the button to the panel
 			commandsPanel.add(button);
 		}
-
-
+		commandsPanel.revalidate();  // Make sure the layout is refreshed
+		commandsPanel.repaint();     // Force repaint of the panel
 	}
 
 	// Clears the middle content panel (the space inside the borders)
@@ -123,16 +129,29 @@ public class InterfaceWrapper {
 
 class CircularButton extends JButton {
 	private int __size;
+	private ImageIcon imageIcon;  // Field to store the image
+	private Image scalled_image;
 
 	public CircularButton(int size) {
 		super();
+		this.__size = size;
 		setContentAreaFilled(false); // Remove the default rectangle
-		// setFocusPainted(false);
-		setBorderPainted(false); // no border
+		setBorderPainted(false); // No border
 	}
 
-	public void setSize(int size){
+	public void setSize(int size) {
 		this.__size = size;
+		if (imageIcon != null) scalled_image = imageIcon.getImage().getScaledInstance(__size, __size, Image.SCALE_SMOOTH);
+		revalidate();
+		repaint();
+	}
+
+	// Set an image for the button
+	public void setImage(ImageIcon icon) {
+		this.imageIcon = icon;
+		scalled_image = imageIcon.getImage().getScaledInstance(__size, __size, Image.SCALE_SMOOTH);
+		revalidate();
+		repaint();
 	}
 
 	@Override
@@ -144,12 +163,22 @@ class CircularButton extends JButton {
 		} else {
 			g.setColor(getBackground());
 		}
-		g.fillOval(0, 0, getWidth(), getHeight()); // Draw circle
-		super.paintComponent(g); // Draw text
+
+		// Draw the circular background
+		g.fillOval(0, 0, getWidth(), getHeight());
+
+		// Draw the image inside the circle, ensuring it is resized to fit the button
+		if (imageIcon != null) {
+			g.drawImage(scalled_image, 0, 0, null);
+		}
+
+		// Request a repaint in the event dispatch thread
+		SwingUtilities.invokeLater(this::repaint);
+
+		super.paintComponent(g); // Draw
 	}
 
 	@Override
-	public Dimension getPreferredSize() {
-		return new Dimension(__size, __size); // Set size for the button
-	}
+	public Dimension getPreferredSize() { return new Dimension(__size, __size); } // Set the size for the button
+
 }
