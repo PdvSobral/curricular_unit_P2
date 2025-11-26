@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.net.URL;
 
 public class InterfaceWrapper {
 
@@ -58,7 +57,7 @@ public class InterfaceWrapper {
 		frame.add(contentPanel, BorderLayout.CENTER);
 
 		// Set up bottom part
-		fullBottom.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH+Main.BOTTOM_PANEL_SIZE));
+		fullBottom.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH + Main.BOTTOM_PANEL_SIZE));
 		frame.add(fullBottom, BorderLayout.SOUTH);
 
 		JPanel bottomBorder = new JPanel();
@@ -73,47 +72,53 @@ public class InterfaceWrapper {
 
 		ImageIcon icon = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/meme.jpeg"); // Load the image (based on root)
 
+		// Add the buttons to the panel in a thread-safe way (EDT) [Event Dispatch Thread]
 		for (int i = 0; i < 10; i++) {
-			CircularButton button = new CircularButton(Main.BUTTON_SIZE);
-			button.setBackground(Color.RED); // Set the button color
-			int x = switch (i){
-				case 0 -> 30;
-				case 1 -> 95;
-				case 2 -> 60;
-				case 3 -> 125;
-				case 4 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10; // 10 = 20/2 (20 spacing between buttons)
-				case 5 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10;
-				case 6, 7 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30;
-				case 8 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40; // base: -30
-				case 9 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20; // base: -30
-				default -> 0;
-			};
-			int y = switch (i){
-				case 0, 1 -> 75;
-				case 2, 3 -> 135;
-				case 4, 5 -> 10;
-				case 6 -> 50;
-				case 7 -> 149;
-				case 8, 9 -> 101;
-				default -> 0;
-			};
-			// Absolute positioning of the buttons
-			button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE); // Set position and keep size
-			button.setImage(icon);
-			button.revalidate();
-			button.repaint();
-			// Add the button to the panel
-			commandsPanel.add(button);
+			final int index = i;  // Local variable to use in the lambda, as lambda needs it
+
+			SwingUtilities.invokeLater(() -> {
+				CircularButton button = new CircularButton(Main.BUTTON_SIZE);
+				button.setBackground(Color.RED); // Set the button color
+				int x = switch (index) {
+					case 0 -> 30;
+					case 1 -> 95;
+					case 2 -> 60;
+					case 3 -> 125;
+					case 4 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10;
+					case 5 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10;
+					case 6, 7 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30;
+					case 8 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40;
+					case 9 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20;
+					default -> 0;
+				};
+				int y = switch (index) {
+					case 0, 1 -> 75;
+					case 2, 3 -> 135;
+					case 4, 5 -> 10;
+					case 6 -> 50;
+					case 7 -> 149;
+					case 8, 9 -> 101;
+					default -> 0;
+				};
+				// Absolute positioning of the buttons
+				button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE);
+				button.setImage(icon);
+				commandsPanel.add(button);
+			});
 		}
-		commandsPanel.revalidate();  // Make sure the layout is refreshed
-		commandsPanel.repaint();     // Force repaint of the panel
+		SwingUtilities.invokeLater(() -> {
+			commandsPanel.revalidate();  // Make sure the layout is refreshed
+			commandsPanel.repaint();     // Force repaint of the panel, although the buttons kind of do that already
+		});
 	}
 
-	// Clears the middle content panel (the space inside the borders)
+	// Clears the middle content panel (the space inside the borders), in EDT
 	public void cleanWindow() {
-		contentPanel.removeAll();
-		contentPanel.revalidate();
-		contentPanel.repaint();
+		SwingUtilities.invokeLater(() -> {
+			contentPanel.removeAll();
+			contentPanel.revalidate();
+			contentPanel.repaint();
+		});
 	}
 
 	// Returns the content space (the middle JPanel)
@@ -122,15 +127,13 @@ public class InterfaceWrapper {
 	public JPanel getControlSpace() { return fullBottom; }
 
 	// Getter for the JFrame, in case you need to access the main window directly
-	public JFrame getFrame() {
-		return frame;
-	}
+	public JFrame getFrame() { return frame; }
 }
 
 class CircularButton extends JButton {
 	private int __size;
-	private ImageIcon imageIcon;  // Field to store the image
-	private Image scalled_image;
+	private ImageIcon __imageIcon; // stores original image
+	private Image __scalled_image;
 
 	public CircularButton(int size) {
 		super();
@@ -141,44 +144,46 @@ class CircularButton extends JButton {
 
 	public void setSize(int size) {
 		this.__size = size;
-		if (imageIcon != null) scalled_image = imageIcon.getImage().getScaledInstance(__size, __size, Image.SCALE_SMOOTH);
+		if (__imageIcon != null) __scalled_image = __imageIcon.getImage().getScaledInstance(__size, __size, Image.SCALE_SMOOTH);
 		revalidate();
 		repaint();
 	}
 
 	// Set an image for the button
 	public void setImage(ImageIcon icon) {
-		this.imageIcon = icon;
-		scalled_image = imageIcon.getImage().getScaledInstance(__size, __size, Image.SCALE_SMOOTH);
+		this.__imageIcon = icon;
+		__scalled_image = __imageIcon.getImage().getScaledInstance(__size, __size, Image.SCALE_SMOOTH);
 		revalidate();
 		repaint();
 	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
+		/*
 		if (getModel().isPressed()) {
+			// when pressed
 			g.setColor(Color.LIGHT_GRAY);
 		} else if (getModel().isRollover()) {
-			g.setColor(Color.GRAY);
+			// on hover
 		} else {
+			// rest of the time
 			g.setColor(getBackground());
 		}
-
-		// Draw the circular background
-		g.fillOval(0, 0, getWidth(), getHeight());
+		*/
 
 		// Draw the image inside the circle, ensuring it is resized to fit the button
-		if (imageIcon != null) {
-			g.drawImage(scalled_image, 0, 0, null);
-		}
+		if (__imageIcon != null) g.drawImage(__scalled_image, 0, 0, null);
+		else g.fillOval(0, 0, getWidth(), getHeight()); // Draw the circular background if no image
 
-		// Request a repaint in the event dispatch thread
-		SwingUtilities.invokeLater(this::repaint);
-
-		super.paintComponent(g); // Draw
+		// repainting happens on the EDT
+		repaint();
 	}
 
 	@Override
-	public Dimension getPreferredSize() { return new Dimension(__size, __size); } // Set the size for the button
+	public void revalidate(){ SwingUtilities.invokeLater(super::revalidate); } // revalidate operated on EDT
 
+	public void repaint(){ SwingUtilities.invokeLater(super::repaint); } // repaint operated on EDT
+
+	@Override
+	public Dimension getPreferredSize(){ return new Dimension(__size, __size); } // Set the size for the button
 }
