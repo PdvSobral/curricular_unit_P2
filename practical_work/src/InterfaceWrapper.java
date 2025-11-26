@@ -73,34 +73,33 @@ public class InterfaceWrapper {
 		for (int i = 0; i < 10; i++) {
 			JButton button = new CircularButton(Main.BUTTON_SIZE);
 			button.setBackground(Color.RED); // Set the button color
-			int x;
-			int y;
+			int x = switch (i){
+				case 0: yield 30;
+				case 1: yield 75;
+				case 2: yield 60;
+				case 3: yield 125;
+				case 4: yield ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10; // 10 = 20/2 (20 spacing between buttons)
+				case 5: yield ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10;
+				case 6: // equal to case 7
+				case 7: yield (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30;
+				case 8: yield (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40; // base: -30
+				case 9: yield (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20; // base: -30
+				default: yield 0;
+			};
+			int y = switch (i){
+				case 0: // equal to 1
+				case 1: yield 75;
+				case 2: // equal to 3
+				case 3: yield 135;
+				case 4: // equal to 5
+				case 5: yield 10;
+				case 6: yield 50;
+				case 7: yield 149;
+				case 8: // equal to 9
+				case 9: yield 101;
+				default: yield 0;
+			};
 			// Absolute positioning of the buttons
-			switch (i) {
-				case 0: x = 30; y = 75; break;
-				case 1: x = 95; y = 75; break;
-				case 2: x = 60; y = 135; break;
-				case 3: x = 125; y = 135; break;
-				case 4:
-					x = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10; // 10 = 20/2 (20 spacing between buttons)
-					y = 10; break;
-				case 5:
-					x = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10;
-					y = 10; break;
-				case 6: // up
-					x = (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30;
-					y = 50; break;
-				case 7: // down
-					x = (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30;
-					y = 149; break;
-				case 8: // right
-					x = (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40; // base: -30
-					y = 101; break;
-				case 9: // left
-					x = (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20; // base: -30
-					y = 101; break;
-				default: x = 0; y = 0;
-			}
 			button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE); // Set position and keep size
 			// Add the button to the panel
 			commandsPanel.add(button);
