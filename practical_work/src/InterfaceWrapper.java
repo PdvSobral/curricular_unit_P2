@@ -102,41 +102,6 @@ public class InterfaceWrapper {
 				default: x = 0; y = 0;
 			}
 			button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE); // Set position and keep size
-			switch (i) {
-				case 0: x = 30; y = 75; break;
-				case 1: x = 95; y = 75; break;
-				case 2: x = 60; y = 135; break;
-				case 3: x = 125; y = 135; break;
-				case 4:
-					x = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10; // 10 = 20/2 (20 spacing between buttons)
-					y = 10; break;
-				case 5:
-					x = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10;
-					y = 10; break;
-				case 6: // up
-					x = (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30;
-					y = 50; break;
-				case 7: // down
-					x = (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30;
-					y = 149; break;
-				case 8: // right
-					x = (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40; // base: -30
-					y = 101; break;
-				case 9: // left
-					x = (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20; // base: -30
-					y = 101; break;
-				default: x = 0; y = 0;
-			}
-			/*if (i == 4 || i == 5) {
-				// Buttons on top middle
-				x = 330 + (i - 4) * 60; // Positions 330 and 390
-				y = 20; // Top row
-			} else {
-				// 4 buttons on the right side (2, 4, 6, 8 positions)
-				x = 570 + (i - 6) * 60; // Positions 570, 630, 690, 750
-				y = 50 + ((i - 6) % 2) * 60; // Top or bottom positions
-			}*/
-			button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE); // Set position and keep size
 			// Add the button to the panel
 			commandsPanel.add(button);
 		}
