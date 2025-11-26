@@ -75,7 +75,7 @@ public class InterfaceWrapper {
 			button.setBackground(Color.RED); // Set the button color
 			int x = switch (i){
 				case 0 -> 30;
-				case 1 -> 75;
+				case 1 -> 95;
 				case 2 -> 60;
 				case 3 -> 125;
 				case 4 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10; // 10 = 20/2 (20 spacing between buttons)
