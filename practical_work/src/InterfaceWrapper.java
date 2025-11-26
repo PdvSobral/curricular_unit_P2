@@ -5,8 +5,8 @@ public class InterfaceWrapper {
 
 	private static InterfaceWrapper instance = new InterfaceWrapper();
 	private final JFrame frame;
-	private final JPanel contentPanel;
-	private final JPanel fullBottom;
+	private final JPanel __contentPanel;
+	private final ControlPanel __controlPanel;
 
 	// Private constructor to prevent instantiation from other classes
 	private InterfaceWrapper() {
@@ -20,8 +20,9 @@ public class InterfaceWrapper {
 		frame.setLayout(new BorderLayout());
 
 		// Design interface
-		fullBottom = new JPanel(new BorderLayout());
-		contentPanel = new JPanel(null);
+
+		__controlPanel = new ControlPanel(null);
+		__contentPanel = new JPanel(null);
 		setUpInterface();
 
 		frame.setVisible(true);
@@ -37,6 +38,8 @@ public class InterfaceWrapper {
 
 	// Adds panels to simulate borders around the window
 	private void setUpInterface() {
+		JPanel fullBottom = new JPanel(new BorderLayout());
+
 		// Create border panels
 		JPanel topBorder = new JPanel();
 		topBorder.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH));
@@ -54,7 +57,7 @@ public class InterfaceWrapper {
 		frame.add(rightBorder, BorderLayout.EAST);
 
 		// Create the central content panel where we will add components
-		frame.add(contentPanel, BorderLayout.CENTER);
+		frame.add(__contentPanel, BorderLayout.CENTER);
 
 		// Set up bottom part
 		fullBottom.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH + Main.BOTTOM_PANEL_SIZE));
@@ -65,12 +68,14 @@ public class InterfaceWrapper {
 		bottomBorder.setBackground(Color.MAGENTA); // Set color as desired
 		fullBottom.add(bottomBorder, BorderLayout.NORTH);
 
-		JPanel commandsPanel = new JPanel(null);
-		commandsPanel.setPreferredSize(new Dimension(frame.getWidth(), Main.BOTTOM_PANEL_SIZE));
-		commandsPanel.setBackground(Color.CYAN);
-		fullBottom.add(commandsPanel, BorderLayout.SOUTH);
+		ImageIcon icon2 = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/background.jpg"); // Load the image (based on root)
 
-		ImageIcon icon = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/meme.jpeg"); // Load the image (based on root)
+		__controlPanel.setPreferredSize(new Dimension(frame.getWidth(), Main.BOTTOM_PANEL_SIZE));
+		__controlPanel.setBackground(Color.CYAN);
+		__controlPanel.setBackgroundImage(icon2);
+		fullBottom.add(__controlPanel, BorderLayout.SOUTH);
+
+		final ImageIcon icon = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/meme_c.png"); // Load the image (based on root)
 
 		// Add the buttons to the panel in a thread-safe way (EDT) [Event Dispatch Thread]
 		for (int i = 0; i < 10; i++) {
@@ -78,7 +83,6 @@ public class InterfaceWrapper {
 
 			SwingUtilities.invokeLater(() -> {
 				CircularButton button = new CircularButton(Main.BUTTON_SIZE);
-				button.setBackground(Color.RED); // Set the button color
 				int x = switch (index) {
 					case 0 -> 30;
 					case 1 -> 95;
@@ -103,28 +107,28 @@ public class InterfaceWrapper {
 				// Absolute positioning of the buttons
 				button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE);
 				button.setImage(icon);
-				commandsPanel.add(button);
+				__controlPanel.add(button);
 			});
 		}
 		SwingUtilities.invokeLater(() -> {
-			commandsPanel.revalidate();  // Make sure the layout is refreshed
-			commandsPanel.repaint();     // Force repaint of the panel, although the buttons kind of do that already
+			__controlPanel.revalidate();  // Make sure the layout is refreshed
+			__controlPanel.repaint();     // Force repaint of the panel, although the buttons kind of do that already
 		});
 	}
 
 	// Clears the middle content panel (the space inside the borders), in EDT
 	public void cleanWindow() {
 		SwingUtilities.invokeLater(() -> {
-			contentPanel.removeAll();
-			contentPanel.revalidate();
-			contentPanel.repaint();
+			__contentPanel.removeAll();
+			__contentPanel.revalidate();
+			__contentPanel.repaint();
 		});
 	}
 
 	// Returns the content space (the middle JPanel)
-	public JPanel getContentSpace() { return contentPanel; }
+	public JPanel getContentSpace() { return __contentPanel; }
 
-	public JPanel getControlSpace() { return fullBottom; }
+	public JPanel getControlSpace() { return __controlPanel; }
 
 	// Getter for the JFrame, in case you need to access the main window directly
 	public JFrame getFrame() { return frame; }
@@ -186,4 +190,20 @@ class CircularButton extends JButton {
 
 	@Override
 	public Dimension getPreferredSize(){ return new Dimension(__size, __size); } // Set the size for the button
+}
+
+class ControlPanel extends JPanel {
+	private Image __backgroundImage;
+
+	public ControlPanel(BorderLayout borderLayout){ super(borderLayout); }
+
+	public void setBackgroundImage(ImageIcon icon){ this.__backgroundImage = icon.getImage(); }
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		if (__backgroundImage != null) {
+			g.drawImage(__backgroundImage, 0, 0, getWidth(), getHeight(), this);
+		}
+	}
 }
