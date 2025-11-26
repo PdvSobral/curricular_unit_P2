@@ -31,22 +31,21 @@ public class Main {
 
 	static final List<String> CHECKSMENU = List.of("Machine/Game Checks", "Player Checks", "Leaderboard Checks", "Return");
 
-	static final int WINDOW_WIDTH = 1100;
-	static final int WINDOW_HIGHT = 700;
+	static final int WINDOW_WIDTH = 700;
+	static final int WINDOW_HIGHT = 1000;
+	static final int BORDER_WIDTH = 40;
 	static final int BORDER_LOSS = 10;
+	static final String APPLICATION_TITTLE = "ARCADE^2 MANAGER";
+	static final int BUTTON_SIZE = 60;
+	static final int BOTTOM_PANEL_SIZE = 240;
 
 	public static void main(String[] args) throws IOException{
+		InterfaceWrapper.getInstance(); // Start if not yet started
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			System.out.println("\n[!!] SIGINT received!. Shutting workers and saving...");
 			// TODO: Add a save here for what is needed
 			System.out.println("[!!] Exiting...");
 		}));
-		// Get the singleton instance of InterfaceWrapper
-		InterfaceWrapper window = InterfaceWrapper.getInstance();
-		Frame frame = window.getFrame();
-		frame.setSize(WINDOW_WIDTH, WINDOW_HIGHT);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true); // Force the show
 		int __temp;
 		while (true){
 			clearScreen();

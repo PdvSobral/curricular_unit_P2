@@ -32,16 +32,15 @@ public class Menu {
 		interfaceWrapper.cleanWindow(); // Clear the existing content of the window
 
 		// Create a panel to hold the buttons
-		JPanel panel = new JPanel();
-		panel.setLayout(null);  // Absolute Layout
+		JPanel panel = interfaceWrapper.getContentSpace();
 
 		final int height_step = 30;
 		int current_height = 40; // height da label  + offset buttons para a label + space buttons-label
 
-		// Set up the window title and/or menu name
-		interfaceWrapper.getFrame().setTitle(menu_name);
+		// Set up the menu name
 		JLabel menuLabel = new JLabel(menu_name, SwingConstants.CENTER);
-		menuLabel.setBounds(((Main.WINDOW_WIDTH - Main.BORDER_LOSS)/2) - 100, 10, 200, 30);
+		int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS)/2)-Main.BORDER_WIDTH;
+		menuLabel.setBounds(base_center - 100, 10, 200, 30);
 		panel.add(menuLabel);
 
 
@@ -58,7 +57,7 @@ public class Menu {
 				// Action when a button is clicked
 				selectedOption[0] = Integer.parseInt(e.getActionCommand()); // Store the selected option
 			});
-			button.setBounds(((Main.WINDOW_WIDTH - Main.BORDER_LOSS)/2) - 100, current_height, 200, 30);
+			button.setBounds(base_center - 100, current_height, 200, 30);
 			panel.add(button);
 			current_height += height_step;
 		}
@@ -71,7 +70,7 @@ public class Menu {
 				selectedOption[0] = Integer.parseInt(e.getActionCommand());  // Store the selected option
 				updateWindow(panel);  // Update the window content based on the selection
 			});
-			button.setBounds(((Main.WINDOW_WIDTH - Main.BORDER_LOSS)/2) - 100, current_height, 200, 30);
+			button.setBounds(base_center - 100, current_height, 200, 30);
 			panel.add(button);
 			current_height += height_step;
 			buttonIndex++;
