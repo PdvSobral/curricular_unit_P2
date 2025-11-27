@@ -5,7 +5,7 @@ public class InterfaceWrapper {
 
 	private static InterfaceWrapper instance = new InterfaceWrapper();
 	private final JFrame frame;
-	private final JPanel __contentPanel;
+	private final ContentPanel __contentPanel;
 	private final ControlPanel __controlPanel;
 
 	// Private constructor to prevent instantiation from other classes
@@ -22,7 +22,7 @@ public class InterfaceWrapper {
 		// Design interface
 
 		__controlPanel = new ControlPanel(null);
-		__contentPanel = new JPanel(null);
+		__contentPanel = new ContentPanel(null);
 		setUpInterface();
 
 		frame.setVisible(true);
@@ -115,20 +115,11 @@ public class InterfaceWrapper {
 			__controlPanel.repaint();     // Force repaint of the panel, although the buttons kind of do that already
 		});
 	}
-
-	// Clears the middle content panel (the space inside the borders), in EDT
-	public void cleanWindow() {
-		SwingUtilities.invokeLater(() -> {
-			__contentPanel.removeAll();
-			__contentPanel.revalidate();
-			__contentPanel.repaint();
-		});
-	}
-
+	
 	// Returns the content space (the middle JPanel)
-	public JPanel getContentSpace() { return __contentPanel; }
+	public ContentPanel getContentSpace() { return __contentPanel; }
 
-	public JPanel getControlSpace() { return __controlPanel; }
+	public ControlPanel getControlSpace() { return __controlPanel; }
 
 	// Getter for the JFrame, in case you need to access the main window directly
 	public JFrame getFrame() { return frame; }
@@ -186,6 +177,7 @@ class CircularButton extends JButton {
 	@Override
 	public void revalidate(){ SwingUtilities.invokeLater(super::revalidate); } // revalidate operated on EDT
 
+	@Override
 	public void repaint(){ SwingUtilities.invokeLater(super::repaint); } // repaint operated on EDT
 
 	@Override
@@ -198,6 +190,42 @@ class ControlPanel extends JPanel {
 	public ControlPanel(BorderLayout borderLayout){ super(borderLayout); }
 
 	public void setBackgroundImage(ImageIcon icon){ this.__backgroundImage = icon.getImage(); }
+
+	@Override
+	public void revalidate(){ SwingUtilities.invokeLater(super::revalidate); } // revalidate operated on EDT
+
+	@Override
+	public void repaint(){ SwingUtilities.invokeLater(super::repaint); } // repaint operated on EDT
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		if (__backgroundImage != null) {
+			g.drawImage(__backgroundImage, 0, 0, getWidth(), getHeight(), this);
+		}
+	}
+}
+
+class ContentPanel extends JPanel {
+	private Image __backgroundImage;
+
+	public ContentPanel(LayoutManager layout){
+		super(layout);
+	}
+
+	public void setBackgroundImage(ImageIcon icon){ this.__backgroundImage = icon.getImage(); }
+
+	public void clearPanel() {
+		SwingUtilities.invokeLater(this::removeAll);
+		this.revalidate();
+		this.repaint();
+	}
+
+	@Override
+	public void revalidate(){ SwingUtilities.invokeLater(super::revalidate); } // revalidate operated on EDT
+
+	@Override
+	public void repaint(){ SwingUtilities.invokeLater(super::repaint); } // repaint operated on EDT
 
 	@Override
 	protected void paintComponent(Graphics g) {

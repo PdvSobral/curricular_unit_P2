@@ -42,7 +42,7 @@ public class Main {
 	public static void main(String[] args) throws IOException{
 		InterfaceWrapper.getInstance(); // Start if not yet started
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			System.out.println("\n[!!] SIGINT received!. Shutting workers and saving...");
+			System.out.println("\n[!!] SIGINT received! Shutting workers and saving...");
 			// TODO: Add a save here for what is needed
 			System.out.println("[!!] Exiting...");
 		}));
