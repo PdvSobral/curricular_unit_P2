@@ -45,14 +45,13 @@ public class Menu {
 		int buttonIndex = 1;  // Start button index from 1 (1-based index)
 
 		if (debug == Main.DEBUG) {
-			JButton button = new JButton(optionsList.removeFirst());
-			button.setActionCommand(String.valueOf(Main.DEBUG)); // Set the action command to the option's index
-			button.addActionListener(e -> {
-				// Action when a button is clicked
+			JButton debugButton = new JButton(optionsList.removeFirst());
+			debugButton.setActionCommand(String.valueOf(Main.DEBUG)); // Set the action command to the debug option
+			debugButton.addActionListener(e -> {
 				selectedOption[0] = Integer.parseInt(e.getActionCommand()); // Store the selected option
 			});
-			button.setBounds(base_center - 100, current_height, 200, 30);
-			panel.add(button);
+			debugButton.setBounds(base_center - 100, current_height, 200, 30);
+			panel.add(debugButton);
 			current_height += height_step;
 		}
 		for (String option : optionsList) {
