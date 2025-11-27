@@ -23,15 +23,13 @@ public class Menu {
 		selectedOption[0] = -1;
 		ArrayList<String> optionsList = new ArrayList<>(_optionsList);
 		// Display the menu name and the options
-		if (debug == Main.DEBUG) {
-			optionsList.addFirst("DEBUG");
-		}
+		if (debug == Main.DEBUG) optionsList.addFirst("DEBUG");
 
 		// Get the singleton instance of InterfaceWrapper
 		InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
 		interfaceWrapper.cleanWindow(); // Clear the existing content of the window
 
-		// Create a panel to hold the buttons
+		// Get the content panel to hold the buttons
 		JPanel panel = interfaceWrapper.getContentSpace();
 
 		final int height_step = 30;
@@ -39,18 +37,14 @@ public class Menu {
 
 		// Set up the menu name
 		JLabel menuLabel = new JLabel(menu_name, SwingConstants.CENTER);
-		int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS)/2)-Main.BORDER_WIDTH;
+		int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
 		menuLabel.setBounds(base_center - 100, 10, 200, 30);
 		panel.add(menuLabel);
-
 
 		// Create a button for each option
 		int buttonIndex = 1;  // Start button index from 1 (1-based index)
 
-		// Declare dialog variable here to be accessible in the action listener
-		JDialog dialog = new JDialog();  // Create a new JDialog window
-
-		if (debug==Main.DEBUG) {
+		if (debug == Main.DEBUG) {
 			JButton button = new JButton(optionsList.removeFirst());
 			button.setActionCommand(String.valueOf(Main.DEBUG)); // Set the action command to the option's index
 			button.addActionListener(e -> {
@@ -76,14 +70,16 @@ public class Menu {
 			buttonIndex++;
 		}
 
-		// Update the window with the newly created panel
-		interfaceWrapper.getFrame().getContentPane().add(panel);
-		interfaceWrapper.getFrame().revalidate();
-		interfaceWrapper.getFrame().repaint();
+		// Update the window with the newly created panel (on EDT)
+		SwingUtilities.invokeLater(() -> {
+			panel.revalidate();
+			panel.repaint();
+			interfaceWrapper.getFrame().revalidate();
+			interfaceWrapper.getFrame().repaint();
+		});
 
 		// Wait for the user to select an option
 		while (selectedOption[0] == -1) {
-			// Keep the dialog open until a selection is made
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -91,7 +87,6 @@ public class Menu {
 			}
 		}
 
-		// Return the selected option value
 		return selectedOption[0];
 	}
 
