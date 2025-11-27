@@ -1,9 +1,12 @@
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("preview")
 public class Menu {
 	private static final Menu __instance = new Menu();
+	private final int[] selectedOption = {-1};  // Store the selected option index
 
 	// Private constructor to ensure singleton
 	private Menu() {}
@@ -12,40 +15,78 @@ public class Menu {
 	public static Menu getInstance() { return __instance; }
 
 	// Returns the selected option index (1-based) or -1 if canceled or invalid input
-	public int menu(List<String> optionsList, String menu_name, char last_zero) throws IOException{
+	public int menu(List<String> optionsList, String menu_name, char last_zero) throws IOException {
 		return this.menu(optionsList, menu_name, last_zero, 0);
 	}
 
-	public int menu(List<String> optionsList, String menu_name, char last_zero, int debug) throws IOException{
-		System.out.println(STR."\{menu_name}:");
-		if (debug == Main.DEBUG){
-			System.out.println(" [-2] - DEBUG");
-		}
-		for (char i = 0; i <= optionsList.size()-2; i++) {
-			System.out.println(STR." [\{i + 1}] - \{optionsList.get(i)}");
-		}
-		if (last_zero==1) {
-			System.out.println(STR." [0] - \{optionsList.getLast()}");
-		} else {
-			System.out.println(STR." [\{optionsList.size()}] - \{optionsList.getLast()}");
-		}
+	public int menu(List<String> _optionsList, String menu_name, char last_zero, int debug) throws IOException {
+		selectedOption[0] = -1;
+		ArrayList<String> optionsList = new ArrayList<>(_optionsList);
+		// Display the menu name and the options
+		if (debug == Main.DEBUG) optionsList.addFirst("DEBUG");
 
-		Reader scanner = new Reader(System.in);
-		scanner.setHandler(Main::receivedCTRLD);
+		// Get the singleton instance of InterfaceWrapper
+		InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
 
-		int selected;
-		// Input loop until a valid selection is made
-		while (true) {
-			System.out.print("Select an option: ");
-			String input = scanner.readLine();
+		// Get the content panel to hold the buttons
+		ContentPanel panel = interfaceWrapper.getContentSpace();
+		panel.clearPanel(); // Clear the existing content of the window
+
+		final int height_step = 30;
+		SwingUtilities.invokeLater(() -> {
+			int current_height = 40; // height da label + offset buttons para a label + space buttons-label
+
+			// Set up the menu name
+			JLabel menuLabel = new JLabel(menu_name, SwingConstants.CENTER);
+			int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
+			menuLabel.setBounds(base_center - 100, 10, 200, 30);
+			panel.add(menuLabel);
+
+			// Create a button for each option
+			int buttonIndex = 1;  // Start button index from 1 (1-based index)
+
+			if (debug == Main.DEBUG) {
+				JButton debugButton = new JButton(optionsList.removeFirst());
+				debugButton.setActionCommand(String.valueOf(Main.DEBUG)); // Set the action command to the debug option
+				debugButton.addActionListener(e -> {
+					selectedOption[0] = Integer.parseInt(e.getActionCommand()); // Store the selected option
+				});
+				debugButton.setBounds(base_center - 100, current_height, 200, 30);
+				panel.add(debugButton);
+				current_height += height_step;
+			}
+			for (String option : optionsList) {
+				JButton button = new JButton(option);
+				if (buttonIndex == optionsList.size() && last_zero == 1) button.setActionCommand("0");
+				else button.setActionCommand(String.valueOf(buttonIndex));  // Set the action command to the option's index
+				button.addActionListener(e -> {
+					// Action when a button is clicked
+					selectedOption[0] = Integer.parseInt(e.getActionCommand());  // Store the selected option
+				});
+				button.setBounds(base_center - 100, current_height, 200, 30);
+				panel.add(button);
+				current_height += height_step;
+				buttonIndex++;
+			}
+		});
+
+		// Update the window with the updated panel (on EDT)
+		SwingUtilities.invokeLater(() -> {
+			panel.revalidate();
+			panel.repaint();
+			interfaceWrapper.getFrame().revalidate();
+			interfaceWrapper.getFrame().repaint();
+		});
+
+		// Wait for the user to select an option
+		while (selectedOption[0] == -1) {
 			try {
-				selected = Integer.parseInt(input);
-				if (selected == Main.DEBUG && debug == Main.DEBUG) return -2;
-				if (selected >= 1 - last_zero && selected <= optionsList.size() - last_zero) return selected;
-				else System.out.println("Invalid option. Please choose a valid option.");
-			} catch (NumberFormatException e) {
-				System.out.println("Invalid input. Please try again.");
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
+
+		return selectedOption[0];
 	}
 }
