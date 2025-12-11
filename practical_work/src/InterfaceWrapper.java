@@ -72,7 +72,15 @@ public class InterfaceWrapper {
 		__controlPanel.setBackgroundImage(icon2);
 		fullBottom.add(__controlPanel, BorderLayout.SOUTH);
 
-		final ImageIcon icon = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/template_button.png"); // Load the image (based on root)
+		final ImageIcon icon = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/template_button.png"); // Load the image (based on root)
+		final ImageIcon quit_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/power_button.png"); // Load the image (based on root)
+		final ImageIcon return_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/return_button.png"); // Load the image (based on root)
+		final ImageIcon left_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/left_button.png"); // Load the image (based on root)
+		final ImageIcon right_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/right_button.png"); // Load the image (based on root)
+		final ImageIcon up_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/up_button.png"); // Load the image (based on root)
+		final ImageIcon down_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/down_button.png"); // Load the image (based on root)
+		final ImageIcon tick_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/tick_button.png"); // Load the image (based on root)
+		final ImageIcon cross_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/cross_button.png"); // Load the image (based on root)
 
 		// Add the buttons to the panel in a thread-safe way (EDT) [Event Dispatch Thread]
 		for (int i = 0; i < 10; i++) {
@@ -89,25 +97,35 @@ public class InterfaceWrapper {
 					case 2 -> 85 + panning; // 2*2 (2;1)
 					case 3 -> 135 + panning; // 2*2 (2;2)
 					case 4 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10; // return
-					case 5 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10; // home
+					case 5 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10; // power
 					case 6, 7 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30 - panning2; // up, down
-					case 8 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40 - panning2; // left
-					case 9 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20 - panning2; // right
+					case 8 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40 - panning2; // right
+					case 9 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20 - panning2; // left
 					default -> 0;
 				};
 				int y = switch (index) {
 					case 0, 1 -> 28; // 2*2 (first row)
 					case 2, 3 -> 68; // 2*2 (second row)
-					case 4, 5 -> 8; // home, return
-					case 6 -> 16; // up
-					case 7 -> 83; // down
+					case 4, 5 -> 8; // power, return
+					case 6 -> 20; // up   16
+					case 7 -> 76; // down  83
 					case 8, 9 -> 48; // left, right
 					default -> 0;
 				};
 				// Absolute positioning of the buttons
 				button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE);
 				button.setSize(Main.BUTTON_SIZE);
-				button.setImage(icon);
+				switch (index) {
+					case 0: button.setImage(tick_but); break;
+					case 1: button.setImage(cross_but); break;
+					case 4: button.setImage(return_but); break;
+					case 5: button.setImage(quit_but); break;
+					case 6: button.setImage(up_but); break;
+					case 7: button.setImage(down_but); break;
+					case 8: button.setImage(right_but); break;
+					case 9: button.setImage(left_but); break;
+					default: button.setImage(icon);
+				}
 				__controlPanel.add(button);
 			});
 		}
