@@ -72,16 +72,6 @@ public class InterfaceWrapper {
 		__controlPanel.setBackgroundImage(icon2);
 		fullBottom.add(__controlPanel, BorderLayout.SOUTH);
 
-		final ImageIcon icon = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/template_button.png"); // Load the image (based on root)
-		final ImageIcon quit_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/power_button.png"); // Load the image (based on root)
-		final ImageIcon return_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/return_button.png"); // Load the image (based on root)
-		final ImageIcon left_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/left_button.png"); // Load the image (based on root)
-		final ImageIcon right_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/right_button.png"); // Load the image (based on root)
-		final ImageIcon up_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/up_button.png"); // Load the image (based on root)
-		final ImageIcon down_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/down_button.png"); // Load the image (based on root)
-		final ImageIcon tick_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/tick_button.png"); // Load the image (based on root)
-		final ImageIcon cross_but = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/unpressed_buttons/cross_button.png"); // Load the image (based on root)
-
 		// Add the buttons to the panel in a thread-safe way (EDT) [Event Dispatch Thread]
 		for (int i = 0; i < 10; i++) {
 			final int index = i;  // Local variable to use in the lambda, as lambda needs it
@@ -90,6 +80,7 @@ public class InterfaceWrapper {
 			// FIXME: to make permanent if everyone agrees on the new padded interface
 			int panning = 40;
 			int panning2 = 60;
+
 			SwingUtilities.invokeLater(() -> {
 				int x = switch (index) {
 					case 0 -> 60 + panning; // 2*2 (1;1)
@@ -114,18 +105,20 @@ public class InterfaceWrapper {
 				};
 				// Absolute positioning of the buttons
 				button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE);
-				button.setSize(Main.BUTTON_SIZE);
-				switch (index) {
-					case 0: button.setImage(tick_but); break;
-					case 1: button.setImage(cross_but); break;
-					case 4: button.setImage(return_but); break;
-					case 5: button.setImage(quit_but); break;
-					case 6: button.setImage(up_but); break;
-					case 7: button.setImage(down_but); break;
-					case 8: button.setImage(right_but); break;
-					case 9: button.setImage(left_but); break;
-					default: button.setImage(icon);
-				}
+				button.setSize(Main.BUTTON_SIZE); // TODO: for some reason not working, see FIXME
+
+				String image_name = switch (index){
+					case 0 -> "unpressed_buttons/tick_button.png";
+					case 1 -> "unpressed_buttons/cross_button.png";
+					case 4 -> "unpressed_buttons/return_button.png";
+					case 5 -> "unpressed_buttons/power_button.png";
+					case 6 -> "unpressed_buttons/up_button.png";
+					case 7 -> "unpressed_buttons/down_button.png";
+					case 8 -> "unpressed_buttons/right_button.png";
+					case 9 -> "unpressed_buttons/left_button.png";
+					default -> "unpressed_buttons/template_button.png";
+				};
+				button.setImage(new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/\{image_name}"));
 				__controlPanel.add(button);
 			});
 		}
