@@ -41,19 +41,17 @@ public class InterfaceWrapper {
 		JPanel fullBottom = new JPanel(new BorderLayout());
 
 		// Create border panels
-		JPanel topBorder = new JPanel();
+		ImagePanel topBorder = new ImagePanel(STR."\{System.getProperty("java.class.path")}/resources/interface_top_brd.png");
 		topBorder.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH));
-		topBorder.setBackground(Color.MAGENTA); // Set color as desired
 		frame.add(topBorder, BorderLayout.NORTH);
 
-		JPanel leftBorder = new JPanel();
+
+		ImagePanel leftBorder = new ImagePanel(STR."\{System.getProperty("java.class.path")}/resources/interface_left_brd.png");
 		leftBorder.setPreferredSize(new Dimension(Main.BORDER_WIDTH, frame.getHeight())); // 45px width
-		leftBorder.setBackground(Color.MAGENTA); // Set color as desired
 		frame.add(leftBorder, BorderLayout.WEST);
 
-		JPanel rightBorder = new JPanel();
+		ImagePanel rightBorder = new ImagePanel(STR."\{System.getProperty("java.class.path")}/resources/interface_right_brd.png");
 		rightBorder.setPreferredSize(new Dimension(Main.BORDER_WIDTH, frame.getHeight())); // 45px width
-		rightBorder.setBackground(Color.MAGENTA); // Set color as desired
 		frame.add(rightBorder, BorderLayout.EAST);
 
 		// Create the central content panel where we will add components
@@ -63,49 +61,52 @@ public class InterfaceWrapper {
 		fullBottom.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH + Main.BOTTOM_PANEL_SIZE));
 		frame.add(fullBottom, BorderLayout.SOUTH);
 
-		JPanel bottomBorder = new JPanel();
+		ImagePanel bottomBorder = new ImagePanel(STR."\{System.getProperty("java.class.path")}/resources/interface_bottom_brd_sc.png");
 		bottomBorder.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH));
-		bottomBorder.setBackground(Color.MAGENTA); // Set color as desired
 		fullBottom.add(bottomBorder, BorderLayout.NORTH);
 
-		ImageIcon icon2 = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/background.jpg"); // Load the image (based on root)
+		ImageIcon icon2 = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/interface_controls2_sc.png"); // Load the image (based on root)
 
 		__controlPanel.setPreferredSize(new Dimension(frame.getWidth(), Main.BOTTOM_PANEL_SIZE));
 		__controlPanel.setBackground(Color.CYAN);
 		__controlPanel.setBackgroundImage(icon2);
 		fullBottom.add(__controlPanel, BorderLayout.SOUTH);
 
-		final ImageIcon icon = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/meme_c.png"); // Load the image (based on root)
+		final ImageIcon icon = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/template_button.png"); // Load the image (based on root)
 
 		// Add the buttons to the panel in a thread-safe way (EDT) [Event Dispatch Thread]
 		for (int i = 0; i < 10; i++) {
 			final int index = i;  // Local variable to use in the lambda, as lambda needs it
-
+			// FIXME: It's not updating the button size... it has to be manual in the default value
+			CircularButton button = new CircularButton(Main.BUTTON_SIZE);
+			// FIXME: to make permanent if everyone agrees on the new padded interface
+			int panning = 40;
+			int panning2 = 60;
 			SwingUtilities.invokeLater(() -> {
-				CircularButton button = new CircularButton(Main.BUTTON_SIZE);
 				int x = switch (index) {
-					case 0 -> 30;
-					case 1 -> 95;
-					case 2 -> 60;
-					case 3 -> 125;
-					case 4 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10;
-					case 5 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10;
-					case 6, 7 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30;
-					case 8 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40;
-					case 9 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20;
+					case 0 -> 60 + panning; // 2*2 (1;1)
+					case 1 -> 110 + panning; // 2*2 (1;2)
+					case 2 -> 85 + panning; // 2*2 (2;1)
+					case 3 -> 135 + panning; // 2*2 (2;2)
+					case 4 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10; // return
+					case 5 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10; // home
+					case 6, 7 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30 - panning2; // up, down
+					case 8 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40 - panning2; // left
+					case 9 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20 - panning2; // right
 					default -> 0;
 				};
 				int y = switch (index) {
-					case 0, 1 -> 75;
-					case 2, 3 -> 135;
-					case 4, 5 -> 10;
-					case 6 -> 50;
-					case 7 -> 149;
-					case 8, 9 -> 101;
+					case 0, 1 -> 28; // 2*2 (first row)
+					case 2, 3 -> 68; // 2*2 (second row)
+					case 4, 5 -> 8; // home, return
+					case 6 -> 16; // up
+					case 7 -> 83; // down
+					case 8, 9 -> 48; // left, right
 					default -> 0;
 				};
 				// Absolute positioning of the buttons
 				button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE);
+				button.setSize(Main.BUTTON_SIZE);
 				button.setImage(icon);
 				__controlPanel.add(button);
 			});
@@ -126,7 +127,7 @@ public class InterfaceWrapper {
 }
 
 class CircularButton extends JButton {
-	private int __size;
+	private int __size = 40; // FIXME: If set here, it works. Else, it uses default, no scaling.
 	private ImageIcon __imageIcon; // stores original image
 	private Image __scalled_image;
 
@@ -168,7 +169,7 @@ class CircularButton extends JButton {
 
 		// Draw the image inside the circle, ensuring it is resized to fit the button
 		if (__imageIcon != null) g.drawImage(__scalled_image, 0, 0, null);
-		else g.fillOval(0, 0, getWidth(), getHeight()); // Draw the circular background if no image
+		else g.fillOval(0, 0, __size, __size); // Draw the circular background if no image
 
 		// repainting happens on the EDT
 		repaint();
@@ -233,5 +234,22 @@ class ContentPanel extends JPanel {
 		if (__backgroundImage != null) {
 			g.drawImage(__backgroundImage, 0, 0, getWidth(), getHeight(), this);
 		}
+	}
+}
+
+class ImagePanel extends JPanel {
+	private Image backgroundImage;
+
+	public ImagePanel(String imagePath) {
+		// Load the image
+		backgroundImage = new ImageIcon(imagePath).getImage();
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+
+		// Draw the background image (stretch it to fit the panel)
+		g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
 	}
 }

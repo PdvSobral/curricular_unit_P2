@@ -36,7 +36,7 @@ public class Main {
 	static final int BORDER_WIDTH = 40;
 	static final int BORDER_LOSS = 10;
 	static final String APPLICATION_TITTLE = "ARCADE^2 MANAGER";
-	static final int BUTTON_SIZE = 56;
+	static final int BUTTON_SIZE = 40;
 	static final int BOTTOM_PANEL_SIZE = 240;
 
 	public static void main(String[] args) throws IOException{
@@ -53,7 +53,11 @@ public class Main {
 			if (__temp == 0) break;
 			switch (__temp){
 				case DEBUG:
-					pass();
+					// pass();
+					System.out.println("Clearing contents and waiting for input...");
+					InterfaceWrapper.getInstance().getContentSpace().clearPanel();
+					System.out.println("Press enter to continue...");
+					new Reader(System.in).readLine();
 					break;
 				case 1:
 					managementMenu();
