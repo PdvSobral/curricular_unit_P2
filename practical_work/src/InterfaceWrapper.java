@@ -118,6 +118,17 @@ public class InterfaceWrapper {
 					case 9 -> "unpressed_buttons/left_button.png";
 					default -> "unpressed_buttons/template_button.png";
 				};
+
+				// TODO: SET UP HERE THE ACTIONS. Maybe set a name to be able to reset the action on press
+				button.addActionListener(e -> {
+					switch (index) {
+						case 5:
+							System.exit(0);
+							break;
+						default:
+					}
+				});
+
 				button.setImage(new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/\{image_name}"));
 				__controlPanel.add(button);
 			});
