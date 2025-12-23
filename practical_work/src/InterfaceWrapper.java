@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class InterfaceWrapper {
@@ -217,6 +218,15 @@ class CircularButton extends JButton {
 
 	@Override
 	public Dimension getPreferredSize(){ return new Dimension(__size, __size); } // Set the size for the button
+
+	public void removeActions() {
+		// Get the current ActionListeners attached to the button
+		ActionListener[] listeners = this.getActionListeners();
+		// Remove each ActionListener
+		for (ActionListener listener : listeners) {
+			this.removeActionListener(listener);
+		}
+	}
 }
 
 class ControlPanel extends JPanel {
@@ -254,7 +264,13 @@ class ControlPanel extends JPanel {
 				}
 			}
 		});
-		while (to_return.get() == null) {};
+		while (to_return.get() == null) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		};
 		return to_return.get();
 	}
 }
