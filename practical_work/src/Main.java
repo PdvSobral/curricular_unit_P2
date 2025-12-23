@@ -56,6 +56,7 @@ public class Main {
 					// pass();
 					System.out.println("Clearing contents and waiting for input...");
 					InterfaceWrapper.getInstance().getContentSpace().clearPanel();
+					System.out.println(InterfaceWrapper.getInstance().getControlSpace().getButton("Up"));
 					System.out.println("Press enter to continue...");
 					new Reader(System.in).readLine();
 					break;

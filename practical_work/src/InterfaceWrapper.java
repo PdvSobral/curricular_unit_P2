@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class InterfaceWrapper {
 
@@ -45,7 +46,6 @@ public class InterfaceWrapper {
 		topBorder.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH));
 		frame.add(topBorder, BorderLayout.NORTH);
 
-
 		ImagePanel leftBorder = new ImagePanel(STR."\{System.getProperty("java.class.path")}/resources/interface_left_brd.png");
 		leftBorder.setPreferredSize(new Dimension(Main.BORDER_WIDTH, frame.getHeight())); // 45px width
 		frame.add(leftBorder, BorderLayout.WEST);
@@ -77,21 +77,18 @@ public class InterfaceWrapper {
 			final int index = i;  // Local variable to use in the lambda, as lambda needs it
 			// FIXME: It's not updating the button size... it has to be manual in the default value
 			CircularButton button = new CircularButton(Main.BUTTON_SIZE);
-			// FIXME: to make permanent if everyone agrees on the new padded interface
-			int panning = 40;
-			int panning2 = 60;
 
 			SwingUtilities.invokeLater(() -> {
 				int x = switch (index) {
-					case 0 -> 60 + panning; // 2*2 (1;1)
-					case 1 -> 110 + panning; // 2*2 (1;2)
-					case 2 -> 85 + panning; // 2*2 (2;1)
-					case 3 -> 135 + panning; // 2*2 (2;2)
+					case 0 -> 100; // 2*2 (1;1)
+					case 1 -> 150; // 2*2 (1;2)
+					case 2 -> 125; // 2*2 (2;1)
+					case 3 -> 175; // 2*2 (2;2)
 					case 4 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BUTTON_SIZE - 10; // return
 					case 5 -> ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) + 10; // power
-					case 6, 7 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 30 - panning2; // up, down
-					case 8 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 40 - panning2; // right
-					case 9 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 20 - panning2; // left
+					case 6, 7 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 2) - 90; // up, down
+					case 8 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - Main.BUTTON_SIZE - 100; // right
+					case 9 -> (Main.WINDOW_WIDTH - Main.BORDER_LOSS) - (Main.BUTTON_SIZE * 3) - 80; // left
 					default -> 0;
 				};
 				int y = switch (index) {
@@ -103,6 +100,21 @@ public class InterfaceWrapper {
 					case 8, 9 -> 48; // left, right
 					default -> 0;
 				};
+				button.setName(
+					switch (index) {
+						case 0 -> "Accept";
+						case 1 -> "Reject";
+						//case 2 -> "";
+						//case 3 -> "";
+						case 4 -> "Return";
+						case 5 -> "PowerButton";
+						case 6 -> "Up";
+						case 7 -> "Down";
+						case 8 -> "Right";
+						case 9 -> "Left";
+						default -> null;
+					}
+				);
 				// Absolute positioning of the buttons
 				button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE);
 				button.setSize(Main.BUTTON_SIZE); // TODO: for some reason not working, see FIXME
@@ -226,6 +238,24 @@ class ControlPanel extends JPanel {
 		if (__backgroundImage != null) {
 			g.drawImage(__backgroundImage, 0, 0, getWidth(), getHeight(), this);
 		}
+	}
+
+	public CircularButton getButton(final String button_name){
+		AtomicReference<CircularButton> to_return = new AtomicReference<CircularButton>();
+		SwingUtilities.invokeLater(() -> {
+			// Iterate through the components in the panel
+			for (Component component : this.getComponents()) {
+				if (component instanceof CircularButton) {
+					CircularButton button = (CircularButton) component;
+					// Check if the button has the name we are looking for
+					if (button_name.equals(button.getName())) {
+						to_return.set(button);
+					}
+				}
+			}
+		});
+		while (to_return.get() == null) {};
+		return to_return.get();
 	}
 }
 
