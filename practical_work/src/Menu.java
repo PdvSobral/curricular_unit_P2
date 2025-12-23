@@ -58,7 +58,7 @@ public class Menu {
 			for (String option : optionsList) {
 				JButton button = new JButton(option);
 				if (buttonIndex == optionsList.size() && last_zero == 1) button.setActionCommand("0");
-				else button.setActionCommand(String.valueOf(buttonIndex));  // Set the action command to the option's index
+				else button.setActionCommand(String.valueOf(buttonIndex)); // Set the action command to the option's index
 				button.addActionListener(e -> {
 					// Action when a button is clicked
 					selectedOption[0] = Integer.parseInt(e.getActionCommand());  // Store the selected option
@@ -78,6 +78,19 @@ public class Menu {
 			interfaceWrapper.getFrame().repaint();
 		});
 
+		// NOTE: If getButton is inside EDT, it causes a deadlock. maybe later change to a callback event handler.
+		// For now this works
+		CircularButton return_btn = InterfaceWrapper.getInstance().getControlSpace().getButton("Return");
+		SwingUtilities.invokeLater(() -> {
+			return_btn.removeActions();
+			if (last_zero == 1) return_btn.setActionCommand("0");
+			else return_btn.setActionCommand(String.valueOf(optionsList.size()));
+			return_btn.addActionListener(e -> {
+				// Action when a button is clicked
+				selectedOption[0] = Integer.parseInt(e.getActionCommand());  // Store the selected option
+			});
+		});
+
 		// Wait for the user to select an option
 		while (selectedOption[0] == -1) {
 			try {
@@ -86,6 +99,9 @@ public class Menu {
 				e.printStackTrace();
 			}
 		}
+
+		InterfaceWrapper.getInstance().getContentSpace().clearPanel();
+		InterfaceWrapper.getInstance().getControlSpace().getButton("Return").removeActions();
 
 		return selectedOption[0];
 	}
