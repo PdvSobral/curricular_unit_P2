@@ -30,6 +30,7 @@ public class Menu {
 
 		// Get the content panel to hold the buttons
 		ContentPanel panel = interfaceWrapper.getContentSpace();
+		panel.setLayout(null);
 		panel.clearPanel(); // Clear the existing content of the window
 
 		final int height_step = 30;
@@ -38,6 +39,8 @@ public class Menu {
 
 			// Set up the menu name
 			JLabel menuLabel = new JLabel(menu_name, SwingConstants.CENTER);
+			Font old = menuLabel.getFont();
+			menuLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
 			int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
 			menuLabel.setBounds(base_center - 100, 10, 200, 30);
 			panel.add(menuLabel);

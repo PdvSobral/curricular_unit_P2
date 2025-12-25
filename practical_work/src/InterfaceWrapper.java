@@ -30,6 +30,20 @@ public class InterfaceWrapper {
 		frame.setVisible(true);
 	}
 
+	public static void showErrorWindow(String message) {
+		// Create a simple JOptionPane error dialog
+		showErrorWindow(message, "Error");
+	}
+	public static void showErrorWindow(String message, String tittle) {
+		// Create a simple JOptionPane error dialog
+		JOptionPane.showMessageDialog(
+				instance.frame, // parent component (to center in the middle)
+				message,
+				tittle,
+				JOptionPane.INFORMATION_MESSAGE // message type WARNING, ERROR, INFORMATION
+		);
+	}
+
 	// Public method to get the singleton instance
 	public static InterfaceWrapper getInstance() {
 		if (instance == null) {

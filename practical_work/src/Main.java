@@ -124,12 +124,21 @@ public class Main {
 				case DEBUG:
 					Database.getInstance().setMainSaveDirectory("./practical_work/db");
 					Database.getInstance().setGamesSubdirectory("games");
-					Game teste = new Game(2001, "Space Odessey", new ArrayList<>(), "space", "no idea", "");
+					Game teste = new Game(2001, "Space Odessey", 2,"space", "no idea", "");
 					System.out.println(teste);
 					teste.save();
 					System.out.println("Loading...");
 					Game test = Database.getInstance().loadGame("2001_Space-Odessey.gm");
 					System.out.println(test);
+					break;
+				case 1:
+					Game new_game = Game.createGameGUI();
+					if (new_game != null) {
+						// TODO: add an overwrite detection and user confirmation. probably in the save method itself.
+						// TODO: and maybe even an overwrite flag, so when using GUI it can be skipped no problemo
+						new_game.save();
+						System.out.println("[*] New game added and saved successfully!");
+					} else System.out.println("[*] User canceled operation.");
 					break;
 				default: System.out.println("Option not yet implemented!");
 			}
