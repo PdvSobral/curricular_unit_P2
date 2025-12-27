@@ -122,8 +122,8 @@ public class Main {
 			if (__temp == 0) return;
 			switch (__temp){
 				case DEBUG:
-					Database.getInstance().setMainSaveDirectory("./practical_work/db");
-					Database.getInstance().setGamesSubdirectory("games");
+					Database.getInstance().setMainSaveDirectory("./db");
+					Database.getInstance().setGamesSubdirectory("./db/games");
 					Game teste = new Game(2001, "Space Odessey", 2,"space", "no idea", "");
 					System.out.println(teste);
 					teste.save();

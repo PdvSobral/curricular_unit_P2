@@ -1,4 +1,7 @@
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @SuppressWarnings("preview")
 public class Database {
@@ -20,17 +23,24 @@ public class Database {
 
 	// Set the main save directory
 	public void setMainSaveDirectory(String directoryPath) {
-		File dir = new File(directoryPath);
-		if (dir.exists() && dir.isDirectory()) {
-			main_save_directory = directoryPath;
-		} else {
-			System.err.println("Invalid directory path specified.");
-		}
+        try {
+            Path path = Paths.get(directoryPath);
+            Files.createDirectories(path);
+            main_save_directory = directoryPath;
+        }   catch (IOException e){
+            System.err.println(e.getMessage());
+        }
 	}
 	public void setGamesSubdirectory(String directoryPath) {
 		// TODO: if not exist create. same on MainDirectory.
 		// TODO: if possible use a syscall to make the GUI selector
-		games_save_subdirectory = directoryPath;
+        try {
+            Path path = Paths.get(directoryPath);
+            Files.createDirectories(path);
+            games_save_subdirectory = directoryPath;
+        }   catch (IOException e){
+            System.err.println(e.getMessage());
+        }
 	}
 
 
@@ -38,7 +48,7 @@ public class Database {
 	public void saveGame(Game game_to_save, @SuppressWarnings("unused") String file_name){
 		// Game is serialized
 		// TODO: Ensure the file is writable
-		try (FileOutputStream fileOut = new FileOutputStream(STR."\{main_save_directory}/\{games_save_subdirectory}/\{file_name}");
+		try (FileOutputStream fileOut = new FileOutputStream(STR."\{games_save_subdirectory}/\{file_name}");
 			 ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
 			// Serialize the Game object to the file
 			objectOut.writeObject(game_to_save);
@@ -58,7 +68,7 @@ public class Database {
 			return null;
 		}
 
-		File file = new File(STR."\{main_save_directory}/\{games_save_subdirectory}/\{filename}");
+		File file = new File(STR."\{games_save_subdirectory}/\{filename}");
 		Game loadedGame = null;
 
 		try (FileInputStream fileIn = new FileInputStream(file);
