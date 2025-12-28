@@ -20,17 +20,51 @@ public class Database {
 
 	// Set the main save directory
 	public void setMainSaveDirectory(String directoryPath) {
+		// TODO: if possible use a syscall to make the GUI selector
 		File dir = new File(directoryPath);
-		if (dir.exists() && dir.isDirectory()) {
+		try {
+			if (!dir.isDirectory()) {
+				System.out.println(STR."[!] File \"\{directoryPath}\" already exists. Unable to create directory!");
+				return;
+			}
+			// If it does not exist, attempt to create the directory (and parent dirs also as needed)
+			if (!dir.exists()) {
+				if (dir.mkdirs()) System.out.println(STR."[*] Directory creation of \"\{directoryPath}\" sucsesful!");
+				else System.err.println(STR."[!] Directory creation of \"\{directoryPath}\" unsucsesful!");
+			}
+			else System.out.println(STR."[*] Directory \"\{directoryPath}\" already exists!");
 			main_save_directory = directoryPath;
-		} else {
-			System.err.println("Invalid directory path specified.");
+		}
+		catch (SecurityException e) {
+			System.err.println(STR."Permission denied: \{e.getMessage()}");
+		} catch (Exception e) {
+			System.err.println(STR."An error occurred: \{e.getMessage()}");
 		}
 	}
+
 	public void setGamesSubdirectory(String directoryPath) {
-		// TODO: if not exist create. same on MainDirectory.
 		// TODO: if possible use a syscall to make the GUI selector
-		games_save_subdirectory = directoryPath;
+		// TODO: if not GUI, then will have to change this to be very aparent the maindir in prints
+		// However, for now, let's keep this, and attemp to use GUI to ask.
+		File dir = new File(STR."\{main_save_directory}\{directoryPath}");
+		try {
+			if (!dir.isDirectory()) {
+				System.out.println(STR."[!] File \"\{directoryPath}\" already exists. Unable to create directory!");
+				return;
+			}
+			// If it does not exist, attempt to create the directory (and parent dirs also as needed)
+			if (!dir.exists()) {
+				if (dir.mkdirs()) System.out.println(STR."[*] Directory creation of \"\{directoryPath}\" sucsesful!");
+				else System.err.println(STR."[!] Directory creation of \"\{directoryPath}\" unsucsesful!");
+			}
+			else System.out.println(STR."[*] Directory \"\{directoryPath}\" already exists!");
+			games_save_subdirectory = directoryPath;
+		}
+		catch (SecurityException e) {
+			System.err.println(STR."Permission denied: \{e.getMessage()}");
+		} catch (Exception e) {
+			System.err.println(STR."An error occurred: \{e.getMessage()}");
+		}
 	}
 
 

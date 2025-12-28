@@ -122,6 +122,7 @@ public class Main {
 			if (__temp == 0) return;
 			switch (__temp){
 				case DEBUG:
+					// FIXME: when making the .jar, remove the practical_work/ from the main save dir
 					Database.getInstance().setMainSaveDirectory("./practical_work/db");
 					Database.getInstance().setGamesSubdirectory("games");
 					Game teste = new Game(2001, "Space Odessey", 2,"space", "no idea", "");
