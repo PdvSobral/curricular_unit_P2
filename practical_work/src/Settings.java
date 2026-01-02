@@ -29,11 +29,15 @@ class SettingsCore implements Serializable{
 
 	public String mainDirectory;
 	public String gameSubDirectory;
+	public String playerSubDirectory;
+	public int last_player_id;
 
 	public SettingsCore() {
 		// set defaults
 		// FIXME: when making the .jar, remove the practical_work/ from the paths
 		mainDirectory = "./practical_work/db";
 		gameSubDirectory = "games";
+		playerSubDirectory = "players";
+		last_player_id = 1; // Artificial SERIAL for player ids
 	}
 }

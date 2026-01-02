@@ -155,6 +155,7 @@ public class Main {
 				case DEBUG:
 					pass();
 					break;
+				case 1: Player.createPlayerGUI(); break;
 				default: System.out.println("Option not yet implemented!");
 			}
 		}
