@@ -21,7 +21,7 @@ public class Main {
 
 	static void pass(){ System.out.println("NOTHING HERE (yet...)"); }
 
-	static final List<String> MAINMENU		 = List.of("Management", "Checks", "Exit");
+	static final List<String> MAINMENU		 = List.of("Management", "Checks", "Settings", "Exit");
 	static final List<String> MANGEGMENU	 = List.of("Machine Management", "Game Management", "Player Management", "Leaderboard Management", "Return");
 	static final List<String> MACHINEMANGEG	 = List.of("Add Machine", "Remove Machine", "Return");
 	static final List<String> GAMEMANGEG	 = List.of("Add Game", "Remove Game", "Return");
@@ -39,7 +39,14 @@ public class Main {
 	static final int BUTTON_SIZE = 40;
 	static final int BOTTOM_PANEL_SIZE = 240;
 
+	// FIXME: when making the .jar, remove the practical_work/ from the settings file
+	static final String SETTINGS_FILE = "./practical_work/settings.bin";
+
 	public static void main(String[] args) throws IOException{
+		if (!Database.getInstance().loadSettings(SETTINGS_FILE)){
+			Settings.getInstance().reset();
+			Database.getInstance().saveSettings(SETTINGS_FILE);
+		}
 		InterfaceWrapper.getInstance(); // Start if not yet started
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			System.out.println("\n[!!] SIGINT received! Shutting workers and saving...");
@@ -65,6 +72,9 @@ public class Main {
 					break;
 				case 2:
 					checksMenu();
+					break;
+				case 3:
+					settingsMenu();
 					break;
 				default: System.out.println("Option not yet implemented!");
 			}
@@ -122,8 +132,6 @@ public class Main {
 			if (__temp == 0) return;
 			switch (__temp){
 				case DEBUG:
-					Database.getInstance().setMainSaveDirectory("./db");
-					Database.getInstance().setGamesSubdirectory("./db/games");
 					Game teste = new Game(2001, "Space Odessey", 2,"space", "no idea", "");
 					System.out.println(teste);
 					teste.save();
@@ -197,5 +205,10 @@ public class Main {
 				default: System.out.println("Option not yet implemented!");
 			}
 		}
+	}
+
+	private static void settingsMenu() throws IOException{
+		pass();
+		// TODO: make GUI
 	}
 }

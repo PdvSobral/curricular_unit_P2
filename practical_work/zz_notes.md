@@ -1,3 +1,11 @@
+# TODOs
+Sobral - Leaderboards, Checks
+Cinder - Fazer GUIS para as funções do menu de management de Player
+Stig27 - Fazer GUIS para as funções do menu de management de Game e Machines
+
+Other:
+ - Settings
+
 # 🎮 Arcade Simulator
 🎯 Objetivo do Tema:\
 Gerir máquinas de arcade e jogadores:
