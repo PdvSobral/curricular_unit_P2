@@ -112,8 +112,12 @@ public class Game implements Serializable {
 			cbManualOverride.setBounds(330, 40, 120, 25);
 			main_content.add(cbManualOverride);
 			// Action listener to enable/disable ID editing based on checkbox
-			cbManualOverride.addActionListener(e -> tfID.setEditable(cbManualOverride.isSelected()));
-
+			cbManualOverride.addActionListener(e -> {
+				tfID.setEditable(cbManualOverride.isSelected());
+				if (!cbManualOverride.isSelected()) {
+					tfID.setText(String.valueOf(Settings.getInstance().core.next_game_id)); // Set the default value
+				}
+			});
 			// Game Name label and text field
 			JLabel nameLabel = new JLabel("Game Name:", SwingConstants.RIGHT);
 			nameLabel.setBounds(90, 70, 140, 25);
@@ -189,15 +193,19 @@ public class Game implements Serializable {
 				int players = (Integer) playersComboBox.getSelectedItem();
 				String description = descriptionArea.getText();
 
-				// TODO: Check there is no game alreay with that ID
 				String _id = tfID.getText();
 				if (_id == null || _id.isEmpty() || _id.equals("0")) {
 					InterfaceWrapper.showErrorWindow("Game ID is not valid!");
 					return;
 				}
+				if (Database.getInstance().loadGame(Integer.parseInt(_id)) != null) {
+					InterfaceWrapper.showErrorWindow("Game ID already exists! Please remove the previous game or choose another ID!");
+					return;
+				}
 
-				// Create a new Game object with the data
-				game[0] = new Game(year, name, players, genre, developer, description, Integer.parseInt(_id));
+				// Create a new Game object with the data   NOTE: with overwrite, it does not go up
+				if (cbManualOverride.isSelected()) game[0] = new Game(year, name, players, genre, developer, description, Integer.parseInt(_id));
+				else game[0] = new Game(year, name, players, genre, developer, description); // so it goes up
 
 				System.out.println(STR."Game Created: \{_id}, \{name}, \{genre}, \{developer}, \{year}, \{players} players, \{description}");
 

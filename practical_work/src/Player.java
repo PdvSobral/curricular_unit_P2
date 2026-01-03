@@ -53,7 +53,6 @@ public class Player implements Serializable {
 		return STR."Player@\{Integer.toHexString(hashCode())}{id=\{id}, name='\{__name}', age='\{age}'}";
 	}
 
-
 	public static Player createPlayerGUI() {
 		final int[] exit_mode = {0};
 		// Declare the Game object that will be returned
@@ -101,7 +100,12 @@ public class Player implements Serializable {
 			main_content.add(cbManualOverride, gbc);
 
 			// Action listener to enable/disable ID editing based on checkbox
-			cbManualOverride.addActionListener(e -> tfID.setEditable(cbManualOverride.isSelected()));
+			cbManualOverride.addActionListener(e -> {
+				tfID.setEditable(cbManualOverride.isSelected());
+				if (!cbManualOverride.isSelected()) {
+					tfID.setText(String.valueOf(Settings.getInstance().core.next_player_id)); // Set the default value
+				}
+			});
 
 			// Player Name field
 			JLabel nameField = new JLabel("Name:");
@@ -139,15 +143,19 @@ public class Player implements Serializable {
 
 				int age = (Integer) ageSpinner.getValue();
 
-				// TODO: Check there is no game alreay with that ID
 				String _id = tfID.getText();
 				if (_id == null || _id.isEmpty() || _id.equals("0")) {
-					InterfaceWrapper.showErrorWindow("Game ID is not valid!");
+					InterfaceWrapper.showErrorWindow("Player ID is not valid!");
+					return;
+				}
+				if (Database.getInstance().loadPlayer(Integer.parseInt(_id)) != null) {
+					InterfaceWrapper.showErrorWindow("Player ID already exists! Use \"Edit Player\" or choose another ID!");
 					return;
 				}
 
-				// Create a new Game object with the data
-				player[0] = new Player(_name2, age, Integer.parseInt(_id));
+				// Create a new Player object with the data   NOTE: with overwrite, it does not go up
+				if (cbManualOverride.isSelected()) player[0] = new Player(_name2, age, Integer.parseInt(_id));
+				else player[0] = new Player(_name2, age); // so it goes up
 
 				System.out.println(STR."Player Created: \{_id}, \{_name2}, \{age}");
 

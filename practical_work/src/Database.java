@@ -35,11 +35,11 @@ public class Database {
 		String filename = STR."\{game_to_save.getGameId()}.gm";
 		saveGame(game_to_save, filename);
 	}
-	public Game loadGame(@SuppressWarnings("unused") int id) {
+	public Game loadGame(int id) {
 		String filename = STR."\{id}.gm";
 		return loadGame(filename); // Return the loaded Game object
 	}
-	public Game loadGame(@SuppressWarnings("unused") String filename) {
+	public Game loadGame(String filename) {
 		File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}/\{filename}");
 		Game loadedGame = null;
 
@@ -70,7 +70,7 @@ public class Database {
 		String filename = STR."\{player_to_save.getId()}.plr";
 		savePlayer(player_to_save, filename);
 	}
-	public Player loadPlayer(@SuppressWarnings("unused") String filename) {
+	public Player loadPlayer(String filename) {
 		File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}/\{filename}");
 		Player loadedGame = null;
 
@@ -88,8 +88,6 @@ public class Database {
 		String filename = STR."\{id}.plr";
 		return loadPlayer(filename); // Return the loaded Game object
 	}
-
-
 
 	public boolean saveSettings(String filename){
 		// TODO: Ensure the file is writeable
