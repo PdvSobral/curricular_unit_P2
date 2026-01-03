@@ -199,8 +199,7 @@ public class Game implements Serializable {
 				// Create a new Game object with the data
 				game[0] = new Game(year, name, players, genre, developer, description, Integer.parseInt(_id));
 
-				// Handle the game creation (e.g., save to a database, print data, etc.)
-				System.out.println(STR."Game Created: \{name}, \{genre}, \{developer}, \{year}, \{players} players, \{description}");
+				System.out.println(STR."Game Created: \{_id}, \{name}, \{genre}, \{developer}, \{year}, \{players} players, \{description}");
 
 				exit_mode[0] = 1;
 			};
@@ -226,8 +225,6 @@ public class Game implements Serializable {
 
 			main_content.revalidate();
 			main_content.repaint();
-			interfaceWrapper.getFrame().revalidate();
-			interfaceWrapper.getFrame().repaint();
 		});
 
 		while (exit_mode[0] == 0){

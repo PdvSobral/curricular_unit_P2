@@ -32,6 +32,8 @@ class SettingsCore implements Serializable{
 	public String playerSubDirectory;
 	public int next_player_id;
 	public int next_game_id;
+	public int minimumPlayerAge;
+	public int maxPlayerAge;
 
 	public SettingsCore() {
 		// set defaults
@@ -41,5 +43,7 @@ class SettingsCore implements Serializable{
 		playerSubDirectory = "players";
 		next_player_id = 1; // Artificial SERIAL for player ids
 		next_game_id = 1; // Artificial SERIAL for game ids
+		minimumPlayerAge = 8;
+		maxPlayerAge = 140;
 	}
 }
