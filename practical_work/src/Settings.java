@@ -30,7 +30,8 @@ class SettingsCore implements Serializable{
 	public String mainDirectory;
 	public String gameSubDirectory;
 	public String playerSubDirectory;
-	public int last_player_id;
+	public int next_player_id;
+	public int next_game_id;
 
 	public SettingsCore() {
 		// set defaults
@@ -38,6 +39,7 @@ class SettingsCore implements Serializable{
 		mainDirectory = "./practical_work/db";
 		gameSubDirectory = "games";
 		playerSubDirectory = "players";
-		last_player_id = 1; // Artificial SERIAL for player ids
+		next_player_id = 1; // Artificial SERIAL for player ids
+		next_game_id = 1; // Artificial SERIAL for game ids
 	}
 }

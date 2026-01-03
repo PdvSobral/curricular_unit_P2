@@ -12,7 +12,6 @@ public class Player implements Serializable {
 	private String name;
 	private int age;
 
-
 	public int getId() { return id; }
 	public void setId(int id) { this.id = id; }
 
@@ -22,7 +21,7 @@ public class Player implements Serializable {
 	public int getAge() { return age; }
 	public void setAge(int age) { this.age = age; }
 
-
+	// FIXME: prototype
 	public static Player createPlayerGUI() {
 		final int[] exit_mode = {0};
 		// Declare the Game object that will be returned
@@ -32,7 +31,6 @@ public class Player implements Serializable {
 		InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
 		// content panel
 		ContentPanel main_content = interfaceWrapper.getContentSpace();
-		main_content.setLayout(null);
 
 		// for button reassignment
 		ControlPanel controls = interfaceWrapper.getControlSpace();
@@ -60,7 +58,8 @@ public class Player implements Serializable {
 			gbc.anchor = GridBagConstraints.EAST;
 			main_content.add(idLabel, gbc);
 
-			JTextField tfID = new JTextField("12345");  // Prepopulate with ID
+			// Prepopulate with next ID in the chain
+			JTextField tfID = new JTextField(String.valueOf(Settings.getInstance().core.next_player_id));
 			tfID.setEditable(false);  // Initially non-editable
 			gbc.gridx = 1;
 			main_content.add(tfID, gbc);

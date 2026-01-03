@@ -14,6 +14,7 @@ public class Game implements Serializable {
 	private final String __genre;
 	private final String __developer;
 	private final String __description;
+	private final int __game_id;
 
 	// Constructor + checks
 	public Game(int year, String name, int allowedPlayers, String genre, String developer, String description) {
@@ -27,28 +28,33 @@ public class Game implements Serializable {
 		this.__genre = genre;
 		this.__developer = developer;
 		this.__description = description;
+		this.__game_id = Settings.getInstance().core.next_game_id;
+		Settings.getInstance().core.next_game_id++;
+		Database.getInstance().saveSettings(Main.SETTINGS_FILE);
+	}
+
+	public Game(int year, String name, int allowedPlayers, String genre, String developer, String description, int game_id) {
+		if (year < 1970 || year > DatesTimes.getInstance().getYear()){
+			this.__year = 0;
+			throw new IllegalArgumentException("Game year must be between 1970 and the current year!");
+		}
+		this.__year = year;
+		this.__name = name;
+		this.__allowedPlayers = allowedPlayers;
+		this.__genre = genre;
+		this.__developer = developer;
+		this.__description = description;
+		this.__game_id = game_id;
 	}
 
 	// Getters
-	public int getYear() {
-		return this.__year;
-	}
-	public String getName() {
-		return this.__name;
-	}
-	public int getAllowedPlayers() {
-		return __allowedPlayers; // Returns a copy for safety
-	}
-	public String getGenre() {
-		return this.__genre;
-	}
-	public String getDeveloper() {
-		return this.__developer;
-	}
-	public String getDescription() {
-		return this.__description;
-	}
-
+	public int getYear() { return this.__year; }
+	public String getName() { return this.__name; }
+	public int getAllowedPlayers() { return __allowedPlayers; }
+	public String getGenre() { return this.__genre; }
+	public String getDeveloper() { return this.__developer; }
+	public String getDescription() { return this.__description; }
+	public int getGameId() { return this.__game_id; }
 	// No Setters (NOTE: setters are not here all attributes should be immutable, after creating the game no editing is allowed
 
 	// Method to display game information. Overrides normal function
@@ -92,6 +98,21 @@ public class Game implements Serializable {
 			int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
 			titleLabel.setBounds(base_center - 250, 10, 500, 30);
 			main_content.add(titleLabel);
+
+			// Game ID field
+			JLabel idLabel = new JLabel("Game ID:", SwingConstants.RIGHT);
+			idLabel.setBounds(90, 40, 140, 25);
+			main_content.add(idLabel);
+			// Prepopulate with next ID in the chain
+			JTextField tfID = new JTextField(String.valueOf(Settings.getInstance().core.next_game_id));
+			tfID.setEditable(false);  // Initially non-editable
+			tfID.setBounds(240, 40, 80, 25);
+			main_content.add(tfID);
+			JCheckBox cbManualOverride = new JCheckBox("ID Override");
+			cbManualOverride.setBounds(330, 40, 120, 25);
+			main_content.add(cbManualOverride);
+			// Action listener to enable/disable ID editing based on checkbox
+			cbManualOverride.addActionListener(e -> tfID.setEditable(cbManualOverride.isSelected()));
 
 			// Game Name label and text field
 			JLabel nameLabel = new JLabel("Game Name:", SwingConstants.RIGHT);
@@ -168,8 +189,15 @@ public class Game implements Serializable {
 				int players = (Integer) playersComboBox.getSelectedItem();
 				String description = descriptionArea.getText();
 
+				// TODO: Check there is no game alreay with that ID
+				String _id = tfID.getText();
+				if (_id == null || _id.isEmpty() || _id.equals("0")) {
+					InterfaceWrapper.showErrorWindow("Game ID is not valid!");
+					return;
+				}
+
 				// Create a new Game object with the data
-				game[0] = new Game(year, name, players, genre, developer, description);
+				game[0] = new Game(year, name, players, genre, developer, description, Integer.parseInt(_id));
 
 				// Handle the game creation (e.g., save to a database, print data, etc.)
 				System.out.println(STR."Game Created: \{name}, \{genre}, \{developer}, \{year}, \{players} players, \{description}");
