@@ -132,11 +132,12 @@ public class Main {
 			if (__temp == 0) return;
 			switch (__temp){
 				case DEBUG:
-					Game teste = new Game(2001, "Space Odessey", 2,"space", "no idea", "");
+					System.out.println("Saving game with id -2 (Debug)");
+					Game teste = new Game(1980, "Pac-Man", 1, "Maze", "Namco", "A classic arcade game where you control Pac-Man as he navigates a maze and eats pellets while avoiding ghosts.", -2);
 					System.out.println(teste);
 					teste.save();
 					System.out.println("Loading...");
-					Game test = Database.getInstance().loadGame("2001_Space-Odessey.gm");
+					Game test = Database.getInstance().loadGame(-2);
 					System.out.println(test);
 					break;
 				case 1:
@@ -161,7 +162,13 @@ public class Main {
 			if (__temp == 0) return;
 			switch (__temp){
 				case DEBUG:
-					pass();
+					System.out.println("Saving game with id -2 (Debug)");
+					Player teste = new Player("John Doe", 25, -2);
+					System.out.println(teste);
+					teste.save();
+					System.out.println("Loading...");
+					Player test = Database.getInstance().loadPlayer(-2);
+					System.out.println(test);
 					break;
 				case 1: Player.createPlayerGUI(); break;
 				default: System.out.println("Option not yet implemented!");

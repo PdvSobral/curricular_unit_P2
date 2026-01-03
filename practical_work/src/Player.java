@@ -44,6 +44,16 @@ public class Player implements Serializable {
 	public int getAge() { return age; }
 	public void setAge(int age) { this.age = age; }
 
+	public void save(){ Database.getInstance().savePlayer(this); }
+	public void save(String file_name){ Database.getInstance().savePlayer(this, file_name); }
+
+	// Method to display game information. Overrides normal function
+	@Override
+	public String toString() {
+		return STR."Player@\{Integer.toHexString(hashCode())}{id=\{id}, name='\{__name}', age='\{age}'}";
+	}
+
+
 	public static Player createPlayerGUI() {
 		final int[] exit_mode = {0};
 		// Declare the Game object that will be returned

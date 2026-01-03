@@ -35,6 +35,10 @@ public class Database {
 		String filename = STR."\{game_to_save.getGameId()}.gm";
 		saveGame(game_to_save, filename);
 	}
+	public Game loadGame(@SuppressWarnings("unused") int id) {
+		String filename = STR."\{id}.gm";
+		return loadGame(filename); // Return the loaded Game object
+	}
 	public Game loadGame(@SuppressWarnings("unused") String filename) {
 		File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}/\{filename}");
 		Game loadedGame = null;
@@ -67,7 +71,7 @@ public class Database {
 		savePlayer(player_to_save, filename);
 	}
 	public Player loadPlayer(@SuppressWarnings("unused") String filename) {
-		File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}/\{filename}");
+		File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}/\{filename}");
 		Player loadedGame = null;
 
 		try (FileInputStream fileIn = new FileInputStream(file);
@@ -75,11 +79,16 @@ public class Database {
 			// Deserialize the Game object from the file
 			loadedGame = (Player) objectIn.readObject();
 		} catch (IOException | ClassNotFoundException e) {
-			System.err.println(STR."Error loading game: \{e.getMessage()}");
+			System.err.println(STR."Error loading player: \{e.getMessage()}");
 		}
 
 		return loadedGame; // Return the loaded Game object
 	}
+	public Player loadPlayer(@SuppressWarnings("unused") int id) {
+		String filename = STR."\{id}.plr";
+		return loadPlayer(filename); // Return the loaded Game object
+	}
+
 
 
 	public boolean saveSettings(String filename){

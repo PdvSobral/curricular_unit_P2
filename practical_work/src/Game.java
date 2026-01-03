@@ -60,7 +60,7 @@ public class Game implements Serializable {
 	// Method to display game information. Overrides normal function
 	@Override
 	public String toString() {
-		return STR."Game@\{Integer.toHexString(hashCode())}{year=\{__year}, name='\{__name}', allowedPlayers=\{__allowedPlayers}, genre='\{__genre}', developer='\{__developer}', description='\{__description}'}";
+		return STR."Game@\{Integer.toHexString(hashCode())}{id=\{__game_id}, year=\{__year}, name='\{__name}', allowedPlayers=\{__allowedPlayers}, genre='\{__genre}', developer='\{__developer}', description='\{__description}'}";
 	}
 
 	public void save(){
