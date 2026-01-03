@@ -115,24 +115,20 @@ public class Database {
 		return true;
 	}
 
-	// FIXME: only prototype
+	// NSV (Null Seperated Values) for possibility of being loaded by another app
+	// For example to trim the records for 1 per game per user except if in top 10 per game.
 	public Map loadLeaderboardsByGame() throws IOException{
-		InputStream inputStream = new FileInputStream("scores.nsv");
+		// Returns MAP gameId -> List [ (playerId, score) ]
+		InputStream inputStream = new FileInputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv");
 		byte[] data = inputStream.readAllBytes();
 		String nsvContent = new String(data);
 
-		String[] lines = nsvContent.split("\n");
-
+		// Tuple is a custom class, already implemented
 		Map<Integer, List<Tuple<Integer, Integer>>> gameScores = new HashMap<>();
-		for (String line : lines) {
+		for (String line : nsvContent.split("\n")) {
 			String[] values = line.split("\0");
-			Integer gameId = Integer.parseInt(values[0]);
-			Integer playerId = Integer.parseInt(values[1]);
-			int score = Integer.parseInt(values[2]);
-
-			gameScores.computeIfAbsent(gameId, k -> new ArrayList<>()).add(new Tuple<>(playerId, score));
+			gameScores.computeIfAbsent(Integer.parseInt(values[0]), k -> new ArrayList<>()).add(new Tuple<>(Integer.parseInt(values[1]), Integer.parseInt(values[2])));
 		}
-
 		return gameScores;
 	}
 
