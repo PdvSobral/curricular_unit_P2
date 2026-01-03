@@ -25,6 +25,23 @@ public class InterfaceWrapper {
 
 		__controlPanel = new ControlPanel(null);
 		__contentPanel = new ContentPanel(null);
+
+		// TODO: Further customize the interface, specially buttons
+		Color foreground = new Color(207, 204, 204);
+		Color background = new Color(42, 56, 85);
+
+		SwingUtilities.invokeLater(() -> {
+			__contentPanel.setBackground(background);
+			__controlPanel.setForeground(foreground);
+		});
+
+		UIDefaults defaults = UIManager.getDefaults();
+		defaults.put("Label.foreground", foreground);
+		defaults.put("TextField.background", new Color(255, 255, 255));
+		defaults.put("TextField.foreground", new Color(0, 0, 0));
+		defaults.put("CheckBox.background", background);
+		defaults.put("CheckBox.foreground", foreground);
+
 		setUpInterface();
 
 		frame.setVisible(true);

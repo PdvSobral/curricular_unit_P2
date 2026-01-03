@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -117,36 +118,73 @@ public class Database {
 
 	// NSV (Null Seperated Values) for possibility of being loaded by another app
 	// For example to trim the records for 1 per game per user except if in top 10 per game.
-	public Map loadLeaderboardsByGame() throws IOException{
-		// Returns MAP gameId -> List [ (playerId, score) ]
-		InputStream inputStream = new FileInputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv");
-		byte[] data = inputStream.readAllBytes();
-		String nsvContent = new String(data);
-
-		// Tuple is a custom class, already implemented
-		Map<Integer, List<Tuple<Integer, Integer>>> gameScores = new HashMap<>();
-		for (String line : nsvContent.split("\n")) {
-			String[] values = line.split("\0");
-			gameScores.computeIfAbsent(Integer.parseInt(values[0]), k -> new ArrayList<>()).add(new Tuple<>(Integer.parseInt(values[1]), Integer.parseInt(values[2])));
+	// Returns MAP gameId -> List [ (playerId, score) ]
+	public Map<Integer, ArrayList<Tuple<Integer, Integer>>> loadLeaderboardsByGame() {
+		// Try resource assures Stream is closed even if on error
+		try (InputStream inputStream = new FileInputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv")) {
+			Map<Integer, ArrayList<Tuple<Integer, Integer>>> gameScores = new HashMap<>();
+			for (String line : (new String(inputStream.readAllBytes())).split("\n")) {
+				if (!line.isEmpty()) { // Check for empty lines
+					String[] values = line.split("\0");
+					if (values.length == 3) { // Ensure correct number of values
+						gameScores.computeIfAbsent(Integer.parseInt(values[0]), k -> new ArrayList<>()).add(new Tuple<>(Integer.parseInt(values[1]), Integer.parseInt(values[2])));
+					}
+				}
+			}
+			return gameScores;
+		} catch (IOException e) {
+			System.err.println(STR."[!] Error loading leaderboards: \{e.getMessage()}");
+			return null;
 		}
-		return gameScores;
+	}
+	public void saveLeaderboardsByGame(Map<Integer, List<Tuple<Integer, Integer>>> gameScores) {
+		try (FileOutputStream outputStream = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv")) {
+			for (Map.Entry<Integer, List<Tuple<Integer, Integer>>> entry : gameScores.entrySet()) {
+				for (Tuple<Integer, Integer> score : entry.getValue()) {
+					outputStream.write(STR."\{entry.getKey()}\0\{score.getKey()}\0\{score.getValue()}\n".getBytes(StandardCharsets.UTF_8));
+				}
+			}
+		} catch (IOException e) {
+			System.err.println(STR."[!] Error saving leaderboards: \{e.getMessage()}");
+		}
 	}
 
-	// FIXME: only prototype
-	public Map loadLeaderboardsByPlayer() throws IOException{
-		InputStream inputStream = new FileInputStream("scores.nsv");
-		String nsvContent = new String(inputStream.readAllBytes());
-		inputStream.close();
-
-		Map<Integer, List<Tuple<Integer, Integer>>> playerScores = new HashMap<>();
-		for (String line : nsvContent.split("\n")) {
-			String[] values = line.split("\0");
-			Integer gameId = Integer.parseInt(values[0]);
-			Integer playerId = Integer.parseInt(values[1]);
-			int score = Integer.parseInt(values[2]);
-			playerScores.computeIfAbsent(playerId, k -> new ArrayList<>()).add(new Tuple<>(gameId, score));
+	// CopyPasta com algumas alterações. Prone para erors...
+	// Returns MAP playerId -> List [ (gameId, score) ]
+	public Map<Integer, ArrayList<Tuple<Integer, Integer>>> loadLeaderboardsByPlayer() {
+		try (InputStream inputStream = new FileInputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv")) {
+			Map<Integer, ArrayList<Tuple<Integer, Integer>>> playerScores = new HashMap<>();
+			for (String line : new String(inputStream.readAllBytes()).split("\n")) {
+				if (!line.isEmpty()) {
+					String[] values = line.split("\0");
+					if (values.length == 3) {
+						playerScores.computeIfAbsent(Integer.parseInt(values[1]), k -> new ArrayList<>()).add(new Tuple<>(Integer.parseInt(values[0]), Integer.parseInt(values[2])));
+					}
+				}
+			}
+			return playerScores;
+		} catch (IOException e) {
+			System.err.println(STR."[*] Error loading leaderboards: \{e.getMessage()}");
+			return null;
 		}
+	}
+	public void saveLeaderboardsByPlayer(Map<Integer, List<Tuple<Integer, Integer>>> playerScores) {
+		try (FileOutputStream outputStream = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv")) {
+			for (Map.Entry<Integer, List<Tuple<Integer, Integer>>> entry : playerScores.entrySet()) {
+				for (Tuple<Integer, Integer> score : entry.getValue()) {
+					outputStream.write(STR."\{score.getKey()}\0\{entry.getKey()}\0\{score.getValue()}\n".getBytes(StandardCharsets.UTF_8));
+				}
+			}
+		} catch (IOException e) {
+			System.err.println(STR."[!] Error saving leaderboards: \{e.getMessage()}");
+		}
+	}
 
-		return playerScores;
+	public void appendLeaderboardRecord(int gameId, int playerId, int score) {
+		try (FileOutputStream outputStream = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv", true)) {
+			outputStream.write(STR."\{gameId}\0\{playerId}\0\{score}\n".getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			System.err.println(STR."[!] Error appending leaderboard record: \{e.getMessage()}");
+		}
 	}
 }

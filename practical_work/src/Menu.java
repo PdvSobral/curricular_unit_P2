@@ -42,7 +42,7 @@ public class Menu {
 			Font old = menuLabel.getFont();
 			menuLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
 			int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
-			menuLabel.setBounds(base_center - 100, 10, 200, 30);
+			menuLabel.setBounds(base_center - (panel.getWidth()/2), 10, panel.getWidth(), 30);
 			panel.add(menuLabel);
 
 			// Create a button for each option
@@ -54,7 +54,7 @@ public class Menu {
 				debugButton.addActionListener(e -> {
 					selectedOption[0] = Integer.parseInt(e.getActionCommand()); // Store the selected option
 				});
-				debugButton.setBounds(base_center - 100, current_height, 200, 30);
+				debugButton.setBounds(base_center - 200, current_height, 400, 30);
 				panel.add(debugButton);
 				current_height += height_step;
 			}
@@ -66,7 +66,7 @@ public class Menu {
 					// Action when a button is clicked
 					selectedOption[0] = Integer.parseInt(e.getActionCommand());  // Store the selected option
 				});
-				button.setBounds(base_center - 100, current_height, 200, 30);
+				button.setBounds(base_center - 200, current_height, 400, 30);
 				panel.add(button);
 				current_height += height_step;
 				buttonIndex++;

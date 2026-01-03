@@ -34,10 +34,12 @@ class SettingsCore implements Serializable{
 	public int next_game_id;
 	public int minimumPlayerAge;
 	public int maxPlayerAge;
+	public String scoresFileName;
 
 	public SettingsCore() {
 		// set defaults
 		// FIXME: when making the .jar, remove the practical_work/ from the paths
+		// NOTO: After every change in here (adding new attributes or just changing order/type, delete old .bin for new module to be applied.
 		mainDirectory = "./practical_work/db";
 		gameSubDirectory = "games";
 		playerSubDirectory = "players";
@@ -45,5 +47,6 @@ class SettingsCore implements Serializable{
 		next_game_id = 1; // Artificial SERIAL for game ids
 		minimumPlayerAge = 8;
 		maxPlayerAge = 140;
+		scoresFileName = "scores.nsv";
 	}
 }
