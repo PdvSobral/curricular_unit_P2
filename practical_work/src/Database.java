@@ -38,7 +38,12 @@ public class Database {
 	}
 	public Game loadGame(int id) {
 		String filename = STR."\{id}.gm";
-		return loadGame(filename); // Return the loaded Game object
+		Game to_return = loadGame(filename);
+		if (to_return != null && to_return.getGameId() != id) {
+			System.out.println(STR."[!] Tampering with game detected! (Expected: \{id} | Returned: \{to_return.getGameId()})");
+			return null;
+		}
+		return to_return; // Return the loaded Game object
 	}
 	public Game loadGame(String filename) {
 		File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}/\{filename}");
@@ -49,13 +54,13 @@ public class Database {
 			// Deserialize the Game object from the file
 			loadedGame = (Game) objectIn.readObject();
 		} catch (IOException | ClassNotFoundException e) {
-			System.err.println(STR."Error loading game: \{e.getMessage()}");
+			System.err.println(STR."[*] Error loading game: \{e.getMessage()}");
 		}
 
 		return loadedGame; // Return the loaded Game object
 	}
 
-	public void savePlayer(Player game_to_save, @SuppressWarnings("unused") String file_name){
+	public void savePlayer(Player game_to_save, String file_name){
 		// Game is serialized
 		// TODO: Ensure the file is writable and directories exist
 		try (FileOutputStream fileOut = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}/\{file_name}");
@@ -85,10 +90,41 @@ public class Database {
 
 		return loadedGame; // Return the loaded Game object
 	}
-	public Player loadPlayer(@SuppressWarnings("unused") int id) {
+	public Player loadPlayer(int id) {
 		String filename = STR."\{id}.plr";
-		return loadPlayer(filename); // Return the loaded Game object
+		Player to_return = loadPlayer(filename);
+		if (to_return != null && to_return.getId() != id) {
+			System.out.println(STR."[!] Tampering with player detected! (Expected: \{id} | Returned: \{to_return.getId()})");
+			return null;
+		}
+		return to_return; // Return the loaded Game object
 	}
+	public ArrayList<Integer> listPlayers(boolean show_debug) {
+
+		// Create the directory path
+		File directory = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}");
+
+		// Filter and list files
+		if (directory.exists() && directory.isDirectory()) {
+			String pattern = show_debug ? "^-?\\d+$" : "^\\d+$";
+			File[] files = directory.listFiles(file ->
+					file.isFile() && file.getName().endsWith(".plr") && file.getName().substring(0, file.getName().lastIndexOf('.')).matches(pattern));
+			// Print matched files
+			if (files != null) {
+				for (File file : files) {
+					System.out.println(file.getName().substring(0, file.getName().lastIndexOf('.')));
+				}
+			}
+		} else {
+			System.out.println("[?] File does not exist or it is not a directory.");
+			return null;
+		}
+		return null;
+	}
+	public ArrayList<Integer> listPlayers(){
+		return listPlayers(false);
+	}
+
 
 	public boolean saveSettings(String filename){
 		// TODO: Ensure the file is writeable
