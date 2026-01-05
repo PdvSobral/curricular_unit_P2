@@ -130,6 +130,10 @@ public class Main {
 					System.out.println("Loading...");
 					Game test = Database.getInstance().loadGame(-2);
 					System.out.println(test);
+					System.out.println("Deb off");
+					Database.getInstance().listGames();
+					System.out.println("Deb on");
+					Database.getInstance().listGames(true);
 					break;
 				case 1:
 					Game new_game = Game.createGameGUI();

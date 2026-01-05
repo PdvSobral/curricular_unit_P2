@@ -59,6 +59,30 @@ public class Database {
 
 		return loadedGame; // Return the loaded Game object
 	}
+	public ArrayList<Integer> listGames(boolean show_debug) {
+
+		// Create the directory path
+		File directory = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}");
+
+		// Filter and list files
+		if (directory.exists() && directory.isDirectory()) {
+			String pattern = show_debug ? "^-?\\d+$" : "^\\d+$";
+			File[] files = directory.listFiles(file ->
+					file.isFile() && file.getName().endsWith(".gm") && file.getName().substring(0, file.getName().lastIndexOf('.')).matches(pattern));
+			// Print matched files
+			if (files != null) {
+				for (File file : files) {
+					System.out.println(file.getName().substring(0, file.getName().lastIndexOf('.')));
+				}
+			}
+		} else {
+			System.out.println("[?] File does not exist or it is not a directory.");
+			return null;
+		}
+		return null;
+	}
+	public ArrayList<Integer> listGames(){ return listGames(false); }
+
 
 	public void savePlayer(Player game_to_save, String file_name){
 		// Game is serialized
@@ -121,9 +145,7 @@ public class Database {
 		}
 		return null;
 	}
-	public ArrayList<Integer> listPlayers(){
-		return listPlayers(false);
-	}
+	public ArrayList<Integer> listPlayers(){ return listPlayers(false); }
 
 
 	public boolean saveSettings(String filename){
