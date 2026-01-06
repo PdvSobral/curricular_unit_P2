@@ -3,20 +3,23 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.io.Serializable; // to save in binary
+import java.util.ArrayList;
 
+// TODO: save machine to file
+// TODO: no checks on inputs in GUI
 //NOTE TO SELF, TO DELETE MACHINE OR WTV, JUST RM FILE
 
 public class GameMachine implements Serializable {// the machines in the arcade. NO SLOTS OR GAMBLING, only skill games
     @Serial
     private static final long serialVersionUID = 1L; // For serialization version control
 
-    // TODO: to make basically the whole "meat" of the class
+
     private int id;
     private String __name;
 
-	Controls control_scheme;
-	Game game_in_machine;
-	MACHINE_STATE availabilityStatus;
+	private Controls control_scheme;
+	private Game game_in_machine;
+	private MACHINE_STATE availabilityStatus;
 	int available_tickets;
 
     public GameMachine(String name, Controls scheme, Game game_in_machine, int id, int tickets, MACHINE_STATE state){
@@ -24,6 +27,24 @@ public class GameMachine implements Serializable {// the machines in the arcade.
         this.control_scheme = scheme;
         this.game_in_machine = game_in_machine;
         this.id = id;
+        if(tickets<0){
+            this.available_tickets = 0;
+            state = MACHINE_STATE.OUT_OF_TICKETS;
+            throw new IllegalArgumentException("Ticket amount must be greater than 0");
+        }
+        this.available_tickets = tickets;
+        //TODO: check if state is one of the values in enum
+        //TODO: if state was supposed to be MAINTENANCE, OUT OF ORDER, COMING SOON, then don't set to OUT OF TICKETS despite 0 tickets
+        this.availabilityStatus = state;
+    }
+
+    public GameMachine(String name, Controls scheme, Game game_in_machine, int tickets, MACHINE_STATE state){
+        this.__name = name;
+        this.control_scheme = scheme;
+        this.game_in_machine = game_in_machine;
+        this.id = Settings.getInstance().core.next_machine_id;
+        Settings.getInstance().core.next_machine_id++;
+        Database.getInstance().saveSettings(Main.SETTINGS_FILE);
         if(tickets<0){
             this.available_tickets = 0;
             state = MACHINE_STATE.OUT_OF_TICKETS;
@@ -83,7 +104,7 @@ public class GameMachine implements Serializable {// the machines in the arcade.
             titleLabel.setBounds(base_center - 250, 10, 500, 30);
             main_content.add(titleLabel);
 
-            // Player ID field
+            // Machine ID field
             JLabel idLabel = new JLabel("Machine ID:");
             gbc.gridx = 0;
             gbc.gridy = 1;
@@ -119,14 +140,69 @@ public class GameMachine implements Serializable {// the machines in the arcade.
             gbc.gridx = 1;
             main_content.add(tfName, gbc);
 
-            // Machine state selector
-            JComboBox<MACHINE_STATE> state = new JComboBox(MACHINE_STATE.values());
+            // Machine game selector
+            JLabel gameField = new JLabel("Game in the machine:");
             gbc.gridx = 0;
             gbc.gridy = 3;
             gbc.anchor = GridBagConstraints.EAST;
-            main_content.add(state, gbc);
+            main_content.add(gameField, gbc);
+            // get every game from last id back, then load name from id, combine strings
+            //dropdown selector
 
+            ArrayList<String> listGames = new ArrayList<>(0);
+            for (int i = 1; i<Settings.getInstance().core.next_game_id; i++){
+                Game game_to_read = Database.getInstance().loadGame(i);
+                listGames.add(game_to_read.getName());
+            }
+            System.out.println(listGames);
 
+            JComboBox<String> game_box = new JComboBox(listGames.toArray());
+            game_box.setEditable(false);
+            gbc.gridx = 1;
+            gbc.gridy = 3;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(game_box, gbc);
+
+            // Machine control type selector
+            JLabel controlField = new JLabel("Control Type:");
+            gbc.gridx = 0;
+            gbc.gridy = 4;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(controlField, gbc);
+
+            //dropdown selector
+            JComboBox<Controls> control_box = new JComboBox(Controls.values());
+            game_box.setEditable(false);
+            gbc.gridx = 1;
+            gbc.gridy = 4;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(control_box, gbc);
+
+            // Machine state selector
+            JLabel stateField = new JLabel("Status:");
+            gbc.gridx = 0;
+            gbc.gridy = 5;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(stateField, gbc);
+
+            //dropdown selector
+            JComboBox<MACHINE_STATE> state_box = new JComboBox(MACHINE_STATE.values());
+            game_box.setEditable(false);
+            gbc.gridx = 1;
+            gbc.gridy = 5;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(state_box, gbc);
+
+            // Tickets field
+            JLabel ticketsLabel = new JLabel("Tickets in the Machine:");
+            gbc.gridx = 0;
+            gbc.gridy = 6;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(ticketsLabel, gbc);
+
+            JTextField ticketsField = new JTextField("0");
+            gbc.gridx = 1;
+            main_content.add(ticketsField, gbc);
 
             ActionListener _main = _ -> {
                 // FIXME: it's not stopping on name empty... but in game yes... Why?!?
@@ -141,16 +217,16 @@ public class GameMachine implements Serializable {// the machines in the arcade.
                     InterfaceWrapper.showErrorWindow("Machine ID is not valid!");
                     return;
                 }
-                if (Database.getInstance().loadPlayer(Integer.parseInt(_id)) != null) {
-                    InterfaceWrapper.showErrorWindow("Machine ID already exists! Choose another ID!");
-                    return;
-                }
 
+                String _tickets = ticketsField.getText();
+                MACHINE_STATE state = (MACHINE_STATE) state_box.getSelectedItem();
+                Controls scheme = (Controls) control_box.getSelectedItem();
+                Game machine_game = Database.getInstance().loadGame(game_box.getSelectedIndex()+1);
                 // Create a new machine object with the data   NOTE: with overwrite, it does not go up
-               // if (cbManualOverride.isSelected()) machine[0] = new GameMachine(_name2, scheme, machine_game, Integer.parseInt(_id), Integer.parseInt(tickets), state);
-             //   else machine[0] = new GameMachine(_name2, scheme, machine_game); // default state, tickets, auto id
+                if (cbManualOverride.isSelected()) machine[0] = new GameMachine(_name2, scheme, machine_game, Integer.parseInt(_id), Integer.parseInt(_tickets), state);
+                else machine[0] = new GameMachine(_name2, scheme, machine_game, Integer.parseInt(_tickets), state); // default state, tickets, auto id
 
-             //   System.out.println(STR."Machine Created: \{_id}, \{_name2}, \{scheme}, \{machine_game}, \{tickets}, \{state}");
+                System.out.println(STR."Machine Created: \{_id}, \{_name2}, \{control_box.getSelectedItem()}, \{game_box.getSelectedItem()}, \{_tickets}, \{state_box.getSelectedItem()}");
 
                 exit_mode[0] = 1;
             };
@@ -161,7 +237,7 @@ public class GameMachine implements Serializable {// the machines in the arcade.
             // Submit and Cancel buttons
             JButton submitButton = new JButton("Create Machine");
             gbc.gridx = 1;
-            gbc.gridy = 4;
+            gbc.gridy = 8;
             submitButton.addActionListener(_main);
             main_content.add(submitButton, gbc);
 
@@ -193,7 +269,7 @@ public class GameMachine implements Serializable {// the machines in the arcade.
             reject_btn.removeActions();
         });
 
-        // Return the created Game object after the user submits, if valid
+        // Return the created Machine object after the user submits, if valid
         if (exit_mode[0] == 1) return machine[0];
         else return null; // return null if user choose to cancel game input
     }
