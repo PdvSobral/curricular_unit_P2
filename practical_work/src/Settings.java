@@ -32,6 +32,7 @@ class SettingsCore implements Serializable{
 	public String playerSubDirectory;
 	public int next_player_id;
 	public int next_game_id;
+    public int next_machine_id;
 	public int minimumPlayerAge;
 	public int maxPlayerAge;
 	public String scoresFileName;
@@ -45,6 +46,7 @@ class SettingsCore implements Serializable{
 		playerSubDirectory = "players";
 		next_player_id = 1; // Artificial SERIAL for player ids
 		next_game_id = 1; // Artificial SERIAL for game ids
+        next_machine_id = 1; // Artificial SERIAL for machine ids
 		minimumPlayerAge = 8;
 		maxPlayerAge = 140;
 		scoresFileName = "scores.nsv";
