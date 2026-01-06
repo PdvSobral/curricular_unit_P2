@@ -10,13 +10,16 @@ public class Main {
 	static final int     NORMAL       = 0;
 	static final int     RUNNING_MODE = DEBUG;
 
-	static void pass(){ System.out.println("NOTHING HERE (yet...)"); }
+	static void pass(){
+		System.out.println("NOTHING HERE (yet...)");
+		InterfaceWrapper.showErrorWindow("NOTHING HERE (yet...)", "Mystery");
+	}
 
 	static final List<String> MAINMENU		 = List.of("Management", "Checks", "Settings", "Exit");
 	static final List<String> MANGEGMENU	 = List.of("Machine Management", "Game Management", "Player Management", "Leaderboard Management", "Return");
 	static final List<String> MACHINEMANGEG	 = List.of("Add Machine", "Remove Machine", "Return");
 	static final List<String> GAMEMANGEG	 = List.of("Add Game", "Remove Game", "Return");
-	static final List<String> PLAYERMANGEG	 = List.of("Add Player", "Edit Player", "Remove Player", "Reset Player Highscores", "Return");
+	static final List<String> PLAYERMANGEG	 = List.of("Add Player", "Edit Player", "Remove Player", "Return");
 	static final List<String> LEADERMANEG	 = List.of("Add New Record", "Reset Game Leaderboards", "Purge Player from Leaderboards", "Leaderboards Reset", "Return");
 	static final List<String> SUBLEADERMANEG = List.of("Proceed", "Cancel");
 	static final List<String> CHECKSMENU     = List.of("Machine/Game Checks", "Player Checks", "Leaderboard Checks", "Return");
@@ -127,12 +130,15 @@ public class Main {
 					System.out.println("Loading...");
 					Game test = Database.getInstance().loadGame(-2);
 					System.out.println(test);
+					System.out.println("Deb off");
+					Database.getInstance().listGames();
+					System.out.println("Deb on");
+					Database.getInstance().listGames(true);
 					break;
 				case 1:
 					Game new_game = Game.createGameGUI();
 					if (new_game != null) {
-						// TODO: add an overwrite detection and user confirmation. probably in the save method itself.
-						// TODO: and maybe even an overwrite flag, so when using GUI it can be skipped no problemo
+						// TODO: add an overwrite detection and user confirmation.
 						new_game.save();
 						System.out.println("[*] New game added and saved successfully!");
 					} else System.out.println("[*] User canceled operation.");
@@ -160,8 +166,19 @@ public class Main {
 					System.out.println("Loading...");
 					Player test = Database.getInstance().loadPlayer(-2);
 					System.out.println(test);
+					System.out.println("Deb off");
+					Database.getInstance().listPlayers();
+					System.out.println("Deb on");
+					Database.getInstance().listPlayers(true);
 					break;
-				case 1: Player.createPlayerGUI(); break;
+				case 1:
+					Player new_player = Player.createPlayerGUI();
+					if (new_player != null) {
+						// TODO: add an overwrite detection and user confirmation.
+						new_player.save();
+						System.out.println("[*] New player added and saved successfully!");
+					} else System.out.println("[*] User canceled operation.");
+					break;
 				default: System.out.println("Option not yet implemented!");
 			}
 		}
