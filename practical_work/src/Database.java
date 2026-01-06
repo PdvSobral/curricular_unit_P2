@@ -124,8 +124,9 @@ public class Database {
 		return to_return; // Return the loaded Game object
 	}
 	public ArrayList<Integer> listPlayers(boolean show_debug) {
+        ArrayList<Integer> to_return = new ArrayList<>();
 
-		// Create the directory path
+        // Create the directory path
 		File directory = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}");
 
 		// Filter and list files
@@ -136,14 +137,14 @@ public class Database {
 			// Print matched files
 			if (files != null) {
 				for (File file : files) {
-					System.out.println(file.getName().substring(0, file.getName().lastIndexOf('.')));
+                    to_return.add(Integer.parseInt(file.getName().substring(0, file.getName().lastIndexOf('.'))));
 				}
 			}
 		} else {
 			System.out.println("[?] File does not exist or it is not a directory.");
 			return null;
 		}
-		return null;
+		return to_return;
 	}
 	public ArrayList<Integer> listPlayers(){ return listPlayers(false); }
 
