@@ -4,6 +4,8 @@ import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.io.Serializable; // to save in binary
 
+//NOTE TO SELF, TO DELETE MACHINE OR WTV, JUST RM FILE
+
 public class GameMachine implements Serializable {// the machines in the arcade. NO SLOTS OR GAMBLING, only skill games
     @Serial
     private static final long serialVersionUID = 1L; // For serialization version control
@@ -117,12 +119,14 @@ public class GameMachine implements Serializable {// the machines in the arcade.
             gbc.gridx = 1;
             main_content.add(tfName, gbc);
 
-            // Player Age field
+            // Machine state selector
             JComboBox<MACHINE_STATE> state = new JComboBox(MACHINE_STATE.values());
             gbc.gridx = 0;
             gbc.gridy = 3;
             gbc.anchor = GridBagConstraints.EAST;
             main_content.add(state, gbc);
+
+
 
             ActionListener _main = _ -> {
                 // FIXME: it's not stopping on name empty... but in game yes... Why?!?
