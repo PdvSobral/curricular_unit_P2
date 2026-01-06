@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.io.Serializable; // to save in binary
 
@@ -9,19 +10,48 @@ public class Player implements Serializable {
 
 	// TODO: to make basically the whole "meat" of the class
 	private int id;
-	private String name;
+	private String __name;
 	private int age;
 
+	public Player(String name, int age, int id) {
+		this.__name = name;
+		if (!(age >= Settings.getInstance().core.minimumPlayerAge) || !(age <= Settings.getInstance().core.maxPlayerAge)) {
+			this.age = 1;
+			throw new IllegalArgumentException("Game year must be between 1970 and the current year!");
+		}
+		this.age = age;
+		this.id = id;
+	}
+
+	public Player(String name, int age) {
+		this.__name = name;
+		if (!(age >= Settings.getInstance().core.minimumPlayerAge) || !(age <= Settings.getInstance().core.maxPlayerAge)) {
+			this.age = 1;
+			throw new IllegalArgumentException("Game year must be between 1970 and the current year!");
+		}
+		this.age = age;
+		this.id = Settings.getInstance().core.next_player_id;
+		Settings.getInstance().core.next_player_id++;
+		Database.getInstance().saveSettings(Main.SETTINGS_FILE);
+	}
 
 	public int getId() { return id; }
 	public void setId(int id) { this.id = id; }
 
-	public String getName() { return name; }
-	public void setName(String name) { this.name = name; }
+	public String getName() { return __name; }
+	public void setName(String name) { this.__name = name; }
 
 	public int getAge() { return age; }
 	public void setAge(int age) { this.age = age; }
 
+	public void save(){ Database.getInstance().savePlayer(this); }
+	public void save(String file_name){ Database.getInstance().savePlayer(this, file_name); }
+
+	// Method to display game information. Overrides normal function
+	@Override
+	public String toString() {
+		return STR."Player@\{Integer.toHexString(hashCode())}{id=\{id}, name='\{__name}', age='\{age}'}";
+	}
 
 	public static Player createPlayerGUI() {
 		final int[] exit_mode = {0};
@@ -32,7 +62,6 @@ public class Player implements Serializable {
 		InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
 		// content panel
 		ContentPanel main_content = interfaceWrapper.getContentSpace();
-		main_content.setLayout(null);
 
 		// for button reassignment
 		ControlPanel controls = interfaceWrapper.getControlSpace();
@@ -53,14 +82,23 @@ public class Player implements Serializable {
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
 
+            //Title Label
+            JLabel titleLabel = new JLabel("NEW PLAYER CREATION", SwingConstants.CENTER);
+            Font old = titleLabel.getFont();
+            titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
+            int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
+            titleLabel.setBounds(base_center - 250, 10, 500, 30);
+            main_content.add(titleLabel);
+
 			// Player ID field
 			JLabel idLabel = new JLabel("Player ID:");
 			gbc.gridx = 0;
-			gbc.gridy = 0;
+			gbc.gridy = 1;
 			gbc.anchor = GridBagConstraints.EAST;
 			main_content.add(idLabel, gbc);
 
-			JTextField tfID = new JTextField("12345");  // Prepopulate with ID
+			// Prepopulate with next ID in the chain
+			JTextField tfID = new JTextField(String.valueOf(Settings.getInstance().core.next_player_id));
 			tfID.setEditable(false);  // Initially non-editable
 			gbc.gridx = 1;
 			main_content.add(tfID, gbc);
@@ -69,12 +107,20 @@ public class Player implements Serializable {
 			gbc.gridx = 2;
 			main_content.add(cbManualOverride, gbc);
 
+			// Action listener to enable/disable ID editing based on checkbox
+			cbManualOverride.addActionListener(e -> {
+				tfID.setEditable(cbManualOverride.isSelected());
+				if (!cbManualOverride.isSelected()) {
+					tfID.setText(String.valueOf(Settings.getInstance().core.next_player_id)); // Set the default value
+				}
+			});
+
 			// Player Name field
-			JLabel nameLabel = new JLabel("Name:");
+			JLabel nameField = new JLabel("Name:");
 			gbc.gridx = 0;
-			gbc.gridy = 1;
+			gbc.gridy = 2;
 			gbc.anchor = GridBagConstraints.EAST;
-			main_content.add(nameLabel, gbc);
+			main_content.add(nameField, gbc);
 
 			JTextField tfName = new JTextField();
 			gbc.gridx = 1;
@@ -83,70 +129,66 @@ public class Player implements Serializable {
 			// Player Age field
 			JLabel ageLabel = new JLabel("Age:");
 			gbc.gridx = 0;
-			gbc.gridy = 2;
+			gbc.gridy = 3;
 			gbc.anchor = GridBagConstraints.EAST;
 			main_content.add(ageLabel, gbc);
 
-			JTextField tfAge = new JTextField();
+			SpinnerModel yearModel = new SpinnerNumberModel( 18, Settings.getInstance().core.minimumPlayerAge, Settings.getInstance().core.maxPlayerAge, 1); // Start, Min, Max, Step
+			JSpinner ageSpinner = new JSpinner(yearModel);
+			// removes the comma separator in 2025 (was showing 2,025)
+			JSpinner.NumberEditor editor = new JSpinner.NumberEditor(ageSpinner, "#");
+			ageSpinner.setEditor(editor);
 			gbc.gridx = 1;
-			main_content.add(tfAge, gbc);
+			main_content.add(ageSpinner, gbc);
 
-			// Player Score field
-			JLabel scoreLabel = new JLabel("Score:");
-			gbc.gridx = 0;
-			gbc.gridy = 3;
-			gbc.anchor = GridBagConstraints.EAST;
-			main_content.add(scoreLabel, gbc);
+			ActionListener _main = _ -> {
+				// FIXME: it's not stopping on name empty... but in game yes... Why?!?
+				String _name2 = nameField.getText();
+				if (_name2 == null || _name2.isEmpty()) {
+					InterfaceWrapper.showErrorWindow("Player name is empty!");
+					return;
+				}
 
-			JTextField tfScore = new JTextField();
-			gbc.gridx = 1;
-			main_content.add(tfScore, gbc);
+				int age = (Integer) ageSpinner.getValue();
 
-			// Action listener to enable/disable ID editing based on checkbox
-			cbManualOverride.addActionListener(e -> tfID.setEditable(cbManualOverride.isSelected()));
+				String _id = tfID.getText();
+				if (_id == null || _id.isEmpty() || _id.equals("0")) {
+					InterfaceWrapper.showErrorWindow("Player ID is not valid!");
+					return;
+				}
+				if (Database.getInstance().loadPlayer(Integer.parseInt(_id)) != null) {
+					InterfaceWrapper.showErrorWindow("Player ID already exists! Use \"Edit Player\" or choose another ID!");
+					return;
+				}
+
+				// Create a new Player object with the data   NOTE: with overwrite, it does not go up
+				if (cbManualOverride.isSelected()) player[0] = new Player(_name2, age, Integer.parseInt(_id));
+				else player[0] = new Player(_name2, age); // so it goes up
+
+				System.out.println(STR."Player Created: \{_id}, \{_name2}, \{age}");
+
+				exit_mode[0] = 1;
+			};
+			ActionListener _scnd = _ -> {
+				exit_mode[0] = 2;
+			};
 
 			// Submit and Cancel buttons
-			JButton submitButton = new JButton("Submit");
+			JButton submitButton = new JButton("Create Player");
 			gbc.gridx = 1;
 			gbc.gridy = 4;
+			submitButton.addActionListener(_main);
 			main_content.add(submitButton, gbc);
 
-			JButton cancelButton = new JButton("Cancel");
+			accept_btn.addActionListener(_main);
+
+			JButton exitButton = new JButton("Cancel");
 			gbc.gridx = 0;
-			main_content.add(cancelButton, gbc);
+			exitButton.addActionListener(_scnd);
+			main_content.add(exitButton, gbc);
 
-			// Action listener for submit button
-			submitButton.addActionListener(e -> {
-				String playerID = tfID.getText();
-				if (!cbManualOverride.isSelected() && playerID.equals("12345")) {
-					JOptionPane.showMessageDialog(null, "Player ID cannot be default unless manually overridden.");
-					return;
-				}
-
-				String playerName = tfName.getText();
-				String playerAgeStr = tfAge.getText();
-				String playerScoreStr = tfScore.getText();
-
-				if (playerName.isEmpty() || playerAgeStr.isEmpty() || playerScoreStr.isEmpty()) {
-					JOptionPane.showMessageDialog(null, "All fields must be filled!");
-					return;
-				}
-
-				int playerAge = Integer.parseInt(playerAgeStr);
-				int playerScore = Integer.parseInt(playerScoreStr);
-
-				// Create the Player object (you can use this data as needed)
-				System.out.println("Player Created: ID=" + playerID + ", Name=" + playerName + ", Age=" + playerAge + ", Score=" + playerScore);
-
-				// Close or perform any action on success
-				JOptionPane.showMessageDialog(null, "Player Data Submitted!");
-			});
-
-			// Action listener for cancel button
-			cancelButton.addActionListener(e -> {
-				// Handle cancellation (like clearing the form or closing the window)
-				JOptionPane.showMessageDialog(null, "Player Creation Cancelled!");
-			});
+			reject_btn.addActionListener(_scnd);
+			reject_btn.addActionListener(_scnd);
 
 			main_content.revalidate();
 			main_content.repaint();
