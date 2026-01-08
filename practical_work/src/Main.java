@@ -144,8 +144,8 @@ public class Main {
 					} else System.out.println("[*] User canceled operation.");
 					break;
                 case 2:
-                  Game.deleteGameGUI();
-                  break;
+                     Game.deleteGameGUI();
+                     break;
 				default: System.out.println("Option not yet implemented!");
 			}
 		}
@@ -196,6 +196,9 @@ public class Main {
 					break;
                 case 1:
                     GameMachine.createMachineGUI();
+                    break;
+                case 2:
+                    GameMachine.deleteMachineGUI();
                     break;
 				default: System.out.println("Option not yet implemented!");
 			}

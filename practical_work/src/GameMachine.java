@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.Serial;
 import java.io.Serializable; // to save in binary
 import java.util.ArrayList;
@@ -21,6 +22,13 @@ public class GameMachine implements Serializable {// the machines in the arcade.
 	private Game game_in_machine;
 	private MACHINE_STATE availabilityStatus;
 	int available_tickets;
+
+    public int getId() {return id;}
+    public String getName() {return __name;}
+    public Game getGame_in_machine() {return game_in_machine;}
+    public Controls getControl_scheme() {return control_scheme;}
+    public int getAvailable_tickets() {return available_tickets;}
+    public MACHINE_STATE getAvailabilityStatus() {return availabilityStatus;}
 
     public GameMachine(String name, Controls scheme, Game game_in_machine, int id, int tickets, MACHINE_STATE state){
         this.__name = name;
@@ -206,7 +214,7 @@ public class GameMachine implements Serializable {// the machines in the arcade.
 
             ActionListener _main = _ -> {
                 // FIXME: it's not stopping on name empty... but in game yes... Why?!?
-                String _name2 = nameField.getText();
+                String _name2 = tfName.getText();
                 if (_name2 == null || _name2.isEmpty()) {
                     InterfaceWrapper.showErrorWindow("Machine name is empty!");
                     return;
@@ -270,7 +278,119 @@ public class GameMachine implements Serializable {// the machines in the arcade.
         });
 
         // Return the created Machine object after the user submits, if valid
-        if (exit_mode[0] == 1) return machine[0];
+        if (exit_mode[0] == 1){
+            Database.getInstance().saveMachine(machine[0]);
+            return machine[0];
+        }
+        else return null; // return null if user choose to cancel game input
+    }
+
+    public static GameMachine deleteMachineGUI() {
+        final int[] exit_mode = {0};
+        // get GUI handler instance
+        InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
+        // content panel
+        ContentPanel main_content = interfaceWrapper.getContentSpace();
+        main_content.setLayout(null); // Using absolute positioning
+        // for button reassignment
+        ControlPanel controls = interfaceWrapper.getControlSpace();
+
+        CircularButton return_btn = controls.getButton("Return");
+        CircularButton accept_btn = controls.getButton("Accept");
+        CircularButton reject_btn = controls.getButton("Reject");
+
+        SwingUtilities.invokeLater(() -> {
+            return_btn.removeActions();
+            accept_btn.removeActions();
+            reject_btn.removeActions();
+
+            main_content.setLayout(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
+
+            // Title label
+            JLabel titleLabel = new JLabel("GAME MACHINE DELETION", SwingConstants.CENTER);
+            Font old = titleLabel.getFont();
+            titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
+            int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
+            titleLabel.setBounds(base_center - 250, 10, 500, 30);
+            main_content.add(titleLabel);
+
+            // Machine game selector
+            JLabel gameField = new JLabel("Game Machine to be DELETED:");
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(gameField, gbc);
+
+            // get every game from last id back, then load name from id
+            ArrayList<String> listMachines = new ArrayList<>(0);
+            for (int i = 1; i<Settings.getInstance().core.next_machine_id; i++){
+                GameMachine machine_to_read = Database.getInstance().loadMachine(i);
+                listMachines.add(machine_to_read.getName());
+            }
+            System.out.println(listMachines);
+            //dropdown selector
+            JComboBox<String> machine_box = new JComboBox(listMachines.toArray());
+            machine_box.setEditable(false);
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(machine_box, gbc);
+
+            //TODO: Error catching, scary confirmation window
+
+            ActionListener _main = _ -> {
+                int id = machine_box.getSelectedIndex()+1;
+                String filename = STR."\{id}.mch";
+                GameMachine target_machine = Database.getInstance().loadMachine(id); //+1 because index for ID starts from 1, in the combo box starts from 0
+                File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}/\{filename}");
+                file.delete();
+
+                exit_mode[0] = 1;
+            };
+            ActionListener _scnd = _ -> {
+                exit_mode[0] = 2;
+            };
+
+            // Submit button
+            JButton submitButton = new JButton("DELETE GAME MACHINE");
+            gbc.gridx = 1;
+            gbc.gridy = 8;
+            submitButton.addActionListener(_main);
+            main_content.add(submitButton, gbc);
+
+            accept_btn.addActionListener(_main);
+
+            JButton exitButton = new JButton("Cancel");
+            gbc.gridx = 0;
+            exitButton.addActionListener(_scnd);
+            main_content.add(exitButton, gbc);
+            reject_btn.addActionListener(_scnd);
+            reject_btn.addActionListener(_scnd);
+
+            main_content.revalidate();
+            main_content.repaint();
+        });
+
+        while (exit_mode[0] == 0){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // reset buttons, just in case
+        SwingUtilities.invokeLater(() -> {
+            return_btn.removeActions();
+            accept_btn.removeActions();
+            reject_btn.removeActions();
+        });
+
+        // Return the created Game object after the user submits, if valid
+        if (exit_mode[0] == 1) return null;
         else return null; // return null if user choose to cancel game input
     }
 }
