@@ -254,5 +254,4 @@ public class Game implements Serializable {
 		if (exit_mode[0] == 1) return game[0];
 		else return null; // return null if user choose to cancel game input
 	}
-
 }

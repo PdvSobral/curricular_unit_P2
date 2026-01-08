@@ -198,6 +198,9 @@ public class Main {
 				case DEBUG:
 					pass();
 					break;
+                case 1:
+                    GameMachine.createMachineGUI();
+                    break;
 				default: System.out.println("Option not yet implemented!");
 			}
 		}
