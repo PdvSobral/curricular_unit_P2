@@ -43,7 +43,8 @@ public class Main {
 		InterfaceWrapper.getInstance(); // Start if not yet started
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			System.out.println("\n[!!] SIGINT received! Shutting workers and saving...");
-			// TODO: Add a save here for what is needed
+			// Add a save here for what is needed, like running settings or others.
+			//
 			System.out.println("[!!] Exiting...");
 		}));
 		int __temp;
@@ -138,7 +139,7 @@ public class Main {
 				case 1:
 					Game new_game = Game.createGameGUI();
 					if (new_game != null) {
-						// TODO: add an overwrite detection and user confirmation.
+						// maybe add an overwrite detection and user confirmation.
 						new_game.save();
 						System.out.println("[*] New game added and saved successfully!");
 					} else System.out.println("[*] User canceled operation.");
@@ -156,7 +157,7 @@ public class Main {
 			if (__temp == 0) return;
 			switch (__temp){
 				case DEBUG:
-					System.out.println("Saving game with id -2 (Debug)");
+					System.out.println("Saving player with id -2 (Debug)");
 					Player teste = new Player("John Doe", 25, -2);
 					System.out.println(teste);
 					teste.save();
@@ -171,7 +172,7 @@ public class Main {
 				case 1:
 					Player new_player = Player.createPlayerGUI();
 					if (new_player != null) {
-						// TODO: add an overwrite detection and user confirmation.
+						// add an overwrite detection and user confirmation.
 						new_player.save();
 						System.out.println("[*] New player added and saved successfully!");
 					} else System.out.println("[*] User canceled operation.");
@@ -196,10 +197,29 @@ public class Main {
 			if (__temp == 0) return;
 			switch (__temp){
 				case DEBUG:
-					pass();
+					// pass();
+					System.out.println("Saving machine with id -2 (Debug)");
+					GameMachine teste = new GameMachine("Street of Craziness", Controls.EIGHT_BUTTON, -2, -2);
+					System.out.println(teste);
+					teste.save();
+					System.out.println("Loading...");
+					GameMachine test = Database.getInstance().loadGameMachine(-2);
+					System.out.println(test);
+					System.out.println("Deb off");
+					System.out.println(Database.getInstance().listGameMachine());
+					System.out.println("Deb on");
+					System.out.println(Database.getInstance().listGameMachine(true));
 					break;
                 case 1:
-                    GameMachine.createMachineGUI();
+					// FIXME: When GUI finished, uncomment the code
+					GameMachine new_machine = GameMachine.createMachineGUI();
+					/*
+					if (new_machine != null) {
+						// add an overwrite detection and user confirmation.
+						new_machine.save();
+						System.out.println("[*] New machine added and saved successfully!");
+					} else System.out.println("[*] User canceled operation.");
+					*/
                     break;
 				default: System.out.println("Option not yet implemented!");
 			}

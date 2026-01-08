@@ -11,7 +11,6 @@ public class Player implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L; // For serialization version control
 
-	// TODO: to make basically the whole "meat" of the class
 	private int id;
 	private String __name;
 	private int age;
@@ -181,6 +180,162 @@ public class Player implements Serializable {
 			gbc.gridy = 4;
 			submitButton.addActionListener(_main);
 			main_content.add(submitButton, gbc);
+
+			accept_btn.addActionListener(_main);
+
+			JButton exitButton = new JButton("Cancel");
+			gbc.gridx = 0;
+			exitButton.addActionListener(_scnd);
+			main_content.add(exitButton, gbc);
+
+			reject_btn.addActionListener(_scnd);
+			reject_btn.addActionListener(_scnd);
+
+			main_content.revalidate();
+			main_content.repaint();
+		});
+
+		while (exit_mode[0] == 0){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		SwingUtilities.invokeLater(() -> {
+			return_btn.removeActions();
+			accept_btn.removeActions();
+			reject_btn.removeActions();
+		});
+
+		// Return the created Game object after the user submits, if valid
+		if (exit_mode[0] == 1) return player[0];
+		else return null; // return null if user choose to cancel game input
+	}
+    public static Player editPlayerGUI() {
+        final int[] exit_mode = {0};
+        // Declare the Game object that will be returned
+        final Player[] player = new Player[1];  // Using an array to modify within the lambda
+
+        // get GUI handler instance
+        InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
+        // content panel
+        ContentPanel main_content = interfaceWrapper.getContentSpace();
+
+        // for button reassignment
+        ControlPanel controls = interfaceWrapper.getControlSpace();
+
+        CircularButton return_btn = controls.getButton("Return");
+        CircularButton accept_btn = controls.getButton("Accept");
+        CircularButton reject_btn = controls.getButton("Reject");
+
+        ArrayList<Integer> temp = Database.getInstance().listPlayers(Main.RUNNING_MODE == Main.DEBUG);
+        Integer[] temp2 = new Integer[temp.size()];
+        temp.toArray(temp2);
+
+        System.out.println();
+        if (temp == null) {
+            InterfaceWrapper.showErrorWindow("No Player to Edit found! Please register a Player and try again!");
+            return null;
+        }
+
+        // reset buttons, just in case
+        SwingUtilities.invokeLater(() -> {
+            return_btn.removeActions();
+            accept_btn.removeActions();
+            reject_btn.removeActions();
+
+            // Set up GridBagLayout for the panel
+            main_content.setLayout(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
+
+            // Player ID field
+            JLabel idLabel = new JLabel("Player ID:");
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(idLabel, gbc);
+
+            // Prepopulate with next ID in the chain
+            JComboBox<Integer> CPID = new JComboBox<>(temp2);
+            CPID.setSelectedItem(null);
+            CPID.setEditable(false);  // Initially non-editable
+            gbc.gridx = 1;
+            main_content.add(CPID, gbc);
+
+            // Player Name field
+            JLabel nameField = new JLabel("Name:");
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(nameField, gbc);
+
+            JTextField tfName = new JTextField();
+            gbc.gridx = 1;
+            main_content.add(tfName, gbc);
+
+            // Player Age field
+            JLabel ageLabel = new JLabel("Age:");
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(ageLabel, gbc);
+
+            SpinnerModel yearModel = new SpinnerNumberModel( 18, Settings.getInstance().core.minimumPlayerAge, Settings.getInstance().core.maxPlayerAge, 1); // Start, Min, Max, Step
+            JSpinner ageSpinner = new JSpinner(yearModel);
+            // removes the comma separator in 2025 (was showing 2,025)
+            JSpinner.NumberEditor editor = new JSpinner.NumberEditor(ageSpinner, "#");
+            ageSpinner.setEditor(editor);
+            gbc.gridx = 1;
+            main_content.add(ageSpinner, gbc);
+
+            // make the update function.
+            CPID.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent itemEvent) {
+                    if (itemEvent.getStateChange() == ItemEvent.SELECTED){
+                        Player temp_pl = Database.getInstance().loadPlayer((Integer) itemEvent.getItem());
+                        tfName.setText(temp_pl.getName());
+                        ageSpinner.setValue(temp_pl.getAge());
+                        main_content.revalidate();
+                        main_content.repaint();
+                    }
+                }
+            });
+
+            ActionListener _main = _ -> {
+                String _name2 = tfName.getText();
+                if (_name2 == null || _name2.isEmpty()) {
+                    InterfaceWrapper.showErrorWindow("Player name is empty!");
+                    return;
+                }
+
+                int age = (Integer) ageSpinner.getValue();
+
+                String _id = CPID.getSelectedItem().toString();
+                if (Database.getInstance().loadPlayer(Integer.parseInt(_id)) == null) {
+                    InterfaceWrapper.showErrorWindow("Player ID does not exist! Use \"Add Player\" or choose another ID!");
+                    return;
+                }
+
+                player[0] = new Player(_name2, age, Integer.parseInt(_id));
+                System.out.println(STR."Player Edited: \{_id}, \{_name2}, \{age}");
+
+                exit_mode[0] = 1;
+            };
+            ActionListener _scnd = _ -> {
+                exit_mode[0] = 2;
+            };
+
+            // Submit and Cancel buttons
+            JButton submitButton = new JButton("Apply Changes");
+            gbc.gridx = 1;
+            gbc.gridy = 4;
+            submitButton.addActionListener(_main);
+            main_content.add(submitButton, gbc);
 
 			accept_btn.addActionListener(_main);
 

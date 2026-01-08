@@ -30,3 +30,5 @@ bin/
 
 ### EXTRA ###
 /.idea/
+# java files for module compilation
+*.iml

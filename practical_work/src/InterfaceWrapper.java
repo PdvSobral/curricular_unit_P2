@@ -149,7 +149,7 @@ public class InterfaceWrapper {
 				);
 				// Absolute positioning of the buttons
 				button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE);
-				button.setSize(Main.BUTTON_SIZE); // TODO: for some reason not working, see FIXME
+				button.setSize(Main.BUTTON_SIZE); // TODO: for some reason not working, see FIXME in CircularButtons
 
 				String image_name = switch (index){
 					case 0 -> "unpressed_buttons/tick_button.png";

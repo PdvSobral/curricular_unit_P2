@@ -27,16 +27,18 @@ class SettingsCore implements Serializable{
 	@Serial
 	private static final long serialVersionUID = 1L; // For serialization version control
 
-	public String mainDirectory;
-	public String gameSubDirectory;
-	public String playerSubDirectory;
-	public String machineSubDirectory;
-	public int next_player_id;
-	public int next_game_id;
-	public int next_machine_id;
-	public int minimumPlayerAge;
-	public int maxPlayerAge;
-	public String scoresFileName;
+	public     String    mainDirectory;
+	public     String    scoresFileName;
+	public     String    gameSubDirectory;
+	public     String    playerSubDirectory;
+	public     String    machineSubDirectory;
+	public      int      maxPlayerAge;
+	public      int      next_game_id;
+	public      int      next_player_id;
+	public      int      next_machine_id;
+	public      int      minimumPlayerAge;
+	public      int      defaultMachineTickets;
+	public MACHINE_STATE defaultMachineState;
 
 	public SettingsCore() {
 		// set defaults
@@ -52,5 +54,7 @@ class SettingsCore implements Serializable{
 		minimumPlayerAge = 8;
 		maxPlayerAge = 140;
 		scoresFileName = "scores.nsv";
+		defaultMachineTickets = 200;
+		defaultMachineState = MACHINE_STATE.COMING_SOON;
 	}
 }
