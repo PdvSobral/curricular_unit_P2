@@ -221,7 +221,7 @@ public class GameMachine implements Serializable {// the machines in the arcade.
                 String _tickets = ticketsField.getText();
                 MACHINE_STATE state = (MACHINE_STATE) state_box.getSelectedItem();
                 Controls scheme = (Controls) control_box.getSelectedItem();
-                Game machine_game = Database.getInstance().loadGame(game_box.getSelectedIndex()+1);
+                Game machine_game = Database.getInstance().loadGame(game_box.getSelectedIndex()+1); //+1 because index for ID starts from 1, in the combo box starts from 0
                 // Create a new machine object with the data   NOTE: with overwrite, it does not go up
                 if (cbManualOverride.isSelected()) machine[0] = new GameMachine(_name2, scheme, machine_game, Integer.parseInt(_id), Integer.parseInt(_tickets), state);
                 else machine[0] = new GameMachine(_name2, scheme, machine_game, Integer.parseInt(_tickets), state); // default state, tickets, auto id

@@ -1,6 +1,7 @@
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.Serial;
 import java.io.Serializable; // to save in binary
 import java.util.ArrayList;
@@ -310,7 +311,15 @@ public class Game implements Serializable {
             gbc.anchor = GridBagConstraints.EAST;
             main_content.add(game_box, gbc);
 
+            //TODO: Error catching, scary confirmation window
+
             ActionListener _main = _ -> {
+                int id = game_box.getSelectedIndex()+1;
+                String filename = STR."\{id}.gm";
+                Game target_game = Database.getInstance().loadGame(id); //+1 because index for ID starts from 1, in the combo box starts from 0
+                File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}/\{filename}");
+                file.delete();
+
                 exit_mode[0] = 1;
             };
             ActionListener _scnd = _ -> {
