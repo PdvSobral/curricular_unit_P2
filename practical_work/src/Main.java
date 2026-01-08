@@ -164,9 +164,9 @@ public class Main {
 					Player test = Database.getInstance().loadPlayer(-2);
 					System.out.println(test);
 					System.out.println("Deb off");
-					Database.getInstance().listPlayers();
+					System.out.println(Database.getInstance().listPlayers());
 					System.out.println("Deb on");
-					Database.getInstance().listPlayers(true);
+					System.out.println(Database.getInstance().listPlayers(true));
 					break;
 				case 1:
 					Player new_player = Player.createPlayerGUI();
@@ -176,6 +176,13 @@ public class Main {
 						System.out.println("[*] New player added and saved successfully!");
 					} else System.out.println("[*] User canceled operation.");
 					break;
+                case 2:
+                    Player edit_player = Player.editPlayerGUI();
+                    if (edit_player != null) {
+                        edit_player.save();
+                        System.out.println("[*] New player data saved successfully!");
+                    } else System.out.println("[*] User canceled operation.");
+                    break;
 				default: System.out.println("Option not yet implemented!");
 			}
 		}
@@ -191,6 +198,9 @@ public class Main {
 				case DEBUG:
 					pass();
 					break;
+                case 1:
+                    GameMachine.createMachineGUI();
+                    break;
 				default: System.out.println("Option not yet implemented!");
 			}
 		}
@@ -201,6 +211,7 @@ public class Main {
 		while (true){
 			__temp = Menu.getInstance().menu(LEADERMANEG, "LEADERBOARDS MANAGEMENT", (char) 1, RUNNING_MODE);
 			if (__temp == 0) return;
+			//TODO: PdvSobral - make Player purge and other
 			switch (__temp) {
 				case DEBUG:
 					pass();

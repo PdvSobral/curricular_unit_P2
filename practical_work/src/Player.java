@@ -1,8 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.Serial;
 import java.io.Serializable; // to save in binary
+import java.util.ArrayList;
 
 public class Player implements Serializable {
 	@Serial
@@ -17,7 +20,7 @@ public class Player implements Serializable {
 		this.__name = name;
 		if (!(age >= Settings.getInstance().core.minimumPlayerAge) || !(age <= Settings.getInstance().core.maxPlayerAge)) {
 			this.age = 1;
-			throw new IllegalArgumentException("Game year must be between 1970 and the current year!");
+			throw new IllegalArgumentException(STR."Player age must be between \{Settings.getInstance().core.minimumPlayerAge} and \{Settings.getInstance().core.maxPlayerAge}!");
 		}
 		this.age = age;
 		this.id = id;
@@ -82,10 +85,18 @@ public class Player implements Serializable {
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
 
+            //Title Label
+            JLabel titleLabel = new JLabel("NEW PLAYER CREATION", SwingConstants.CENTER);
+            Font old = titleLabel.getFont();
+            titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
+            int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
+            titleLabel.setBounds(base_center - 250, 10, 500, 30);
+            main_content.add(titleLabel);
+
 			// Player ID field
 			JLabel idLabel = new JLabel("Player ID:");
 			gbc.gridx = 0;
-			gbc.gridy = 0;
+			gbc.gridy = 1;
 			gbc.anchor = GridBagConstraints.EAST;
 			main_content.add(idLabel, gbc);
 
@@ -110,7 +121,7 @@ public class Player implements Serializable {
 			// Player Name field
 			JLabel nameField = new JLabel("Name:");
 			gbc.gridx = 0;
-			gbc.gridy = 1;
+			gbc.gridy = 2;
 			gbc.anchor = GridBagConstraints.EAST;
 			main_content.add(nameField, gbc);
 
@@ -121,7 +132,7 @@ public class Player implements Serializable {
 			// Player Age field
 			JLabel ageLabel = new JLabel("Age:");
 			gbc.gridx = 0;
-			gbc.gridy = 2;
+			gbc.gridy = 3;
 			gbc.anchor = GridBagConstraints.EAST;
 			main_content.add(ageLabel, gbc);
 
@@ -134,8 +145,7 @@ public class Player implements Serializable {
 			main_content.add(ageSpinner, gbc);
 
 			ActionListener _main = _ -> {
-				// FIXME: it's not stopping on name empty... but in game yes... Why?!?
-				String _name2 = nameField.getText();
+				String _name2 = tfName.getText();
 				if (_name2 == null || _name2.isEmpty()) {
 					InterfaceWrapper.showErrorWindow("Player name is empty!");
 					return;
