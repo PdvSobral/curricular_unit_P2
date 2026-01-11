@@ -1,7 +1,7 @@
 import java.awt.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 @SuppressWarnings({"UnnecessaryModifier", "SwitchStatementWithTooFewBranches"})
@@ -243,7 +243,8 @@ public class Main {
 						case 0: break;
 						case 1:
 							try {
-								Files.write(Paths.get(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.scoresFileName}"), new byte[0]);
+								File file = new File(Settings.getInstance().core.mainDirectory, Settings.getInstance().core.scoresFileName);
+								try (FileOutputStream _ = new FileOutputStream(file)) {}
 								System.out.println("[*] File cleared successfully!");
 							} catch (IOException e) {
 								System.err.println(STR."[!] Error clearing file: \{e.getMessage()}");

@@ -1,5 +1,4 @@
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -261,7 +260,7 @@ public class Database {
 		try (FileOutputStream outputStream = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv")) {
 			for (Map.Entry<Integer, List<Tuple<Integer, Integer>>> entry : gameScores.entrySet()) {
 				for (Tuple<Integer, Integer> score : entry.getValue()) {
-					outputStream.write(STR."\{entry.getKey()}\0\{score.getKey()}\0\{score.getValue()}\n".getBytes(StandardCharsets.UTF_8));
+					outputStream.write(STR."\{entry.getKey()}\0\{score.getKey()}\0\{score.getValue()}\n".getBytes("UTF-8"));
 				}
 			}
 		} catch (IOException e) {
@@ -292,7 +291,7 @@ public class Database {
 		try (FileOutputStream outputStream = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv")) {
 			for (Map.Entry<Integer, List<Tuple<Integer, Integer>>> entry : playerScores.entrySet()) {
 				for (Tuple<Integer, Integer> score : entry.getValue()) {
-					outputStream.write(STR."\{score.getKey()}\0\{entry.getKey()}\0\{score.getValue()}\n".getBytes(StandardCharsets.UTF_8));
+					outputStream.write(STR."\{score.getKey()}\0\{entry.getKey()}\0\{score.getValue()}\n".getBytes("UTF-8"));
 				}
 			}
 		} catch (IOException e) {
@@ -302,7 +301,7 @@ public class Database {
 
 	public void appendLeaderboardRecord(int gameId, int playerId, int score) {
 		try (FileOutputStream outputStream = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv", true)) {
-			outputStream.write(STR."\{gameId}\0\{playerId}\0\{score}\n".getBytes(StandardCharsets.UTF_8));
+			outputStream.write(STR."\{gameId}\0\{playerId}\0\{score}\n".getBytes("UTF-8"));
 		} catch (IOException e) {
 			System.err.println(STR."[!] Error appending leaderboard record: \{e.getMessage()}");
 		}
