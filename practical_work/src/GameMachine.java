@@ -27,10 +27,13 @@ public class GameMachine implements Serializable {// the machines in the arcade.
 		// if state was supposed to be MAINTENANCE, OUT OF ORDER, COMING SOON, then don't set to OUT OF TICKETS despite 0 tickets
 		this.availability_status = state;
 	}
-    public GameMachine(String name, Controls scheme, int game_in_machine, int id, int tickets, MACHINE_STATE state){
+	public GameMachine(String name, Controls scheme, int game_in_machine, int id, MACHINE_STATE state){
+		this.__GameMachine(name, scheme, game_in_machine, id, Settings.getInstance().core.defaultMachineTickets, state);
+	}
+	public GameMachine(String name, Controls scheme, int game_in_machine, int id, int tickets, MACHINE_STATE state){
 		this.__GameMachine(name, scheme, game_in_machine, id, tickets, state);
     }
-	public GameMachine(String name, Controls scheme, int game_in_machine, int tickets, MACHINE_STATE state){
+	public GameMachine(String name, Controls scheme, int game_in_machine, MACHINE_STATE state, int tickets){
 		this.__GameMachine(name, scheme, game_in_machine, Settings.getInstance().core.next_player_id, tickets, state);
 		Settings.getInstance().core.next_player_id++;
 		Database.getInstance().saveSettings(Main.SETTINGS_FILE);
@@ -70,7 +73,6 @@ public class GameMachine implements Serializable {// the machines in the arcade.
 
 	public static GameMachine createMachineGUI(){
 		// TODO: add checks on inputs in GUI
-		// TODO: Add a tickets slider (minimum 1) and remove the OUT_OF_TICKETS option. that should be for later
         final int[] exit_mode = {0};
         // Declare the Game object that will be returned
         final GameMachine[] machine = new GameMachine[1];  // Using an array to modify within the lambda
@@ -150,7 +152,8 @@ public class GameMachine implements Serializable {// the machines in the arcade.
             gbc.anchor = GridBagConstraints.EAST;
             main_content.add(state, gbc);
 
-
+			// TODO: Add controls ComboBox
+			// TODO: Add Game ID - name ComboBox
 
             ActionListener _main = _ -> {
                 String _name2 = tfName.getText();
@@ -170,10 +173,10 @@ public class GameMachine implements Serializable {// the machines in the arcade.
 
 				// TODO: Solve commented out code as so to uncomment
                 // Create a new machine object with the data   NOTE: with overwrite, it does not go up
-                /*
-                if (cbManualOverride.isSelected()) machine[0] = new GameMachine(_name2, scheme, machine_game, Integer.parseInt(_id), Integer.parseInt(tickets), state);
-                else machine[0] = new GameMachine(_name2, scheme, machine_game); // default state, tickets, auto id
-				System.out.println(STR."Machine Created: \{_id}, \{_name2}, \{scheme}, \{machine_game}, \{tickets}, \{state}");
+				/*
+                if (cbManualOverride.isSelected()) machine[0] = new GameMachine(_name2, scheme, game_id, Integer.parseInt(_id), state);
+                else machine[0] = new GameMachine(_name2, _control_scheme, game_id); // default state, tickets, auto id
+				System.out.println(STR."Machine Created: \{_id}, \{_name2}, \{_control_scheme}, \{game_id}, \{state}");
 				*/
                 exit_mode[0] = 1;
             };

@@ -149,7 +149,7 @@ public class InterfaceWrapper {
 				);
 				// Absolute positioning of the buttons
 				button.setBounds(x, y, Main.BUTTON_SIZE, Main.BUTTON_SIZE);
-				button.setSize(Main.BUTTON_SIZE); // TODO: for some reason not working, see FIXME in CircularButtons
+				button.setSize(Main.BUTTON_SIZE); // FIXME: for some reason not working, see FIXME in CircularButtons
 
 				String image_name = switch (index){
 					case 0 -> "unpressed_buttons/tick_button.png";
@@ -163,7 +163,7 @@ public class InterfaceWrapper {
 					default -> "unpressed_buttons/template_button.png";
 				};
 
-				// TODO: SET UP HERE THE ACTIONS. Maybe set a name to be able to reset the action on press
+				// SET UP HERE THE Default ACTIONS.
 				button.addActionListener(e -> {
 					switch (index) {
 						case 5:
