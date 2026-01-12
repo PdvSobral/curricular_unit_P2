@@ -1,5 +1,4 @@
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,19 +8,15 @@ import java.util.Map;
 public class Database {
 	// will work with saving/loading. Every file operation will pass here.
 	// for now working with serialized binaries.
-	// maybe change to JSON?? or custom binary? or custom text with offsets
 
-	// Database.getInstance().getYear()
 	private static final Database __instance = new Database();
 	private Database() {}	// Constructor logic
-	public static Database getInstance() {
-		return __instance;
-	}
+	public static Database getInstance() { return __instance; }
 
 	// Methods
 	public void saveGame(Game game_to_save, @SuppressWarnings("unused") String file_name){
 		// Game is serialized
-		// TODO: Ensure the file is writable
+		// FIXME: Ensure the file is writable, and the directory exists.
 		try (FileOutputStream fileOut = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}/\{file_name}");
 			 ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
 			// Serialize the Game object to the file
@@ -83,10 +78,9 @@ public class Database {
 	}
 	public ArrayList<Integer> listGames(){ return listGames(false); }
 
-
 	public void savePlayer(Player game_to_save, String file_name){
 		// Game is serialized
-		// TODO: Ensure the file is writable and directories exist
+		// FIXME: Ensure the file is writable, and the directory exists.
 		try (FileOutputStream fileOut = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}/\{file_name}");
 			 ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
 			// Serialize the Game object to the file
@@ -148,9 +142,75 @@ public class Database {
 	}
 	public ArrayList<Integer> listPlayers(){ return listPlayers(false); }
 
+	// Further Test these implementations. they were copy-pasted from Player
+	// They passed DEBUG checks
+	public void saveGameMachine(GameMachine game_to_save, String file_name){
+		// Game is serialized
+		// FIXME: Ensure the file is writable, and the directory exists.
+		try (FileOutputStream fileOut = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}/\{file_name}");
+			 ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
+			// Serialize the Game object to the file
+			objectOut.writeObject(game_to_save);
+		} catch (IOException e) {
+			System.err.println(STR."[*] Error saving machine: \{e.getMessage()}");
+		}
+	}
+	public void saveGameMachine(GameMachine player_to_save){
+		// set the default filename if none is provided
+		String filename = STR."\{player_to_save.getId()}.gmm";
+		saveGameMachine(player_to_save, filename);
+	}
+	public GameMachine loadGameMachine(String filename) {
+		File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}/\{filename}");
+		GameMachine loadedGame = null;
+
+		try (FileInputStream fileIn = new FileInputStream(file);
+			 ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
+			// Deserialize the Game object from the file
+			loadedGame = (GameMachine) objectIn.readObject();
+		} catch (IOException | ClassNotFoundException e) {
+			System.err.println(STR."[*] Error loading machine: \{e.getMessage()}");
+		}
+
+		return loadedGame; // Return the loaded Game object
+	}
+	public GameMachine loadGameMachine(int id) {
+		String filename = STR."\{id}.gmm";
+		GameMachine to_return = loadGameMachine(filename);
+		if (to_return != null && to_return.getId() != id) {
+			System.out.println(STR."[!] Tampering with machine detected! (Expected: \{id} | Returned: \{to_return.getId()})");
+			return null;
+		}
+		return to_return; // Return the loaded Game object
+	}
+	public ArrayList<Integer> listGameMachine(boolean show_debug) {
+		ArrayList<Integer> to_return = new ArrayList<>();
+
+		// Create the directory path
+		File directory = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}");
+
+		// Filter and list files
+		if (directory.exists() && directory.isDirectory()) {
+			String pattern = show_debug ? "^-?\\d+$" : "^\\d+$";
+			File[] files = directory.listFiles(file ->
+					file.isFile() && file.getName().endsWith(".gmm") && file.getName().substring(0, file.getName().lastIndexOf('.')).matches(pattern));
+			// Print matched files
+			if (files != null) {
+				for (File file : files) {
+					to_return.add(Integer.parseInt(file.getName().substring(0, file.getName().lastIndexOf('.'))));
+				}
+			}
+		} else {
+			System.out.println("[?] File does not exist or it is not a directory.");
+			return null;
+		}
+		return to_return;
+	}
+	public ArrayList<Integer> listGameMachine(){ return listGameMachine(false); }
+
 
 	public boolean saveSettings(String filename){
-		// TODO: Ensure the file is writeable
+		// FIXME: Ensure the file is writable, and the directory exists.
 		// Settings is serialized
 		try (FileOutputStream fileOut = new FileOutputStream(filename);
 			 ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
@@ -200,7 +260,7 @@ public class Database {
 		try (FileOutputStream outputStream = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv")) {
 			for (Map.Entry<Integer, List<Tuple<Integer, Integer>>> entry : gameScores.entrySet()) {
 				for (Tuple<Integer, Integer> score : entry.getValue()) {
-					outputStream.write(STR."\{entry.getKey()}\0\{score.getKey()}\0\{score.getValue()}\n".getBytes(StandardCharsets.UTF_8));
+					outputStream.write(STR."\{entry.getKey()}\0\{score.getKey()}\0\{score.getValue()}\n".getBytes("UTF-8"));
 				}
 			}
 		} catch (IOException e) {
@@ -231,7 +291,7 @@ public class Database {
 		try (FileOutputStream outputStream = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv")) {
 			for (Map.Entry<Integer, List<Tuple<Integer, Integer>>> entry : playerScores.entrySet()) {
 				for (Tuple<Integer, Integer> score : entry.getValue()) {
-					outputStream.write(STR."\{score.getKey()}\0\{entry.getKey()}\0\{score.getValue()}\n".getBytes(StandardCharsets.UTF_8));
+					outputStream.write(STR."\{score.getKey()}\0\{entry.getKey()}\0\{score.getValue()}\n".getBytes("UTF-8"));
 				}
 			}
 		} catch (IOException e) {
@@ -241,7 +301,7 @@ public class Database {
 
 	public void appendLeaderboardRecord(int gameId, int playerId, int score) {
 		try (FileOutputStream outputStream = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv", true)) {
-			outputStream.write(STR."\{gameId}\0\{playerId}\0\{score}\n".getBytes(StandardCharsets.UTF_8));
+			outputStream.write(STR."\{gameId}\0\{playerId}\0\{score}\n".getBytes("UTF-8"));
 		} catch (IOException e) {
 			System.err.println(STR."[!] Error appending leaderboard record: \{e.getMessage()}");
 		}

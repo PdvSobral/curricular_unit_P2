@@ -7,12 +7,10 @@ import java.io.Serial;
 import java.io.Serializable; // to save in binary
 import java.util.ArrayList;
 
-
 public class Player implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 1L; // For serialization version control
 
-	// TODO: to make basically the whole "meat" of the class
 	private int id;
 	private String __name;
 	private int age;
@@ -86,10 +84,18 @@ public class Player implements Serializable {
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
 
+            //Title Label
+            JLabel titleLabel = new JLabel("NEW PLAYER CREATION", SwingConstants.CENTER);
+            Font old = titleLabel.getFont();
+            titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
+            int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
+            titleLabel.setBounds(base_center - 250, 10, 500, 30);
+            main_content.add(titleLabel);
+
 			// Player ID field
 			JLabel idLabel = new JLabel("Player ID:");
 			gbc.gridx = 0;
-			gbc.gridy = 0;
+			gbc.gridy = 1;
 			gbc.anchor = GridBagConstraints.EAST;
 			main_content.add(idLabel, gbc);
 
@@ -114,7 +120,7 @@ public class Player implements Serializable {
 			// Player Name field
 			JLabel nameField = new JLabel("Name:");
 			gbc.gridx = 0;
-			gbc.gridy = 1;
+			gbc.gridy = 2;
 			gbc.anchor = GridBagConstraints.EAST;
 			main_content.add(nameField, gbc);
 
@@ -125,7 +131,7 @@ public class Player implements Serializable {
 			// Player Age field
 			JLabel ageLabel = new JLabel("Age:");
 			gbc.gridx = 0;
-			gbc.gridy = 2;
+			gbc.gridy = 3;
 			gbc.anchor = GridBagConstraints.EAST;
 			main_content.add(ageLabel, gbc);
 
@@ -208,8 +214,6 @@ public class Player implements Serializable {
 		else return null; // return null if user choose to cancel game input
 	}
     public static Player editPlayerGUI() {
-        // TODO: Add Combobox to make selection of players. On select it should reupdate the data present in the other fields
-        // TODO: Maybe even make it so it asks to save if unsaved data??? For now skip.
         final int[] exit_mode = {0};
         // Declare the Game object that will be returned
         final Player[] player = new Player[1];  // Using an array to modify within the lambda
@@ -333,19 +337,19 @@ public class Player implements Serializable {
             submitButton.addActionListener(_main);
             main_content.add(submitButton, gbc);
 
-            accept_btn.addActionListener(_main);
+			accept_btn.addActionListener(_main);
 
-            JButton exitButton = new JButton("Cancel");
-            gbc.gridx = 0;
-            exitButton.addActionListener(_scnd);
-            main_content.add(exitButton, gbc);
+			JButton exitButton = new JButton("Cancel");
+			gbc.gridx = 0;
+			exitButton.addActionListener(_scnd);
+			main_content.add(exitButton, gbc);
 
-            reject_btn.addActionListener(_scnd);
-            reject_btn.addActionListener(_scnd);
+			reject_btn.addActionListener(_scnd);
+			reject_btn.addActionListener(_scnd);
 
-            main_content.revalidate();
-            main_content.repaint();
-        });
+			main_content.revalidate();
+			main_content.repaint();
+		});
 
         while (exit_mode[0] == 0){
             try {
@@ -355,14 +359,14 @@ public class Player implements Serializable {
             }
         }
 
-        SwingUtilities.invokeLater(() -> {
-            return_btn.removeActions();
-            accept_btn.removeActions();
-            reject_btn.removeActions();
-        });
+		SwingUtilities.invokeLater(() -> {
+			return_btn.removeActions();
+			accept_btn.removeActions();
+			reject_btn.removeActions();
+		});
 
-        // Return the created Game object after the user submits, if valid
-        if (exit_mode[0] == 1) return player[0];
-        else return null; // return null if user choose to cancel game input
-    }
+		// Return the created Game object after the user submits, if valid
+		if (exit_mode[0] == 1) return player[0];
+		else return null; // return null if user choose to cancel game input
+	}
 }

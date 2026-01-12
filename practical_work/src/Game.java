@@ -59,16 +59,10 @@ public class Game implements Serializable {
 
 	// Method to display game information. Overrides normal function
 	@Override
-	public String toString() {
-		return STR."Game@\{Integer.toHexString(hashCode())}{id=\{__game_id}, year=\{__year}, name='\{__name}', allowedPlayers=\{__allowedPlayers}, genre='\{__genre}', developer='\{__developer}', description='\{__description}'}";
-	}
+	public String toString() { return STR."Game@\{Integer.toHexString(hashCode())}{id=\{__game_id}, year=\{__year}, name='\{__name}', allowedPlayers=\{__allowedPlayers}, genre='\{__genre}', developer='\{__developer}', description='\{__description}'}"; }
 
-	public void save(){
-		Database.getInstance().saveGame(this);
-	}
-	public void save(String file_name){
-		Database.getInstance().saveGame(this, file_name);
-	}
+	public void save(){ Database.getInstance().saveGame(this); }
+	public void save(String file_name){ Database.getInstance().saveGame(this, file_name); }
 
 	public static Game createGameGUI() {
 		final int[] exit_mode = {0};
