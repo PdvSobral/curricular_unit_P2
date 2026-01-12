@@ -1,8 +1,5 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("preview")
 public class Database {
@@ -256,9 +253,9 @@ public class Database {
 			return null;
 		}
 	}
-	public void saveLeaderboardsByGame(Map<Integer, List<Tuple<Integer, Integer>>> gameScores) {
+	public void saveLeaderboardsByGame(Map<Integer, ArrayList<Tuple<Integer, Integer>>> gameScores) {
 		try (FileOutputStream outputStream = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv")) {
-			for (Map.Entry<Integer, List<Tuple<Integer, Integer>>> entry : gameScores.entrySet()) {
+			for (Map.Entry<Integer, ArrayList<Tuple<Integer, Integer>>> entry : gameScores.entrySet()) {
 				for (Tuple<Integer, Integer> score : entry.getValue()) {
 					outputStream.write(STR."\{entry.getKey()}\0\{score.getKey()}\0\{score.getValue()}\n".getBytes("UTF-8"));
 				}
@@ -287,9 +284,9 @@ public class Database {
 			return null;
 		}
 	}
-	public void saveLeaderboardsByPlayer(Map<Integer, List<Tuple<Integer, Integer>>> playerScores) {
+	public void saveLeaderboardsByPlayer(Map<Integer, ArrayList<Tuple<Integer, Integer>>> playerScores) {
 		try (FileOutputStream outputStream = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv")) {
-			for (Map.Entry<Integer, List<Tuple<Integer, Integer>>> entry : playerScores.entrySet()) {
+			for (Map.Entry<Integer, ArrayList<Tuple<Integer, Integer>>> entry : playerScores.entrySet()) {
 				for (Tuple<Integer, Integer> score : entry.getValue()) {
 					outputStream.write(STR."\{score.getKey()}\0\{entry.getKey()}\0\{score.getValue()}\n".getBytes("UTF-8"));
 				}
@@ -305,5 +302,44 @@ public class Database {
 		} catch (IOException e) {
 			System.err.println(STR."[!] Error appending leaderboard record: \{e.getMessage()}");
 		}
+	}
+
+	@FunctionalInterface
+	public interface RecordMatcher {
+		/**
+		 @return true  -> REMOVE record
+		         false -> KEEP recordFilesFiles
+		*/
+		//
+		boolean match(int gameId, int playerId, int score);
+	}
+
+	// removeOnMatch((gameId, playerId, score) ->
+	//    playerId == 42 && gameId == 7
+	//);
+	// TODO: test
+	public void removeOnMatch(RecordMatcher matcher) {
+		Map<Integer, ArrayList<Tuple<Integer, Integer>>> old = loadLeaderboardsByGame();
+		if (old == null) return;
+
+		// Iterate over games
+		Iterator<Map.Entry<Integer, ArrayList<Tuple<Integer, Integer>>>> gameIt = old.entrySet().iterator();
+		while (gameIt.hasNext()) {
+			Map.Entry<Integer, ArrayList<Tuple<Integer, Integer>>> gameEntry = gameIt.next();
+			int gameId = gameEntry.getKey();
+			ArrayList<Tuple<Integer, Integer>> scores = gameEntry.getValue();
+
+			// Remove matching records for this game
+			scores.removeIf(scoreTuple ->
+					matcher.match(gameId, scoreTuple.getKey(), scoreTuple.getValue())
+			);
+
+			// Remove game entry if no scores remain
+			if (scores.isEmpty()) {
+				gameIt.remove();
+			}
+		}
+
+		saveLeaderboardsByGame(old);
 	}
 }
