@@ -20,7 +20,7 @@ public class Main {
 	static final List<String> MACHINEMANGEG	 = List.of("Add Machine", "Remove Machine", "Return");
 	static final List<String> GAMEMANGEG	 = List.of("Add Game", "Remove Game", "Return");
 	static final List<String> PLAYERMANGEG	 = List.of("Add Player", "Edit Player", "Remove Player", "Return");
-	static final List<String> LEADERMANEG	 = List.of("Add New Record", "Reset Game Leaderboards", "Purge Player from Leaderboards", "Leaderboards Reset", "Return");
+	static final List<String> LEADERMANEG	 = List.of("Add New Record", "Purge Game from Leaderboards", "Purge Player from Leaderboards", "Leaderboards Reset", "Return");
 	static final List<String> SUBLEADERMANEG = List.of("Proceed", "Cancel");
 	static final List<String> CHECKSMENU     = List.of("Machine/Game Checks", "Player Checks", "Leaderboard Checks", "Return");
 
