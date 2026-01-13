@@ -144,6 +144,9 @@ public class Main {
 						System.out.println("[*] New game added and saved successfully!");
 					} else System.out.println("[*] User canceled operation.");
 					break;
+                case 2:
+                     Game.deleteGameGUI();
+                     break;
 				default: System.out.println("Option not yet implemented!");
 			}
 		}
@@ -220,6 +223,9 @@ public class Main {
 						System.out.println("[*] New machine added and saved successfully!");
 					} else System.out.println("[*] User canceled operation.");
 					*/
+                    break;
+                case 2:
+                    GameMachine.deleteMachineGUI();
                     break;
 				default: System.out.println("Option not yet implemented!");
 			}

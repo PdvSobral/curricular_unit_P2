@@ -1,8 +1,10 @@
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.Serial;
 import java.io.Serializable; // to save in binary
+import java.util.ArrayList;
 
 @SuppressWarnings({"ClassCanBeRecord", "preview"})
 public class Game implements Serializable {
@@ -248,4 +250,113 @@ public class Game implements Serializable {
 		if (exit_mode[0] == 1) return game[0];
 		else return null; // return null if user choose to cancel game input
 	}
+
+    public static Game deleteGameGUI() {
+        final int[] exit_mode = {0};
+        // get GUI handler instance
+        InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
+        // content panel
+        ContentPanel main_content = interfaceWrapper.getContentSpace();
+        main_content.setLayout(null); // Using absolute positioning
+        // for button reassignment
+        ControlPanel controls = interfaceWrapper.getControlSpace();
+
+        CircularButton return_btn = controls.getButton("Return");
+        CircularButton accept_btn = controls.getButton("Accept");
+        CircularButton reject_btn = controls.getButton("Reject");
+
+        SwingUtilities.invokeLater(() -> {
+            return_btn.removeActions();
+            accept_btn.removeActions();
+            reject_btn.removeActions();
+
+            main_content.setLayout(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
+
+            // Title label
+            JLabel titleLabel = new JLabel("GAME DELETION", SwingConstants.CENTER);
+            Font old = titleLabel.getFont();
+            titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
+            int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
+            titleLabel.setBounds(base_center - 250, 10, 500, 30);
+            main_content.add(titleLabel);
+
+            // Machine game selector
+            JLabel gameField = new JLabel("Game to be DELETED:");
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(gameField, gbc);
+
+            // get every game from last id back, then load name from id
+            ArrayList<String> listGames = new ArrayList<>(0);
+            for (int i = 1; i<Settings.getInstance().core.next_game_id; i++){
+                Game game_to_read = Database.getInstance().loadGame(i);
+                listGames.add(game_to_read.getName());
+            }
+
+            //dropdown selector
+            JComboBox<String> game_box = new JComboBox(listGames.toArray());
+            game_box.setEditable(false);
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            gbc.anchor = GridBagConstraints.EAST;
+            main_content.add(game_box, gbc);
+
+            //TODO: Error catching, scary confirmation window
+
+            ActionListener _main = _ -> {
+                int id = game_box.getSelectedIndex()+1;
+                String filename = STR."\{id}.gm";
+                Game target_game = Database.getInstance().loadGame(id); //+1 because index for ID starts from 1, in the combo box starts from 0
+                File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}/\{filename}");
+                file.delete();
+
+                exit_mode[0] = 1;
+            };
+            ActionListener _scnd = _ -> {
+                exit_mode[0] = 2;
+            };
+
+            // Submit button
+            JButton submitButton = new JButton("DELETE GAME");
+            gbc.gridx = 1;
+            gbc.gridy = 8;
+            submitButton.addActionListener(_main);
+            main_content.add(submitButton, gbc);
+
+            accept_btn.addActionListener(_main);
+
+            JButton exitButton = new JButton("Cancel");
+            gbc.gridx = 0;
+            exitButton.addActionListener(_scnd);
+            main_content.add(exitButton, gbc);
+            reject_btn.addActionListener(_scnd);
+            reject_btn.addActionListener(_scnd);
+
+            main_content.revalidate();
+            main_content.repaint();
+        });
+
+        while (exit_mode[0] == 0){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // reset buttons, just in case
+        SwingUtilities.invokeLater(() -> {
+            return_btn.removeActions();
+            accept_btn.removeActions();
+            reject_btn.removeActions();
+        });
+
+        // Return the created Game object after the user submits, if valid
+        if (exit_mode[0] == 1) return null;
+        else return null; // return null if user choose to cancel game input
+    }
 }
