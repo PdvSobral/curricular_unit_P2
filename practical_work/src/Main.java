@@ -1,7 +1,10 @@
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({"UnnecessaryModifier", "SwitchStatementWithTooFewBranches"})
@@ -244,6 +247,99 @@ public class Main {
 				case DEBUG:
 					pass();
 					break;
+				case 3:
+					final int[] exit_mode = {0};
+					InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
+					ContentPanel main_content = interfaceWrapper.getContentSpace();
+					main_content.setLayout(null); // Using absolute positioning
+					ControlPanel controls = interfaceWrapper.getControlSpace();
+					CircularButton return_btn = controls.getButton("Return");
+					CircularButton accept_btn = controls.getButton("Accept");
+					CircularButton reject_btn = controls.getButton("Reject");
+					ArrayList<Integer> listPlayers = Database.getInstance().listPlayers(Main.RUNNING_MODE == Main.DEBUG);
+					if (listPlayers == null){
+						InterfaceWrapper.showErrorWindow("No Players were found!\nPlease add one before proceeding");
+						return;
+					}
+					ArrayList<String> listPlayerIDthNames = new ArrayList<>(0);
+					for ( Integer id : listPlayers ){
+						Player player_to_read = Database.getInstance().loadPlayer(id);
+						listPlayerIDthNames.add(STR."\{id} -> \{player_to_read.getName()}");
+					}
+					listPlayers = null; // tell garbage collector to move it's virtual a$$ and free the memory, hopefully
+					SwingUtilities.invokeLater(() -> {
+						return_btn.removeActions();
+						accept_btn.removeActions();
+						reject_btn.removeActions();
+						main_content.setLayout(new GridBagLayout());
+						GridBagConstraints gbc = new GridBagConstraints();
+						gbc.fill = GridBagConstraints.HORIZONTAL;
+						gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
+						JLabel titleLabel = new JLabel("PLAYER LEADERBOARD PURGE", SwingConstants.CENTER);
+						Font old = titleLabel.getFont();
+						titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
+						int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
+						titleLabel.setBounds(base_center - 250, 10, 500, 30);
+						main_content.add(titleLabel);
+						JLabel gameField = new JLabel("Player ID:");
+						gbc.gridx = 0;
+						gbc.gridy = 1;
+						gbc.anchor = GridBagConstraints.EAST;
+						main_content.add(gameField, gbc);
+						ArrayList<String> listMachines = new ArrayList<>(0);
+						for (int i = 1; i<Settings.getInstance().core.next_machine_id; i++){
+							GameMachine machine_to_read = Database.getInstance().loadMachine(i);
+							listMachines.add(machine_to_read.getName());
+						}
+						//dropdown selector
+						JComboBox<String> player_box = new JComboBox(listPlayerIDthNames.toArray());
+						player_box.setEditable(false);
+						gbc.gridx = 1;
+						gbc.gridy = 1;
+						gbc.anchor = GridBagConstraints.EAST;
+						main_content.add(player_box, gbc);
+						ActionListener _main = _ -> {
+							// TODO: Pdvsobral - change function
+							int id = Integer.parseInt(player_box.getSelectedItem().toString().split(" -> ")[0]);
+							System.out.println(STR."Attempting to remove player with id: \{id}");
+							File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}/\{id}.plr");
+							if (!file.delete()) {
+								InterfaceWrapper.showErrorWindow("Failed to DELETE the player (file failed to delete)!");
+								return;
+							}
+							file = null;
+							exit_mode[0] = 1;
+						};
+						ActionListener _scnd = _ -> {
+							exit_mode[0] = 2;
+						};
+						JButton submitButton = new JButton("DELETE PLAYER SCORES");
+						gbc.gridx = 1;
+						gbc.gridy = 8;
+						submitButton.addActionListener(_main);
+						main_content.add(submitButton, gbc);
+						accept_btn.addActionListener(_main);
+						JButton exitButton = new JButton("Cancel");
+						gbc.gridx = 0;
+						exitButton.addActionListener(_scnd);
+						main_content.add(exitButton, gbc);
+						reject_btn.addActionListener(_scnd);
+						reject_btn.addActionListener(_scnd);
+						main_content.revalidate();
+						main_content.repaint();
+					});
+					while (exit_mode[0] == 0){
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					SwingUtilities.invokeLater(() -> {
+						return_btn.removeActions();
+						accept_btn.removeActions();
+						reject_btn.removeActions();
+					});
 				case 4:
 					InterfaceWrapper.showErrorWindow("You are about to delete all records from the system.\nThis is your last chance to turn back.");
 					__temp = Menu.getInstance().menu(SUBLEADERMANEG, "LEADERBOARDS RESET", (char) 1, NORMAL);

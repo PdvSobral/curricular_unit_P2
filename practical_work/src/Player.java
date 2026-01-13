@@ -436,61 +436,60 @@ public class Player implements Serializable {
             gbc.anchor = GridBagConstraints.EAST;
             main_content.add(player_box, gbc);
 
-                //TODO: Error catching, scary confirmation window
+			//TODO: Error catching, scary confirmation window
 
-                ActionListener _main = _ -> {
-                    int id = Integer.parseInt(player_box.getSelectedItem().toString().split(" -> ")[0]);
-                    System.out.println(STR."Attempting to remove player with id: \{id}");
-                    File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}/\{id}.plr");
-                    if (!file.delete()) {
-                        InterfaceWrapper.showErrorWindow("Failed to DELETE the player (file failed to delete)!");
-                        return;
-                    }
-                    file = null;
-                    exit_mode[0] = 1;
-                };
-                ActionListener _scnd = _ -> {
-                    exit_mode[0] = 2;
-                };
+			ActionListener _main = _ -> {
+				int id = Integer.parseInt(player_box.getSelectedItem().toString().split(" -> ")[0]);
+				System.out.println(STR."Attempting to remove player with id: \{id}");
+				File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}/\{id}.plr");
+				if (!file.delete()) {
+					InterfaceWrapper.showErrorWindow("Failed to DELETE the player (file failed to delete)!");
+					return;
+				}
+				file = null;
+				exit_mode[0] = 1;
+			};
+			ActionListener _scnd = _ -> {
+				exit_mode[0] = 2;
+			};
 
-                // Submit button
-                JButton submitButton = new JButton("DELETE PLAYER DATA");
-                gbc.gridx = 1;
-                gbc.gridy = 8;
-                submitButton.addActionListener(_main);
-                main_content.add(submitButton, gbc);
+			// Submit button
+			JButton submitButton = new JButton("DELETE PLAYER DATA");
+			gbc.gridx = 1;
+			gbc.gridy = 8;
+			submitButton.addActionListener(_main);
+			main_content.add(submitButton, gbc);
 
-                accept_btn.addActionListener(_main);
+			accept_btn.addActionListener(_main);
 
-                JButton exitButton = new JButton("Cancel");
-                gbc.gridx = 0;
-                exitButton.addActionListener(_scnd);
-                main_content.add(exitButton, gbc);
+			JButton exitButton = new JButton("Cancel");
+			gbc.gridx = 0;
+			exitButton.addActionListener(_scnd);
+			main_content.add(exitButton, gbc);
 
-                reject_btn.addActionListener(_scnd);
-                reject_btn.addActionListener(_scnd);
+			reject_btn.addActionListener(_scnd);
+			reject_btn.addActionListener(_scnd);
 
-                main_content.revalidate();
-                main_content.repaint();
-            });
+			main_content.revalidate();
+			main_content.repaint();
+		});
 
-            while (exit_mode[0] == 0){
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+		while (exit_mode[0] == 0){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 
-            SwingUtilities.invokeLater(() -> {
-                return_btn.removeActions();
-                accept_btn.removeActions();
-                reject_btn.removeActions();
-            });
+		SwingUtilities.invokeLater(() -> {
+			return_btn.removeActions();
+			accept_btn.removeActions();
+			reject_btn.removeActions();
+		});
 
-            // Return to caller
-            System.out.println("Returning...");
-            return;
-        }
-        //*/
+		// Return to caller
+		System.out.println("Returning...");
+		return;
+	}
 }
