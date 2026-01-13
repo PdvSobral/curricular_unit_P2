@@ -251,7 +251,7 @@ public class Game implements Serializable {
 		else return null; // return null if user choose to cancel game input
 	}
 
-    public static Game deleteGameGUI() {
+    public static void deleteGameGUI() {
         final int[] exit_mode = {0};
         // get GUI handler instance
         InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
@@ -264,6 +264,18 @@ public class Game implements Serializable {
         CircularButton return_btn = controls.getButton("Return");
         CircularButton accept_btn = controls.getButton("Accept");
         CircularButton reject_btn = controls.getButton("Reject");
+
+        ArrayList<Integer> listGames = Database.getInstance().listGames(Main.RUNNING_MODE == Main.DEBUG);
+        if (listGames == null){
+            InterfaceWrapper.showErrorWindow("No Games were found!\nPlease add one before proceeding");
+            return;
+        }
+        ArrayList<String> listGamesWithNames = new ArrayList<>(0);
+        for ( Integer id : listGames ){
+            Game game_to_read = Database.getInstance().loadGame(id);
+            listGamesWithNames.add(STR."\{id} -> \{game_to_read.getName()}");
+        }
+        listGames = null; // tell garbage collector to move it's virtual a$$ and free the memory, hopefully
 
         SwingUtilities.invokeLater(() -> {
             return_btn.removeActions();
@@ -290,15 +302,8 @@ public class Game implements Serializable {
             gbc.anchor = GridBagConstraints.EAST;
             main_content.add(gameField, gbc);
 
-            // get every game from last id back, then load name from id
-            ArrayList<String> listGames = new ArrayList<>(0);
-            for (int i = 1; i<Settings.getInstance().core.next_game_id; i++){
-                Game game_to_read = Database.getInstance().loadGame(i);
-                listGames.add(game_to_read.getName());
-            }
-
             //dropdown selector
-            JComboBox<String> game_box = new JComboBox(listGames.toArray());
+            JComboBox<String> game_box = new JComboBox(listGamesWithNames.toArray());
             game_box.setEditable(false);
             gbc.gridx = 1;
             gbc.gridy = 1;
@@ -308,12 +313,14 @@ public class Game implements Serializable {
             //TODO: Error catching, scary confirmation window
 
             ActionListener _main = _ -> {
-                int id = game_box.getSelectedIndex()+1;
-                String filename = STR."\{id}.gm";
-                Game target_game = Database.getInstance().loadGame(id); //+1 because index for ID starts from 1, in the combo box starts from 0
-                File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}/\{filename}");
-                file.delete();
-
+                int id = Integer.parseInt(game_box.getSelectedItem().toString().split(" -> ")[0]);
+                System.out.println(STR."Attempting to remove game of id: \{id}");
+                File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}/\{id}.gm");
+                if (!file.delete()) {
+                    InterfaceWrapper.showErrorWindow("Failed to remove the game (file failed to delete)!");
+                    return;
+                }
+                file = null;
                 exit_mode[0] = 1;
             };
             ActionListener _scnd = _ -> {
@@ -333,6 +340,7 @@ public class Game implements Serializable {
             gbc.gridx = 0;
             exitButton.addActionListener(_scnd);
             main_content.add(exitButton, gbc);
+
             reject_btn.addActionListener(_scnd);
             reject_btn.addActionListener(_scnd);
 
@@ -348,15 +356,15 @@ public class Game implements Serializable {
             }
         }
 
-        // reset buttons, just in case
         SwingUtilities.invokeLater(() -> {
             return_btn.removeActions();
             accept_btn.removeActions();
             reject_btn.removeActions();
         });
 
-        // Return the created Game object after the user submits, if valid
-        if (exit_mode[0] == 1) return null;
-        else return null; // return null if user choose to cancel game input
+        // Return to caller
+        System.out.println("Returning...");
+        return;
     }
+
 }
