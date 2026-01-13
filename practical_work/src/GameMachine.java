@@ -1,8 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.Serial;
 import java.io.Serializable; // to save in binary
+import java.util.ArrayList;
+import java.util.Arrays;
 
 // Stig27 -> NOTE TO SELF, TO DELETE MACHINE OR WTV, JUST RM FILE
 
@@ -72,7 +75,6 @@ public class GameMachine implements Serializable {// the machines in the arcade.
 	}
 
 	public static GameMachine createMachineGUI(){
-		// TODO: add checks on inputs in GUI
         final int[] exit_mode = {0};
         // Declare the Game object that will be returned
         final GameMachine[] machine = new GameMachine[1];  // Using an array to modify within the lambda
@@ -89,6 +91,18 @@ public class GameMachine implements Serializable {// the machines in the arcade.
         CircularButton accept_btn = controls.getButton("Accept");
         CircularButton reject_btn = controls.getButton("Reject");
 
+		ArrayList<Integer> listGames = Database.getInstance().listGames(Main.RUNNING_MODE == Main.DEBUG);
+		if (listGames == null){
+			InterfaceWrapper.showErrorWindow("No Games were found!\nPlease add a game before proceeding");
+			return null;
+		}
+		ArrayList<String> listGamesWithNames = new ArrayList<>(0);
+		for ( Integer id : listGames ){
+			Game game_to_read = Database.getInstance().loadGame(id);
+			listGamesWithNames.add(STR."\{id} -> \{game_to_read.getName()}");
+		}
+		listGames = null; // tell garbage collector to move it's virtual a$$ and free the memory, hopefully
+
         // reset buttons, just in case
         SwingUtilities.invokeLater(() -> {
             return_btn.removeActions();
@@ -100,92 +114,254 @@ public class GameMachine implements Serializable {// the machines in the arcade.
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
+			// Title label
+			JLabel titleLabel = new JLabel("NEW MACHINE CREATION", SwingConstants.CENTER);
+			Font old = titleLabel.getFont();
+			titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
+			int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
+			titleLabel.setBounds(base_center - 250, 10, 500, 30);
+			main_content.add(titleLabel);
+
+			// Machine ID field
+			JLabel idLabel = new JLabel("Machine ID:");
+			gbc.gridx = 0;
+			gbc.gridy = 1;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(idLabel, gbc);
+
+			// Prepopulate with next ID in the chain
+			JTextField tfID = new JTextField(String.valueOf(Settings.getInstance().core.next_machine_id));
+			tfID.setEditable(false);  // Initially non-editable
+			gbc.gridx = 1;
+			main_content.add(tfID, gbc);
+
+			JCheckBox cbManualOverride = new JCheckBox("Manual Override ID");
+			gbc.gridx = 2;
+			main_content.add(cbManualOverride, gbc);
+
+			// Action listener to enable/disable ID editing based on checkbox
+			cbManualOverride.addActionListener(e -> {
+				tfID.setEditable(cbManualOverride.isSelected());
+				if (!cbManualOverride.isSelected()) {
+					tfID.setText(String.valueOf(Settings.getInstance().core.next_machine_id)); // Set the default value
+				}
+			});
+
+			// Machine Name field
+			JLabel nameField = new JLabel("Name:");
+			gbc.gridx = 0;
+			gbc.gridy = 2;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(nameField, gbc);
+
+			JTextField tfName = new JTextField();
+			gbc.gridx = 1;
+			main_content.add(tfName, gbc);
+
+			// Machine game selector
+			JLabel gameField = new JLabel("Game in the machine:");
+			gbc.gridx = 0;
+			gbc.gridy = 3;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(gameField, gbc);
+			// get every game from last id back, then load name from id, combine strings
+			//dropdown selector
+
+			JComboBox<String> game_box = new JComboBox(listGamesWithNames.toArray());
+			game_box.setEditable(false);
+			gbc.gridx = 1;
+			gbc.gridy = 3;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(game_box, gbc);
+
+			// Machine control type selector
+			JLabel controlField = new JLabel("Control Type:");
+			gbc.gridx = 0;
+			gbc.gridy = 4;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(controlField, gbc);
+
+			//dropdown selector
+			JComboBox<Controls> control_box = new JComboBox(Controls.values());
+			game_box.setEditable(false);
+			gbc.gridx = 1;
+			gbc.gridy = 4;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(control_box, gbc);
+
+			// Machine state selector
+			JLabel stateField = new JLabel("Status:");
+			gbc.gridx = 0;
+			gbc.gridy = 5;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(stateField, gbc);
+
+			//dropdown selector
+			JComboBox<MACHINE_STATE> state_box = new JComboBox(Arrays.stream(MACHINE_STATE.values()).filter(
+				state -> state != MACHINE_STATE.OUT_OF_TICKETS && state != MACHINE_STATE.MAINTENANCE && state != MACHINE_STATE.IN_USE
+			).toArray());
+			game_box.setEditable(false);
+			gbc.gridx = 1;
+			gbc.gridy = 5;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(state_box, gbc);
+
+
+			ActionListener _main = _ -> {
+				String _name2 = tfName.getText();
+				if (_name2 == null || _name2.isEmpty()) {
+					InterfaceWrapper.showErrorWindow("Machine name is empty!");
+					return;
+				}
+				String _id = tfID.getText();
+				if (_id == null || _id.isEmpty() || _id.equals("0")) {
+					InterfaceWrapper.showErrorWindow("Machine ID is not valid!");
+					return;
+				}
+				MACHINE_STATE state = (MACHINE_STATE) state_box.getSelectedItem();
+				Controls scheme = (Controls) control_box.getSelectedItem();
+				int game_id = Integer.parseInt(game_box.getSelectedItem().toString().split(" -> ")[0]);
+
+                if (cbManualOverride.isSelected()) machine[0] = new GameMachine(_name2, scheme, game_id, Integer.parseInt(_id), state);
+                else machine[0] = new GameMachine(_name2, scheme, game_id); // default state, tickets, auto id
+				System.out.println(STR."Machine Created: \{_id}, \{_name2}, \{scheme}, \{game_id}, \{state}");
+
+				exit_mode[0] = 1;
+			};
+			ActionListener _scnd = _ -> {
+				exit_mode[0] = 2;
+			};
+
+			// Submit and Cancel buttons
+			JButton submitButton = new JButton("Create Machine");
+			gbc.gridx = 1;
+			gbc.gridy = 8;
+			submitButton.addActionListener(_main);
+			main_content.add(submitButton, gbc);
+
+			accept_btn.addActionListener(_main);
+
+			JButton exitButton = new JButton("Cancel");
+			gbc.gridx = 0;
+			exitButton.addActionListener(_scnd);
+			main_content.add(exitButton, gbc);
+
+			reject_btn.addActionListener(_scnd);
+			reject_btn.addActionListener(_scnd);
+
+			main_content.revalidate();
+			main_content.repaint();
+		});
+
+		while (exit_mode[0] == 0){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		SwingUtilities.invokeLater(() -> {
+			return_btn.removeActions();
+			accept_btn.removeActions();
+			reject_btn.removeActions();
+		});
+
+		// Return the created Machine object after the user submits, if valid
+		if (exit_mode[0] == 1){
+			Database.getInstance().saveMachine(machine[0]);
+			return machine[0];
+		}
+		else return null; // return null if user choose to cancel game input
+	}
+	//* FIXME
+    public static void deleteMachineGUI() {
+        final int[] exit_mode = {0};
+        // get GUI handler instance
+        InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
+        // content panel
+        ContentPanel main_content = interfaceWrapper.getContentSpace();
+        main_content.setLayout(null); // Using absolute positioning
+        // for button reassignment
+        ControlPanel controls = interfaceWrapper.getControlSpace();
+
+        CircularButton return_btn = controls.getButton("Return");
+        CircularButton accept_btn = controls.getButton("Accept");
+        CircularButton reject_btn = controls.getButton("Reject");
+
+		ArrayList<Integer> listMachine = Database.getInstance().listGameMachine(Main.RUNNING_MODE == Main.DEBUG);
+		if (listMachine == null){
+			InterfaceWrapper.showErrorWindow("No Machines were found!\nPlease add one before proceeding");
+			return;
+		}
+		ArrayList<String> listMachinesWithNames = new ArrayList<>(0);
+		for ( Integer id : listMachine ){
+			GameMachine game_to_read = Database.getInstance().loadGameMachine(id);
+			listMachinesWithNames.add(STR."\{id} -> \{game_to_read.getName()}");
+		}
+		listMachine = null; // tell garbage collector to move it's virtual a$$ and free the memory, hopefully
+
+        SwingUtilities.invokeLater(() -> {
+            return_btn.removeActions();
+            accept_btn.removeActions();
+            reject_btn.removeActions();
+
+            main_content.setLayout(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
 
             // Title label
-            JLabel titleLabel = new JLabel("NEW MACHINE CREATION", SwingConstants.CENTER);
+            JLabel titleLabel = new JLabel("GAME MACHINE DELETION", SwingConstants.CENTER);
             Font old = titleLabel.getFont();
             titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
             int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
             titleLabel.setBounds(base_center - 250, 10, 500, 30);
             main_content.add(titleLabel);
 
-            // Player ID field
-            JLabel idLabel = new JLabel("Machine ID:");
+            // Machine game selector
+            JLabel gameField = new JLabel("Game Machine to be DELETED:");
             gbc.gridx = 0;
             gbc.gridy = 1;
             gbc.anchor = GridBagConstraints.EAST;
-            main_content.add(idLabel, gbc);
+            main_content.add(gameField, gbc);
 
-            // Prepopulate with next ID in the chain
-            JTextField tfID = new JTextField(String.valueOf(Settings.getInstance().core.next_machine_id));
-            tfID.setEditable(false);  // Initially non-editable
+            // get every game from last id back, then load name from id
+            ArrayList<String> listMachines = new ArrayList<>(0);
+            for (int i = 1; i<Settings.getInstance().core.next_machine_id; i++){
+                GameMachine machine_to_read = Database.getInstance().loadMachine(i);
+                listMachines.add(machine_to_read.getName());
+            }
+            System.out.println(listMachines);
+            //dropdown selector
+            JComboBox<String> machine_box = new JComboBox(listMachinesWithNames.toArray());
+            machine_box.setEditable(false);
             gbc.gridx = 1;
-            main_content.add(tfID, gbc);
-
-            JCheckBox cbManualOverride = new JCheckBox("Manual Override ID");
-            gbc.gridx = 2;
-            main_content.add(cbManualOverride, gbc);
-
-            // Action listener to enable/disable ID editing based on checkbox
-            cbManualOverride.addActionListener(e -> {
-                tfID.setEditable(cbManualOverride.isSelected());
-                if (!cbManualOverride.isSelected()) {
-                    tfID.setText(String.valueOf(Settings.getInstance().core.next_machine_id)); // Set the default value
-                }
-            });
-
-            // Machine Name field
-            JLabel nameField = new JLabel("Name:");
-            gbc.gridx = 0;
-            gbc.gridy = 2;
+            gbc.gridy = 1;
             gbc.anchor = GridBagConstraints.EAST;
-            main_content.add(nameField, gbc);
+            main_content.add(machine_box, gbc);
 
-            JTextField tfName = new JTextField();
-            gbc.gridx = 1;
-            main_content.add(tfName, gbc);
-
-            // Machine state selector
-            JComboBox<MACHINE_STATE> state = new JComboBox(MACHINE_STATE.values());
-            gbc.gridx = 0;
-            gbc.gridy = 3;
-            gbc.anchor = GridBagConstraints.EAST;
-            main_content.add(state, gbc);
-
-			// TODO: Add controls ComboBox
-			// TODO: Add Game ID - name ComboBox
+            //TODO: Error catching, scary confirmation window
 
             ActionListener _main = _ -> {
-                String _name2 = tfName.getText();
-                if (_name2 == null || _name2.isEmpty()) {
-                    InterfaceWrapper.showErrorWindow("Machine name is empty!");
-                    return;
-                }
-                String _id = tfID.getText();
-                if (_id == null || _id.isEmpty() || _id.equals("0")) {
-                    InterfaceWrapper.showErrorWindow("Machine ID is not valid!");
-                    return;
-                }
-                if (Database.getInstance().loadPlayer(Integer.parseInt(_id)) != null) {
-                    InterfaceWrapper.showErrorWindow("Machine ID already exists! Choose another ID!");
-                    return;
-                }
-
-				// TODO: Solve commented out code as so to uncomment
-                // Create a new machine object with the data   NOTE: with overwrite, it does not go up
-				/*
-                if (cbManualOverride.isSelected()) machine[0] = new GameMachine(_name2, scheme, game_id, Integer.parseInt(_id), state);
-                else machine[0] = new GameMachine(_name2, _control_scheme, game_id); // default state, tickets, auto id
-				System.out.println(STR."Machine Created: \{_id}, \{_name2}, \{_control_scheme}, \{game_id}, \{state}");
-				*/
+				int id = Integer.parseInt(machine_box.getSelectedItem().toString().split(" -> ")[0]);
+				System.out.println(STR."Attempting to remove machine of id: \{id}");
+                File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}/\{id}.mch");
+                if (!file.delete()) {
+					InterfaceWrapper.showErrorWindow("Failed to remove the machine (file failed to delete)!");
+					return;
+				}
+				file = null;
                 exit_mode[0] = 1;
             };
-            ActionListener _scnd = _ -> { exit_mode[0] = 2; };
+            ActionListener _scnd = _ -> {
+                exit_mode[0] = 2;
+            };
 
-            // Submit and Cancel buttons
-            JButton submitButton = new JButton("Create Machine");
+            // Submit button
+            JButton submitButton = new JButton("DELETE GAME MACHINE");
             gbc.gridx = 1;
-            gbc.gridy = 4;
+            gbc.gridy = 8;
             submitButton.addActionListener(_main);
             main_content.add(submitButton, gbc);
 
@@ -217,8 +393,9 @@ public class GameMachine implements Serializable {// the machines in the arcade.
             reject_btn.removeActions();
         });
 
-        // Return the created Game object after the user submits, if valid
-        if (exit_mode[0] == 1) return machine[0];
-        else return null; // return null if user choose to cancel game input
+        // Return to caller
+		System.out.println("Returning...");
+        return;
     }
+    //*/
 }

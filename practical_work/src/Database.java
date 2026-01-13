@@ -52,10 +52,10 @@ public class Database {
 		return loadedGame; // Return the loaded Game object
 	}
 	public ArrayList<Integer> listGames(boolean show_debug) {
+		ArrayList<Integer> to_return = new ArrayList<>();
 
 		// Create the directory path
-		File directory = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}");
-
+		File directory = new File(Settings.getInstance().core.mainDirectory, Settings.getInstance().core.gameSubDirectory);
 		// Filter and list files
 		if (directory.exists() && directory.isDirectory()) {
 			String pattern = show_debug ? "^-?\\d+$" : "^\\d+$";
@@ -64,14 +64,14 @@ public class Database {
 			// Print matched files
 			if (files != null) {
 				for (File file : files) {
-					System.out.println(file.getName().substring(0, file.getName().lastIndexOf('.')));
+					to_return.add(Integer.parseInt(file.getName().substring(0, file.getName().lastIndexOf('.'))));
 				}
 			}
 		} else {
 			System.out.println("[?] File does not exist or it is not a directory.");
 			return null;
 		}
-		return null;
+		return to_return;
 	}
 	public ArrayList<Integer> listGames(){ return listGames(false); }
 
@@ -154,7 +154,7 @@ public class Database {
 	}
 	public void saveGameMachine(GameMachine player_to_save){
 		// set the default filename if none is provided
-		String filename = STR."\{player_to_save.getId()}.gmm";
+		String filename = STR."\{player_to_save.getId()}.mch";
 		saveGameMachine(player_to_save, filename);
 	}
 	public GameMachine loadGameMachine(String filename) {
@@ -172,7 +172,7 @@ public class Database {
 		return loadedGame; // Return the loaded Game object
 	}
 	public GameMachine loadGameMachine(int id) {
-		String filename = STR."\{id}.gmm";
+		String filename = STR."\{id}.mch";
 		GameMachine to_return = loadGameMachine(filename);
 		if (to_return != null && to_return.getId() != id) {
 			System.out.println(STR."[!] Tampering with machine detected! (Expected: \{id} | Returned: \{to_return.getId()})");
@@ -190,7 +190,7 @@ public class Database {
 		if (directory.exists() && directory.isDirectory()) {
 			String pattern = show_debug ? "^-?\\d+$" : "^\\d+$";
 			File[] files = directory.listFiles(file ->
-					file.isFile() && file.getName().endsWith(".gmm") && file.getName().substring(0, file.getName().lastIndexOf('.')).matches(pattern));
+					file.isFile() && file.getName().endsWith(".mch") && file.getName().substring(0, file.getName().lastIndexOf('.')).matches(pattern));
 			// Print matched files
 			if (files != null) {
 				for (File file : files) {
