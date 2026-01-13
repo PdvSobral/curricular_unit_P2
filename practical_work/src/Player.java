@@ -351,13 +351,13 @@ public class Player implements Serializable {
 			main_content.repaint();
 		});
 
-        while (exit_mode[0] == 0){
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+		while (exit_mode[0] == 0){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 
 		SwingUtilities.invokeLater(() -> {
 			return_btn.removeActions();

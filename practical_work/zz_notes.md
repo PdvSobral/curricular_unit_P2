@@ -149,4 +149,3 @@ ArrayList<Animal> animals = new ArrayList<>();
         }
     }
 }```
-Cinder juntou-se.
