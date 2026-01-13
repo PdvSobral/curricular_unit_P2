@@ -186,6 +186,8 @@ public class Main {
                         edit_player.save();
                         System.out.println("[*] New player data saved successfully!");
                     } else System.out.println("[*] User canceled operation.");
+                case 3:
+                    Player.deletePlayerGUI();
                     break;
 				default: System.out.println("Option not yet implemented!");
 			}
