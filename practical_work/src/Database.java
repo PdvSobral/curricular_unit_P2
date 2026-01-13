@@ -205,6 +205,46 @@ public class Database {
 	}
 	public ArrayList<Integer> listGameMachine(){ return listGameMachine(false); }
 
+    public void saveMachine(GameMachine machine_to_save, @SuppressWarnings("unused") String file_name){
+        // Game is serialized
+        // TODO: Ensure the file is writable
+        try (FileOutputStream fileOut = new FileOutputStream(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}/\{file_name}");
+             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
+            // Serialize the Game object to the file
+            objectOut.writeObject(machine_to_save);
+        } catch (IOException e) {
+            System.err.println(STR."Error saving machine: \{e.getMessage()}");
+        }
+    }
+    public void saveMachine(GameMachine machine_to_save){
+        // set the default filename if none is provided
+        String gameName = machine_to_save.getName().replace(" ", "-"); // Replace spaces with dashes
+        String filename = STR."\{machine_to_save.getId()}.mch";
+        saveMachine(machine_to_save, filename);
+    }
+    public GameMachine loadMachine(int id) {
+        String filename = STR."\{id}.mch";
+        GameMachine to_return = loadMachine(filename);
+        if (to_return != null && to_return.getId() != id) {
+            System.out.println(STR."[!] Tampering with game detected! (Expected: \{id} | Returned: \{to_return.getId()})");
+            return null;
+        }
+        return to_return; // Return the loaded Game object
+    }
+    public GameMachine loadMachine(String filename) {
+        File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}/\{filename}");
+        GameMachine loadedMachine = null;
+
+        try (FileInputStream fileIn = new FileInputStream(file);
+             ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
+            // Deserialize the Game object from the file
+            loadedMachine = (GameMachine) objectIn.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println(STR."[*] Error loading game: \{e.getMessage()}");
+        }
+
+        return loadedMachine; // Return the loaded Game object
+    }
 
 	public void savePlayer(Player game_to_save, @SuppressWarnings("unused") String file_name){
 		// Game is serialized
