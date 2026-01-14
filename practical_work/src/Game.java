@@ -266,7 +266,7 @@ public class Game implements Serializable {
         CircularButton reject_btn = controls.getButton("Reject");
 
         ArrayList<Integer> listGames = Database.getInstance().listGames(Main.RUNNING_MODE == Main.DEBUG);
-        if (listGames == null){
+        if (listGames.isEmpty()) {
             InterfaceWrapper.showErrorWindow("No Games were found!\nPlease add one before proceeding");
             return;
         }
@@ -295,7 +295,7 @@ public class Game implements Serializable {
             titleLabel.setBounds(base_center - 250, 10, 500, 30);
             main_content.add(titleLabel);
 
-            // Machine game selector
+            // Game selector
             JLabel gameField = new JLabel("Game to be DELETED:");
             gbc.gridx = 0;
             gbc.gridy = 1;
@@ -366,5 +366,4 @@ public class Game implements Serializable {
         System.out.println("Returning...");
         return;
     }
-
 }
