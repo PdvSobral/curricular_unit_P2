@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings({"UnnecessaryModifier", "SwitchStatementWithTooFewBranches"})
 public class Main {
@@ -242,104 +243,22 @@ public class Main {
 		while (true){
 			__temp = Menu.getInstance().menu(LEADERMANEG, "LEADERBOARDS MANAGEMENT", (char) 1, RUNNING_MODE);
 			if (__temp == 0) return;
-			//TODO: PdvSobral - make Player purge and other
 			switch (__temp) {
 				case DEBUG:
 					pass();
 					break;
+				case 1:
+					// TODO: test new highscore
+					tempOption3();
+					break;
+				case 2:
+					// TODO: test game leaderboard purge
+					tempOption2();
+					break;
 				case 3:
-					final int[] exit_mode = {0};
-					InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
-					ContentPanel main_content = interfaceWrapper.getContentSpace();
-					main_content.setLayout(null); // Using absolute positioning
-					ControlPanel controls = interfaceWrapper.getControlSpace();
-					CircularButton return_btn = controls.getButton("Return");
-					CircularButton accept_btn = controls.getButton("Accept");
-					CircularButton reject_btn = controls.getButton("Reject");
-					ArrayList<Integer> listPlayers = Database.getInstance().listPlayers(Main.RUNNING_MODE == Main.DEBUG);
-					if (listPlayers == null){
-						InterfaceWrapper.showErrorWindow("No Players were found!\nPlease add one before proceeding");
-						return;
-					}
-					ArrayList<String> listPlayerIDthNames = new ArrayList<>(0);
-					for ( Integer id : listPlayers ){
-						Player player_to_read = Database.getInstance().loadPlayer(id);
-						listPlayerIDthNames.add(STR."\{id} -> \{player_to_read.getName()}");
-					}
-					listPlayers = null; // tell garbage collector to move it's virtual a$$ and free the memory, hopefully
-					SwingUtilities.invokeLater(() -> {
-						return_btn.removeActions();
-						accept_btn.removeActions();
-						reject_btn.removeActions();
-						main_content.setLayout(new GridBagLayout());
-						GridBagConstraints gbc = new GridBagConstraints();
-						gbc.fill = GridBagConstraints.HORIZONTAL;
-						gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
-						JLabel titleLabel = new JLabel("PLAYER LEADERBOARD PURGE", SwingConstants.CENTER);
-						Font old = titleLabel.getFont();
-						titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
-						int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
-						titleLabel.setBounds(base_center - 250, 10, 500, 30);
-						main_content.add(titleLabel);
-						JLabel gameField = new JLabel("Player ID:");
-						gbc.gridx = 0;
-						gbc.gridy = 1;
-						gbc.anchor = GridBagConstraints.EAST;
-						main_content.add(gameField, gbc);
-						ArrayList<String> listMachines = new ArrayList<>(0);
-						for (int i = 1; i<Settings.getInstance().core.next_machine_id; i++){
-							GameMachine machine_to_read = Database.getInstance().loadMachine(i);
-							listMachines.add(machine_to_read.getName());
-						}
-						//dropdown selector
-						JComboBox<String> player_box = new JComboBox(listPlayerIDthNames.toArray());
-						player_box.setEditable(false);
-						gbc.gridx = 1;
-						gbc.gridy = 1;
-						gbc.anchor = GridBagConstraints.EAST;
-						main_content.add(player_box, gbc);
-						ActionListener _main = _ -> {
-							// TODO: Pdvsobral - change function
-							int id = Integer.parseInt(player_box.getSelectedItem().toString().split(" -> ")[0]);
-							System.out.println(STR."Attempting to remove player with id: \{id}");
-							File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}/\{id}.plr");
-							if (!file.delete()) {
-								InterfaceWrapper.showErrorWindow("Failed to DELETE the player (file failed to delete)!");
-								return;
-							}
-							file = null;
-							exit_mode[0] = 1;
-						};
-						ActionListener _scnd = _ -> {
-							exit_mode[0] = 2;
-						};
-						JButton submitButton = new JButton("DELETE PLAYER SCORES");
-						gbc.gridx = 1;
-						gbc.gridy = 8;
-						submitButton.addActionListener(_main);
-						main_content.add(submitButton, gbc);
-						accept_btn.addActionListener(_main);
-						JButton exitButton = new JButton("Cancel");
-						gbc.gridx = 0;
-						exitButton.addActionListener(_scnd);
-						main_content.add(exitButton, gbc);
-						reject_btn.addActionListener(_scnd);
-						reject_btn.addActionListener(_scnd);
-						main_content.revalidate();
-						main_content.repaint();
-					});
-					while (exit_mode[0] == 0){
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-					SwingUtilities.invokeLater(() -> {
-						return_btn.removeActions();
-						accept_btn.removeActions();
-						reject_btn.removeActions();
-					});
+					// TODO: test Player leaderboard purge
+					tempOption1();
+					break;
 				case 4:
 					InterfaceWrapper.showErrorWindow("You are about to delete all records from the system.\nThis is your last chance to turn back.");
 					__temp = Menu.getInstance().menu(SUBLEADERMANEG, "LEADERBOARDS RESET", (char) 1, NORMAL);
@@ -361,8 +280,323 @@ public class Main {
 			}
 		}
 	}
+	private static void tempOption1(){
+		final int[] exit_mode = {0};
+		InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
+		ContentPanel main_content = interfaceWrapper.getContentSpace();
+		main_content.setLayout(null); // Using absolute positioning
+		ControlPanel controls = interfaceWrapper.getControlSpace();
+		CircularButton return_btn = controls.getButton("Return");
+		CircularButton accept_btn = controls.getButton("Accept");
+		CircularButton reject_btn = controls.getButton("Reject");
+		ArrayList<Integer> listPlayers = Database.getInstance().listPlayers(Main.RUNNING_MODE == Main.DEBUG);
+		if (listPlayers == null){
+			InterfaceWrapper.showErrorWindow("No Players were found!\nPlease add one before proceeding");
+			return;
+		}
+		ArrayList<String> listPlayerIDthNames = new ArrayList<>(0);
+		for ( Integer id : listPlayers ){
+			Player player_to_read = Database.getInstance().loadPlayer(id);
+			listPlayerIDthNames.add(STR."\{id} -> \{player_to_read.getName()}");
+		}
+		listPlayers = null; // tell garbage collector to move it's virtual a$$ and free the memory, hopefully
+		SwingUtilities.invokeLater(() -> {
+			return_btn.removeActions();
+			accept_btn.removeActions();
+			reject_btn.removeActions();
+			main_content.setLayout(new GridBagLayout());
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
+			JLabel titleLabel = new JLabel("PLAYER LEADERBOARD PURGE", SwingConstants.CENTER);
+			Font old = titleLabel.getFont();
+			titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
+			int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
+			titleLabel.setBounds(base_center - 250, 10, 500, 30);
+			main_content.add(titleLabel);
+			JLabel gameField = new JLabel("Player ID:");
+			gbc.gridx = 0;
+			gbc.gridy = 1;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(gameField, gbc);
+			ArrayList<String> listMachines = new ArrayList<>(0);
+			for (int i = 1; i<Settings.getInstance().core.next_machine_id; i++){
+				GameMachine machine_to_read = Database.getInstance().loadMachine(i);
+				listMachines.add(machine_to_read.getName());
+			}
+			//dropdown selector
+			JComboBox<String> player_box = new JComboBox(listPlayerIDthNames.toArray());
+			player_box.setEditable(false);
+			gbc.gridx = 1;
+			gbc.gridy = 1;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(player_box, gbc);
+			ActionListener _main = _ -> {
+				int id = Integer.parseInt(player_box.getSelectedItem().toString().split(" -> ")[0]);
+				int rmvd = Database.getInstance().removeOnMatch((_, playerId, _) -> playerId == id);
+				InterfaceWrapper.showErrorWindow(STR."Removed \{rmvd} entries!", "Information");
+				exit_mode[0] = 1;
+			};
+			ActionListener _scnd = _ -> {
+				exit_mode[0] = 2;
+			};
+			JButton submitButton = new JButton("DELETE PLAYER SCORES");
+			gbc.gridx = 1;
+			gbc.gridy = 8;
+			submitButton.addActionListener(_main);
+			main_content.add(submitButton, gbc);
+			accept_btn.addActionListener(_main);
+			JButton exitButton = new JButton("Cancel");
+			gbc.gridx = 0;
+			exitButton.addActionListener(_scnd);
+			main_content.add(exitButton, gbc);
+			reject_btn.addActionListener(_scnd);
+			reject_btn.addActionListener(_scnd);
+			main_content.revalidate();
+			main_content.repaint();
+		});
+		while (exit_mode[0] == 0){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		SwingUtilities.invokeLater(() -> {
+			return_btn.removeActions();
+			accept_btn.removeActions();
+			reject_btn.removeActions();
+		});
+	}
+	private static void tempOption2(){
+		final int[] exit_mode = {0};
+		InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
+		ContentPanel main_content = interfaceWrapper.getContentSpace();
+		main_content.setLayout(null); // Using absolute positioning
+		ControlPanel controls = interfaceWrapper.getControlSpace();
+		CircularButton return_btn = controls.getButton("Return");
+		CircularButton accept_btn = controls.getButton("Accept");
+		CircularButton reject_btn = controls.getButton("Reject");
+		ArrayList<Integer> listGames = Database.getInstance().listGames(Main.RUNNING_MODE == Main.DEBUG);
+		if (listGames == null){
+			InterfaceWrapper.showErrorWindow("No Players were found!\nPlease add one before proceeding");
+			return;
+		}
+		ArrayList<String> listGameIDthNames = new ArrayList<>(0);
+		for ( Integer id : listGames ){
+			Game player_to_read = Database.getInstance().loadGame(id);
+			listGameIDthNames.add(STR."\{id} -> \{player_to_read.getName()}");
+		}
+		listGames = null; // tell garbage collector to move it's virtual a$$ and free the memory, hopefully
+		SwingUtilities.invokeLater(() -> {
+			return_btn.removeActions();
+			accept_btn.removeActions();
+			reject_btn.removeActions();
+			main_content.setLayout(new GridBagLayout());
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
+			JLabel titleLabel = new JLabel("GAME LEADERBOARD PURGE", SwingConstants.CENTER);
+			Font old = titleLabel.getFont();
+			titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
+			int base_center = ((Main.WINDOW_WIDTH - Main.BORDER_LOSS) / 2) - Main.BORDER_WIDTH;
+			titleLabel.setBounds(base_center - 250, 10, 500, 30);
+			main_content.add(titleLabel);
+			JLabel gameField = new JLabel("Game ID:");
+			gbc.gridx = 0;
+			gbc.gridy = 1;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(gameField, gbc);
+			ArrayList<String> listMachines = new ArrayList<>(0);
+			for (int i = 1; i<Settings.getInstance().core.next_machine_id; i++){
+				GameMachine machine_to_read = Database.getInstance().loadMachine(i);
+				listMachines.add(machine_to_read.getName());
+			}
+			//dropdown selector
+			JComboBox<String> player_box = new JComboBox(listGameIDthNames.toArray());
+			player_box.setEditable(false);
+			gbc.gridx = 1;
+			gbc.gridy = 1;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(player_box, gbc);
+			ActionListener _main = _ -> {
+				int id = Integer.parseInt(player_box.getSelectedItem().toString().split(" -> ")[0]);
+				int rmvd = Database.getInstance().removeOnMatch((gameId, _, _) -> gameId == id);
+				InterfaceWrapper.showErrorWindow(STR."Removed \{rmvd} entries!", "Information");
+				exit_mode[0] = 1;
+			};
+			ActionListener _scnd = _ -> {
+				exit_mode[0] = 2;
+			};
+			JButton submitButton = new JButton("DELETE GAME SCORES");
+			gbc.gridx = 1;
+			gbc.gridy = 8;
+			submitButton.addActionListener(_main);
+			main_content.add(submitButton, gbc);
+			accept_btn.addActionListener(_main);
+			JButton exitButton = new JButton("Cancel");
+			gbc.gridx = 0;
+			exitButton.addActionListener(_scnd);
+			main_content.add(exitButton, gbc);
+			reject_btn.addActionListener(_scnd);
+			reject_btn.addActionListener(_scnd);
+			main_content.revalidate();
+			main_content.repaint();
+		});
+		while (exit_mode[0] == 0){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		SwingUtilities.invokeLater(() -> {
+			return_btn.removeActions();
+			accept_btn.removeActions();
+			reject_btn.removeActions();
+		});
+	}
+	private static void tempOption3(){
+		final int[] exit_mode = {0};
+		InterfaceWrapper interfaceWrapper = InterfaceWrapper.getInstance();
+		ContentPanel main_content = interfaceWrapper.getContentSpace();
+		main_content.setLayout(null);
+		ControlPanel controls = interfaceWrapper.getControlSpace();
+		CircularButton return_btn = controls.getButton("Return");
+		CircularButton accept_btn = controls.getButton("Accept");
+		CircularButton reject_btn = controls.getButton("Reject");
+		// Load players
+		ArrayList<Integer> listPlayers = Database.getInstance().listPlayers(Main.RUNNING_MODE == Main.DEBUG);
+		if (listPlayers == null){
+			InterfaceWrapper.showErrorWindow("No Players were found!\nPlease add one before proceeding");
+			return;
+		}
+		ArrayList<String> listPlayerIDthNames = new ArrayList<>();
+		for (Integer id : listPlayers){
+			Player p = Database.getInstance().loadPlayer(id);
+			listPlayerIDthNames.add(STR."\{id} -> \{p.getName()}");
+		}
+		// Load games
+		ArrayList<Integer> listGames = Database.getInstance().listGames(Main.RUNNING_MODE == Main.DEBUG);
+		if (listGames == null){
+			InterfaceWrapper.showErrorWindow("No Games were found!\nPlease add one before proceeding");
+			return;
+		}
+		ArrayList<String> listGameIDthNames = new ArrayList<>();
+		for (Integer id : listGames){
+			Game g = Database.getInstance().loadGame(id);
+			listGameIDthNames.add(STR."\{id} -> \{g.getName()}");
+		}
+		SwingUtilities.invokeLater(() -> {
+			return_btn.removeActions();
+			accept_btn.removeActions();
+			reject_btn.removeActions();
+			main_content.setLayout(new GridBagLayout());
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.insets = new Insets(5, 5, 5, 5);
+			// Title
+			JLabel titleLabel = new JLabel("NEW HIGHHSCORE", SwingConstants.CENTER);
+			Font old = titleLabel.getFont();
+			titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			gbc.gridwidth = 2;
+			main_content.add(titleLabel, gbc);
+			gbc.gridwidth = 1;
+
+			// Player 1
+			JLabel player1Label = new JLabel("Player:");
+			gbc.gridx = 0;
+			gbc.gridy = 1;
+			gbc.anchor = GridBagConstraints.EAST;
+			main_content.add(player1Label, gbc);
+
+			JComboBox<String> player1Box = new JComboBox<>(listPlayerIDthNames.toArray(new String[0]));
+			player1Box.setEditable(false);
+			gbc.gridx = 1;
+			main_content.add(player1Box, gbc);
+
+			// Game
+			JLabel gameLabel = new JLabel("Game ID:");
+			gbc.gridx = 0;
+			gbc.gridy = 2;
+			main_content.add(gameLabel, gbc);
+
+			JComboBox<String> gameBox = new JComboBox<>(listGameIDthNames.toArray(new String[0]));
+			gameBox.setEditable(false);
+			gbc.gridx = 1;
+			main_content.add(gameBox, gbc);
+
+			// Score
+			JLabel scoreLabel = new JLabel("Score:");
+			gbc.gridx = 0;
+			gbc.gridy = 3;
+			main_content.add(scoreLabel, gbc);
+
+			JTextField scoreField = new JTextField();
+			gameBox.setEditable(true);
+			gbc.gridx = 1;
+			main_content.add(scoreField, gbc);
+
+			// Main action
+			ActionListener _main = _ -> {
+				int player1Id = Integer.parseInt(player1Box.getSelectedItem().toString().split(" -> ")[0]);
+				int gameId    = Integer.parseInt(gameBox.getSelectedItem().toString().split(" -> ")[0]);
+
+				String score = scoreField.getText();
+				if (score.isEmpty() || score.isBlank() || score == null){
+					InterfaceWrapper.showErrorWindow("Score is empty!");
+					return;
+				} else if (!score.matches("\\d+")){
+					InterfaceWrapper.showErrorWindow("Score is non numeric!");
+					return;
+				}
+				Map<Integer, ArrayList<Tuple<Integer, Integer>>> current = Database.getInstance().loadLeaderboardsByGame();
+				current.computeIfAbsent(gameId, k -> new ArrayList<>()).add(new Tuple<>(player1Id, Integer.parseInt(score)));
+				Database.getInstance().saveLeaderboardsByGame(current);
+				exit_mode[0] = 1;
+			};
+
+			// Cancel action
+			ActionListener _scnd = _ -> exit_mode[0] = 2;
+
+			// Buttons
+			JButton submitButton = new JButton("ADD HIGHSCORE");
+			gbc.gridx = 1;
+			gbc.gridy = 5;
+			submitButton.addActionListener(_main);
+			main_content.add(submitButton, gbc);
+			accept_btn.addActionListener(_main);
+
+			JButton exitButton = new JButton("Cancel");
+			gbc.gridx = 0;
+			exitButton.addActionListener(_scnd);
+			main_content.add(exitButton, gbc);
+			reject_btn.addActionListener(_scnd);
+
+			main_content.revalidate();
+			main_content.repaint();
+		});
+
+		while (exit_mode[0] == 0){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		SwingUtilities.invokeLater(() -> {
+			return_btn.removeActions();
+			accept_btn.removeActions();
+			reject_btn.removeActions();
+		});
+	}
+
 	private static void settingsMenu() throws IOException{
 		pass();
 		// TODO: make GUI
 	}
+
 }

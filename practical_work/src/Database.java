@@ -358,9 +358,10 @@ public class Database {
 	//    playerId == 42 && gameId == 7
 	//);
 	// TODO: test
-	public void removeOnMatch(RecordMatcher matcher) {
+	public int removeOnMatch(RecordMatcher matcher) {
+		int removed = 0;
 		Map<Integer, ArrayList<Tuple<Integer, Integer>>> old = loadLeaderboardsByGame();
-		if (old == null) return;
+		if (old == null) return -1;
 
 		// Iterate over games
 		Iterator<Map.Entry<Integer, ArrayList<Tuple<Integer, Integer>>>> gameIt = old.entrySet().iterator();
@@ -370,16 +371,15 @@ public class Database {
 			ArrayList<Tuple<Integer, Integer>> scores = gameEntry.getValue();
 
 			// Remove matching records for this game
-			scores.removeIf(scoreTuple ->
-					matcher.match(gameId, scoreTuple.getKey(), scoreTuple.getValue())
-			);
+			if (scores.removeIf(scoreTuple -> matcher.match(gameId, scoreTuple.getKey(), scoreTuple.getValue()))){
+				removed++;
+			}
 
 			// Remove game entry if no scores remain
-			if (scores.isEmpty()) {
-				gameIt.remove();
-			}
+			if (scores.isEmpty()) gameIt.remove();
 		}
 
 		saveLeaderboardsByGame(old);
+		return removed;
 	}
 }
