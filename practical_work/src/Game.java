@@ -310,18 +310,24 @@ public class Game implements Serializable {
             gbc.anchor = GridBagConstraints.EAST;
             main_content.add(game_box, gbc);
 
-            //TODO: Error catching, scary confirmation window
+            //TODO: Error catching
 
             ActionListener _main = _ -> {
-                int id = Integer.parseInt(game_box.getSelectedItem().toString().split(" -> ")[0]);
-                System.out.println(STR."Attempting to remove game of id: \{id}");
-                File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}/\{id}.gm");
-                if (!file.delete()) {
-                    InterfaceWrapper.showErrorWindow("Failed to remove the game (file failed to delete)!");
-                    return;
+                int confirm = JOptionPane.showOptionDialog(null, "Game deletion is irreversible, are you sure of what you're doing?",
+                        "WARNING",JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,null, JOptionPane.CANCEL_OPTION);
+                if (confirm==JOptionPane.CANCEL_OPTION)
+                    exit_mode[0]=0;
+                else{
+                    int id = Integer.parseInt(game_box.getSelectedItem().toString().split(" -> ")[0]);
+                    System.out.println(STR."Attempting to remove game of id: \{id}");
+                    File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}/\{id}.gm");
+                    if (!file.delete()) {
+                        InterfaceWrapper.showErrorWindow("Failed to remove the game (file failed to delete)!");
+                        return;
+                    }
+                    file = null;
+                    exit_mode[0] = 1;
                 }
-                file = null;
-                exit_mode[0] = 1;
             };
             ActionListener _scnd = _ -> {
                 exit_mode[0] = 2;
