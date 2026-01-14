@@ -274,7 +274,6 @@ public class GameMachine implements Serializable {// the machines in the arcade.
 		}
 		else return null; // return null if user choose to cancel game input
 	}
-	//* FIXME
     public static void deleteMachineGUI() {
         final int[] exit_mode = {0};
         // get GUI handler instance
@@ -341,18 +340,25 @@ public class GameMachine implements Serializable {// the machines in the arcade.
             gbc.anchor = GridBagConstraints.EAST;
             main_content.add(machine_box, gbc);
 
-            //TODO: Error catching, scary confirmation window
+            //TODO: Error catching
 
             ActionListener _main = _ -> {
-				int id = Integer.parseInt(machine_box.getSelectedItem().toString().split(" -> ")[0]);
-				System.out.println(STR."Attempting to remove machine of id: \{id}");
-                File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}/\{id}.mch");
-                if (!file.delete()) {
-					InterfaceWrapper.showErrorWindow("Failed to remove the machine (file failed to delete)!");
-					return;
-				}
-				file = null;
-                exit_mode[0] = 1;
+                Object[] options={"DELETE", "Cancel"};
+                int confirm = JOptionPane.showOptionDialog(null, "Machine deletion is irreversible, are you sure of what you're doing?",
+                        "WARNING",JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                if (confirm==0){
+                    int id = Integer.parseInt(machine_box.getSelectedItem().toString().split(" -> ")[0]);
+                    System.out.println(STR."Attempting to remove machine of id: \{id}");
+                    File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}/\{id}.mch");
+                    if (!file.delete()) {
+                        InterfaceWrapper.showErrorWindow("Failed to remove the machine (file failed to delete)!");
+                        return;
+                    }
+                    file = null;
+                    exit_mode[0] = 1;
+                }
+                   else
+                       exit_mode[0]=0;
             };
             ActionListener _scnd = _ -> {
                 exit_mode[0] = 2;
