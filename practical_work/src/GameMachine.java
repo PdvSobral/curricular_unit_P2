@@ -290,10 +290,10 @@ public class GameMachine implements Serializable {// the machines in the arcade.
         CircularButton reject_btn = controls.getButton("Reject");
 
 		ArrayList<Integer> listMachine = Database.getInstance().listGameMachine(Main.RUNNING_MODE == Main.DEBUG);
-		if (listMachine == null){
-			InterfaceWrapper.showErrorWindow("No Machines were found!\nPlease add one before proceeding");
-			return;
-		}
+        if (listMachine.isEmpty()) {
+            InterfaceWrapper.showErrorWindow("No Machines were found!\nPlease add one before proceeding");
+            return;
+        }
 		ArrayList<String> listMachinesWithNames = new ArrayList<>(0);
 		for ( Integer id : listMachine ){
 			GameMachine game_to_read = Database.getInstance().loadGameMachine(id);
