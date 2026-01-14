@@ -313,11 +313,10 @@ public class Game implements Serializable {
             //TODO: Error catching
 
             ActionListener _main = _ -> {
+                Object[] options={"DELETE", "Cancel"};
                 int confirm = JOptionPane.showOptionDialog(null, "Game deletion is irreversible, are you sure of what you're doing?",
-                        "WARNING",JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,null, JOptionPane.CANCEL_OPTION);
-                if (confirm==JOptionPane.CANCEL_OPTION)
-                    exit_mode[0]=0;
-                else{
+                        "WARNING",JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                if (confirm==0){
                     int id = Integer.parseInt(game_box.getSelectedItem().toString().split(" -> ")[0]);
                     System.out.println(STR."Attempting to remove game of id: \{id}");
                     File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}/\{id}.gm");
@@ -328,6 +327,8 @@ public class Game implements Serializable {
                     file = null;
                     exit_mode[0] = 1;
                 }
+                else
+                    exit_mode[0]=0;
             };
             ActionListener _scnd = _ -> {
                 exit_mode[0] = 2;

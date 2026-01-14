@@ -343,21 +343,22 @@ public class GameMachine implements Serializable {// the machines in the arcade.
             //TODO: Error catching
 
             ActionListener _main = _ -> {
+                Object[] options={"DELETE", "Cancel"};
                 int confirm = JOptionPane.showOptionDialog(null, "Machine deletion is irreversible, are you sure of what you're doing?",
-                        "WARNING",JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null,null, JOptionPane.CANCEL_OPTION);
-                if (confirm==JOptionPane.CANCEL_OPTION)
-                    exit_mode[0]=0;
-                   else{
-                       int id = Integer.parseInt(machine_box.getSelectedItem().toString().split(" -> ")[0]);
-                       System.out.println(STR."Attempting to remove machine of id: \{id}");
-                       File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}/\{id}.mch");
+                        "WARNING",JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                if (confirm==0){
+                    int id = Integer.parseInt(machine_box.getSelectedItem().toString().split(" -> ")[0]);
+                    System.out.println(STR."Attempting to remove machine of id: \{id}");
+                    File file = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}/\{id}.mch");
                     if (!file.delete()) {
-					    InterfaceWrapper.showErrorWindow("Failed to remove the machine (file failed to delete)!");
-					    return;
+                        InterfaceWrapper.showErrorWindow("Failed to remove the machine (file failed to delete)!");
+                        return;
                     }
-				    file = null;
+                    file = null;
                     exit_mode[0] = 1;
-                    }
+                }
+                   else
+                       exit_mode[0]=0;
             };
             ActionListener _scnd = _ -> {
                 exit_mode[0] = 2;
