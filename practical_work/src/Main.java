@@ -190,6 +190,7 @@ public class Main {
                         edit_player.save();
                         System.out.println("[*] New player data saved successfully!");
                     } else System.out.println("[*] User canceled operation.");
+					break;
                 case 3:
                     Player.deletePlayerGUI();
                     break;
