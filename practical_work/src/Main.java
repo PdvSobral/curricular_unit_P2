@@ -537,7 +537,7 @@ public class Main {
 			main_content.add(scoreLabel, gbc);
 
 			JTextField scoreField = new JTextField();
-			gameBox.setEditable(true);
+			gameBox.setEditable(false);
 			gbc.gridx = 1;
 			main_content.add(scoreField, gbc);
 
