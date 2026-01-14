@@ -385,7 +385,7 @@ public class Player implements Serializable {
         CircularButton reject_btn = controls.getButton("Reject");
 
         ArrayList<Integer> listPlayers = Database.getInstance().listPlayers(Main.RUNNING_MODE == Main.DEBUG);
-            if (listPlayers == null){
+		if (listPlayers.isEmpty()){
                 InterfaceWrapper.showErrorWindow("No Players were found!\nPlease add one before proceeding");
                 return;
             }
