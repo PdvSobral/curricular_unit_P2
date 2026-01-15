@@ -12,7 +12,7 @@ import java.util.Map;
 public class Main {
 	static final int     DEBUG        = -2;
 	static final int     NORMAL       = 0;
-	static final int     RUNNING_MODE = DEBUG;
+	static       int  RUNNING_MODE    = NORMAL;
 
 	static void pass(){
 		System.out.println("NOTHING HERE (yet...)");
@@ -38,9 +38,37 @@ public class Main {
 	static final int    BOTTOM_PANEL_SIZE  = 240;
 
 	// FIXME: when making the .jar, remove the practical_work/ from the settings file
-	static final String SETTINGS_FILE = "./practical_work/settings.bin";
+	static String SETTINGS_FILE = "./practical_work/settings.bin";
 
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] argv) throws IOException{
+		int argc = argv.length;
+		String arg;
+		for (int i = 0; i < argc; i++) {
+			arg = argv[i];
+			switch (arg){
+				case "--help":
+					System.out.println("Usage: java -jar this_file.jar [--help] [--debug] [--settings <file>]");
+					System.out.println("--help      Show this help message");
+					System.out.println("--debug     Run in debug mode");
+					System.out.println("--settings  Specify the settings file to use");
+					System.exit(0);
+				case "--debug":
+					RUNNING_MODE = DEBUG;
+					break;
+				case "--settings":
+					if (i + 1 >= argc){
+						System.err.println("[*] No settings file was provided after flag '--settings'!");
+						System.exit(1);
+					}
+					SETTINGS_FILE = argv[++i];
+					System.out.println(STR."[*] Using settings file '\{SETTINGS_FILE}'!");
+					break;
+				default:
+					System.out.println(STR."[*] Unrecognized option '\{arg}'!");
+					System.exit(1);
+			}
+		}
+
 		if (!Database.getInstance().loadSettings(SETTINGS_FILE)){
 			Settings.getInstance().reset();
 			Database.getInstance().saveSettings(SETTINGS_FILE);
