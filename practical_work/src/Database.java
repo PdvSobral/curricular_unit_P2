@@ -299,9 +299,9 @@ public class Database {
 	// For example to trim the records for 1 per game per user except if in top 10 per game.
 	// Returns MAP gameId -> List [ (playerId, score) ]
 	public Map<Integer, ArrayList<Tuple<Integer, Integer>>> loadLeaderboardsByGame() {
+		Map<Integer, ArrayList<Tuple<Integer, Integer>>> gameScores = new HashMap<>();
 		// Try resource assures Stream is closed even if on error
 		try (InputStream inputStream = new FileInputStream(STR."\{Settings.getInstance().core.mainDirectory}/scores.nsv")) {
-			Map<Integer, ArrayList<Tuple<Integer, Integer>>> gameScores = new HashMap<>();
 			for (String line : (new String(inputStream.readAllBytes())).split("\n")) {
 				if (!line.isEmpty()) { // Check for empty lines
 					String[] values = line.split("\0");
@@ -313,7 +313,8 @@ public class Database {
 			return gameScores;
 		} catch (IOException e) {
 			System.err.println(STR."[!] Error loading leaderboards: \{e.getMessage()}");
-			return null;
+			System.err.println(STR."[!] Returning empty");
+			return gameScores;
 		}
 	}
 	public void saveLeaderboardsByGame(Map<Integer, ArrayList<Tuple<Integer, Integer>>> gameScores) {

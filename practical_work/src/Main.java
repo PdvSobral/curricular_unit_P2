@@ -37,8 +37,7 @@ public class Main {
 	static final int    BUTTON_SIZE        = 40;
 	static final int    BOTTOM_PANEL_SIZE  = 240;
 
-	// FIXME: when making the .jar, remove the practical_work/ from the settings file
-	static String SETTINGS_FILE = "./practical_work/settings.bin";
+	static String SETTINGS_FILE = "./settings.bin";
 
 	public static void main(String[] argv) throws IOException{
 		int argc = argv.length;

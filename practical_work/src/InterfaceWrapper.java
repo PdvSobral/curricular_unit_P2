@@ -1,6 +1,11 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class InterfaceWrapper {
@@ -74,15 +79,15 @@ public class InterfaceWrapper {
 		JPanel fullBottom = new JPanel(new BorderLayout());
 
 		// Create border panels
-		ImagePanel topBorder = new ImagePanel(STR."\{System.getProperty("java.class.path")}/resources/interface_top_brd.png");
+		ImagePanel topBorder = new ImagePanel(getClass().getResource("/resources/interface_top_brd.png"));
 		topBorder.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH));
 		frame.add(topBorder, BorderLayout.NORTH);
 
-		ImagePanel leftBorder = new ImagePanel(STR."\{System.getProperty("java.class.path")}/resources/interface_left_brd.png");
+		ImagePanel leftBorder = new ImagePanel(getClass().getResource("/resources/interface_left_brd.png"));
 		leftBorder.setPreferredSize(new Dimension(Main.BORDER_WIDTH, frame.getHeight())); // 45px width
 		frame.add(leftBorder, BorderLayout.WEST);
 
-		ImagePanel rightBorder = new ImagePanel(STR."\{System.getProperty("java.class.path")}/resources/interface_right_brd.png");
+		ImagePanel rightBorder = new ImagePanel(getClass().getResource("/resources/interface_right_brd.png"));
 		rightBorder.setPreferredSize(new Dimension(Main.BORDER_WIDTH, frame.getHeight())); // 45px width
 		frame.add(rightBorder, BorderLayout.EAST);
 
@@ -93,11 +98,11 @@ public class InterfaceWrapper {
 		fullBottom.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH + Main.BOTTOM_PANEL_SIZE));
 		frame.add(fullBottom, BorderLayout.SOUTH);
 
-		ImagePanel bottomBorder = new ImagePanel(STR."\{System.getProperty("java.class.path")}/resources/interface_bottom_brd_sc.png");
+		ImagePanel bottomBorder = new ImagePanel(getClass().getResource("/resources/interface_bottom_brd_sc.png"));
 		bottomBorder.setPreferredSize(new Dimension(frame.getWidth(), Main.BORDER_WIDTH));
 		fullBottom.add(bottomBorder, BorderLayout.NORTH);
 
-		ImageIcon icon2 = new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/interface_controls2_sc.png"); // Load the image (based on root)
+		ImageIcon icon2 = new ImageIcon(getClass().getResource("/resources/interface_controls2_sc.png")); // Load the image (based on root)
 
 		__controlPanel.setPreferredSize(new Dimension(frame.getWidth(), Main.BOTTOM_PANEL_SIZE));
 		__controlPanel.setBackground(Color.CYAN);
@@ -173,7 +178,7 @@ public class InterfaceWrapper {
 					}
 				});
 
-				button.setImage(new ImageIcon(STR."\{System.getProperty("java.class.path")}/resources/\{image_name}"));
+				button.setImage(new ImageIcon(getClass().getResource(STR."/resources/\{image_name}")));
 				__controlPanel.add(button);
 			});
 		}
@@ -339,9 +344,23 @@ class ContentPanel extends JPanel {
 class ImagePanel extends JPanel {
 	private Image backgroundImage;
 
+	/**
+	 * Loads an image from the classpath (works in IDE and JAR)
+	 * @param imagePath the path relative to the classpath, e.g. "/resources/interface_bottom_brd_sc.png"
+	 */
 	public ImagePanel(String imagePath) {
 		// Load the image
 		backgroundImage = new ImageIcon(imagePath).getImage();
+	}
+	public ImagePanel(URL imageUrl) {
+		if (imageUrl == null) throw new RuntimeException("Image URL cannot be null");
+		try {
+			BufferedImage img = ImageIO.read(imageUrl);
+			backgroundImage = img;
+		} catch (IOException e) {
+			e.printStackTrace();
+			backgroundImage = null;
+		}
 	}
 
 	@Override

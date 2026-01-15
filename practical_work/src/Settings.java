@@ -276,9 +276,8 @@ class SettingsCore implements Serializable{
 
 	public SettingsCore() {
 		// set defaults
-		// FIXME: when making the .jar, remove the practical_work/ from the paths
 		// NOTE: After every change in here (adding new attributes or just changing order/type, delete old .bin for new module to be applied.
-		mainDirectory = "./practical_work/db";
+		mainDirectory = "./db";
 		gameSubDirectory = "games";
 		playerSubDirectory = "players";
 		machineSubDirectory = "machines";
