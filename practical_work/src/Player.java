@@ -252,10 +252,18 @@ public class Player implements Serializable {
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
 
+            // Title label
+            JLabel titleLabel = new JLabel("EDIT PLAYER", SwingConstants.CENTER);
+            Font old = titleLabel.getFont();
+            titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            main_content.add(titleLabel);
+
             // Player ID field
             JLabel idLabel = new JLabel("Player ID:");
             gbc.gridx = 0;
-            gbc.gridy = 0;
+            gbc.gridy = 1;
             gbc.anchor = GridBagConstraints.EAST;
             main_content.add(idLabel, gbc);
 
@@ -269,7 +277,7 @@ public class Player implements Serializable {
             // Player Name field
             JLabel nameField = new JLabel("Name:");
             gbc.gridx = 0;
-            gbc.gridy = 1;
+            gbc.gridy = 2;
             gbc.anchor = GridBagConstraints.EAST;
             main_content.add(nameField, gbc);
 
@@ -280,7 +288,7 @@ public class Player implements Serializable {
             // Player Age field
             JLabel ageLabel = new JLabel("Age:");
             gbc.gridx = 0;
-            gbc.gridy = 2;
+            gbc.gridy = 3;
             gbc.anchor = GridBagConstraints.EAST;
             main_content.add(ageLabel, gbc);
 

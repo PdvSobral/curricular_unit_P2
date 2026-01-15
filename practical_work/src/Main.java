@@ -598,7 +598,6 @@ public class Main {
 
 	private static void settingsMenu() throws IOException{
 		//pass();
-		// TODO: make GUI
         int __temp;
         while (true){
             __temp = Menu.getInstance().menu(SETTINGSMANEG, "SETTINGS MANAGEMENT", (char) 1, RUNNING_MODE);
