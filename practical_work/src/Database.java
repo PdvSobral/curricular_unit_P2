@@ -10,15 +10,26 @@ public class Database {
 	private Database() {}	// Constructor logic
 	public static Database getInstance() { return __instance; }
 
+    private void dirBuild(File testDir, String dirName){
+        File currDir = new File("");
+        if (!testDir.exists()){
+            if (!testDir.mkdirs()){
+                if (currDir.canWrite())
+                    System.out.println(STR."\{currDir.getAbsolutePath()} exists and is Writable, but failed to create folders anyway");
+                else
+                    System.out.println(STR."Failed to create \{dirName}/ folder: missing write permissions");
+            }
+        }
+    }
     public void rebuildDirs(){
         File mainDir = new File(STR."\{Settings.getInstance().core.mainDirectory}");
         File gameDir = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}");
         File playerDir = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}");
         File machineDir = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}");
-        mainDir.mkdirs();
-        gameDir.mkdir();
-        playerDir.mkdir();
-        machineDir.mkdir();
+        dirBuild(mainDir, "main");
+        dirBuild(gameDir, "game");
+        dirBuild(playerDir, "player");
+        dirBuild(machineDir, "machine");
     }
 
 	// Methods
