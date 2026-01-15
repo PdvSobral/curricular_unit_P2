@@ -352,7 +352,7 @@ public class Player implements Serializable {
 			main_content.add(exitButton, gbc);
 
 			reject_btn.addActionListener(_scnd);
-			reject_btn.addActionListener(_scnd);
+			return_btn.addActionListener(_scnd);
 
 			main_content.revalidate();
 			main_content.repaint();

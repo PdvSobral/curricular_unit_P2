@@ -116,6 +116,9 @@ public class Main {
 				case DEBUG:
 					pass();
 					break;
+				case 4:
+					new LeaderboardCheck();
+					break;
 				default: System.out.println("Option not yet implemented!");
 			}
 		}
