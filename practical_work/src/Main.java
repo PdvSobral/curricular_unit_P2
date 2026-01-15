@@ -222,16 +222,13 @@ public class Main {
 					System.out.println(Database.getInstance().listGameMachine(true));
 					break;
                 case 1:
-					// FIXME: When GUI finished, uncomment the code
 					GameMachine new_machine = GameMachine.createMachineGUI();
 					if (new_machine != null) {
-						// add an overwrite detection and user confirmation.
 						new_machine.save();
 						System.out.println("[*] New machine added and saved successfully!");
 					} else System.out.println("[*] User canceled operation.");
                     break;
                 case 2:
-					// FIXME
                     GameMachine.deleteMachineGUI();
                     break;
 

@@ -218,12 +218,19 @@ public class GameMachine implements Serializable {// the machines in the arcade.
 					InterfaceWrapper.showErrorWindow("Machine ID is not valid!");
 					return;
 				}
+                if (Database.getInstance().loadMachine(Integer.parseInt(_id)) != null) {
+                    InterfaceWrapper.showErrorWindow("Game Machine ID already exists! Please remove the previous machine or choose another ID!");
+                    return;
+                }
 				MACHINE_STATE state = (MACHINE_STATE) state_box.getSelectedItem();
 				Controls scheme = (Controls) control_box.getSelectedItem();
 				int game_id = Integer.parseInt(game_box.getSelectedItem().toString().split(" -> ")[0]);
 
                 if (cbManualOverride.isSelected()) machine[0] = new GameMachine(_name2, scheme, game_id, Integer.parseInt(_id), state);
-                else machine[0] = new GameMachine(_name2, scheme, game_id); // default state, tickets, auto id
+                else {
+                    machine[0] = new GameMachine(_name2, scheme, game_id); // default state, tickets, auto id
+                    Settings.getInstance().core.next_machine_id+=1;
+                }
 				System.out.println(STR."Machine Created: \{_id}, \{_name2}, \{scheme}, \{game_id}, \{state}");
 
 				exit_mode[0] = 1;
