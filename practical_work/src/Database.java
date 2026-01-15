@@ -22,13 +22,13 @@ public class Database {
         }
     }
     public void rebuildDirs(){
-        File mainDir = new File(STR."\{Settings.getInstance().core.mainDirectory}");
-        File gameDir = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}");
-        File playerDir = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}");
-        File machineDir = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}");
-        dirBuild(mainDir, "main");
-        dirBuild(gameDir, "game");
-        dirBuild(playerDir, "player");
+        File mainDir     = new File(STR."\{Settings.getInstance().core.mainDirectory}");
+        File gameDir     = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}");
+        File playerDir   = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}");
+        File machineDir  = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}");
+        dirBuild(mainDir,    "main");
+        dirBuild(gameDir,    "game");
+        dirBuild(playerDir,  "player");
         dirBuild(machineDir, "machine");
     }
 
