@@ -10,6 +10,17 @@ public class Database {
 	private Database() {}	// Constructor logic
 	public static Database getInstance() { return __instance; }
 
+    public void rebuildDirs(){
+        File mainDir = new File(STR."\{Settings.getInstance().core.mainDirectory}");
+        File gameDir = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.gameSubDirectory}");
+        File playerDir = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.playerSubDirectory}");
+        File machineDir = new File(STR."\{Settings.getInstance().core.mainDirectory}/\{Settings.getInstance().core.machineSubDirectory}");
+        mainDir.mkdirs();
+        gameDir.mkdir();
+        playerDir.mkdir();
+        machineDir.mkdir();
+    }
+
 	// Methods
 	public void saveGame(Game game_to_save, @SuppressWarnings("unused") String file_name){
 		// Game is serialized
@@ -260,7 +271,8 @@ public class Database {
 		return true;
 	}
 	public boolean loadSettings(String filename) {
-		File file = new File(filename);
+		rebuildDirs();
+        File file = new File(filename);
 		try (FileInputStream fileIn = new FileInputStream(file);
 			 ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
 			// Deserialize the Game object from the file
