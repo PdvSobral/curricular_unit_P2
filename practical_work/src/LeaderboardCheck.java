@@ -1,16 +1,18 @@
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 
 public class LeaderboardCheck {
+	// GPTed and then manually made to work. No time to discuss philosophy.
+	// THIS WAS NOT VIBE-CODDED! Let's be clear on that.
 
 	private JTable table;
 	private DefaultTableModel model;
 	private TableRowSorter<DefaultTableModel> sorter;
 
+	// Numeric filters
 	private JTextField playerFilterField;
 	private JTextField gameFilterField;
 	private JTextField scoreFilterField;
@@ -30,25 +32,41 @@ public class LeaderboardCheck {
 		CircularButton return_btn = controls.getButton("Return");
 
 
-		SwingUtilities.invokeLater(()->{
+		SwingUtilities.invokeLater(() -> {
 			return_btn.removeActions();
-
 			panel.setLayout(new BorderLayout());
 
-			// ===== TABLE =====
-			model = new DefaultTableModel( new String[]{"Game ID", "Player ID", "Score"}, 0);
+			/* ===================== TABLE ===================== */
+			model = new DefaultTableModel(
+					new String[]{
+							"Game ID",
+							"Game Name",
+							"Player ID",
+							"Player Name",
+							"Machine Name",
+							"Score"
+					}, 0
+			);
+
 			table = new JTable(model);
 			sorter = new TableRowSorter<>(model);
 			table.setRowSorter(sorter);
 
+			// Populate rows
 			for (Map.Entry<Integer, ArrayList<Tuple<Integer, Integer>>> entry : leaderboard.entrySet()) {
+				int gameId = entry.getKey();
+				String gameName = Database.getInstance().loadGame(gameId).getName();
+				String machineName = Database.getInstance().loadGameMachine(gameId).getName();
 				for (Tuple<Integer, Integer> t : entry.getValue()) {
-					model.addRow(new Object[]{entry.getKey(), t.getKey(), t.getValue()});
+					int playerId = t.getKey();
+					int score = t.getValue();
+					String playerName = Database.getInstance().loadPlayer(playerId).getName();
+					model.addRow(new Object[]{gameId, gameName, playerId, playerName, machineName, score});
 				}
 			}
 			panel.add(new JScrollPane(table), BorderLayout.CENTER);
 
-			// ===== FILTER PANEL =====
+			/* ===================== FILTER PANEL ===================== */
 			JPanel filterPanel = new JPanel(new GridBagLayout());
 			GridBagConstraints gbc = new GridBagConstraints();
 			gbc.insets = new Insets(5, 5, 5, 5);
@@ -128,28 +146,17 @@ public class LeaderboardCheck {
 				sorter.setRowFilter(null);
 			});
 
-
-			return_btn.addActionListener(e -> {
-				exit_mode[0] = 2;
-			});
-
-
+			return_btn.addActionListener(e -> { exit_mode[0] = 2; });
 			panel.revalidate();
 			panel.repaint();
 		});
 
 		while (exit_mode[0] == 0){
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			try { Thread.sleep(100); }
+			catch (InterruptedException e) { e.printStackTrace(); }
 		}
 
-		SwingUtilities.invokeLater(() -> {
-			return_btn.removeActions();
-		});
-
+		SwingUtilities.invokeLater(return_btn::removeActions);
 		return;
 	}
 }
