@@ -250,15 +250,15 @@ public class Main {
 					pass();
 					break;
 				case 1:
-					// TODO: test new highscore
+					// TODO: tested and it is working
 					tempOption3();
 					break;
 				case 2:
-					// TODO: test game leaderboard purge
+					// TODO: working as intended
 					tempOption2();
 					break;
 				case 3:
-					// TODO: test Player leaderboard purge
+					// TODO: Didn't remove any entries while testing because the only DOoM entry was already deleted when testing tempoption2(purge player from leaderboards)
 					tempOption1();
 					break;
 				case 4:

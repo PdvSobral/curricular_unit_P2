@@ -215,7 +215,6 @@ public class Player implements Serializable {
 		else return null; // return null if user choose to cancel game input
 	}
     public static Player editPlayerGUI() {
-		// TODO: make the tittle. if present it's not appearing
         final int[] exit_mode = {0};
         // Declare the Game object that will be returned
         final Player[] player = new Player[1];  // Using an array to modify within the lambda
