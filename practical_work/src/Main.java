@@ -116,6 +116,15 @@ public class Main {
 				case DEBUG:
 					pass();
 					break;
+				case 1:
+					new GameMachineCheck();
+					break;
+				case 2:
+					new GameCheck();
+					break;
+				case 3:
+					new PlayerCheck();
+					break;
 				case 4:
 					new LeaderboardCheck();
 					break;
