@@ -26,7 +26,7 @@ public class Main {
 	static final List<String> PLAYERMANGEG	 = List.of("Add Player", "Edit Player", "Remove Player", "Return");
 	static final List<String> LEADERMANEG	 = List.of("Add New Record", "Purge Game from Leaderboards", "Purge Player from Leaderboards", "Leaderboards Reset", "Return");
 	static final List<String> SUBLEADERMANEG = List.of("Proceed", "Cancel");
-	static final List<String> CHECKSMENU     = List.of("Machine/Game Checks", "Player Checks", "Leaderboard Checks", "Return");
+	static final List<String> CHECKSMENU     = List.of("Machine Checks", "Game Checks", "Player Checks", "Leaderboard Checks", "Return");
 
 	static final int    WINDOW_WIDTH       = 700;
 	static final int    WINDOW_HIGHT       = 1000;
