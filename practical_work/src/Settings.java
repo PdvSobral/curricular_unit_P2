@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.Serial;
-import java.io.Serializable; // to save in binary
+import java.io.Serializable; // to save in binary;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -72,7 +72,7 @@ public class Settings{
             gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.insets = new Insets(5, 5, 5, 5);  // Add padding between components
             // Title label
-            JLabel titleLabel = new JLabel("Settings edit menu", SwingConstants.CENTER);
+            JLabel titleLabel = new JLabel("SETTINGS", SwingConstants.CENTER);
             Font old = titleLabel.getFont();
             titleLabel.setFont(new Font(old.getName(), Font.BOLD, 16));
             gbc.gridx = 0;
@@ -144,31 +144,34 @@ public class Settings{
             gbc.gridx = 0;
             gbc.gridy = 6;
             gbc.anchor = GridBagConstraints.EAST;
-            main_content.add(minAgeLabel);
+            main_content.add(minAgeLabel, gbc);
             SpinnerModel minAgeModel = new SpinnerNumberModel( Settings.getInstance().core.minimumPlayerAge, 0, Settings.getInstance().core.maxPlayerAge, 1); // Start, Min, Max, Step
             JSpinner minAgeSpinner = new JSpinner(minAgeModel);
             gbc.gridx = 1;
-            main_content.add(minAgeSpinner);
+            gbc.gridy = 6;
+            main_content.add(minAgeSpinner, gbc);
 
             // label and spinner for max age
             JLabel maxAgeLabel = new JLabel("Maximum Player Age:");
             gbc.gridx = 0;
             gbc.gridy = 7;
-            main_content.add(maxAgeLabel);
+            main_content.add(maxAgeLabel, gbc);
             SpinnerModel maxAgeModel = new SpinnerNumberModel( Settings.getInstance().core.maxPlayerAge, Settings.getInstance().core.minimumPlayerAge, 140, 1); // Start, Min, Max, Step
             JSpinner maxAgeSpinner = new JSpinner(maxAgeModel);
             gbc.gridx = 1;
-            main_content.add(maxAgeSpinner);
+            gbc.gridy = 7;
+            main_content.add(maxAgeSpinner, gbc);
 
             // label and spinner for default tickets
             JLabel defaultTicketsLabel = new JLabel("Default Ticket Count:");
             gbc.gridx = 0;
             gbc.gridy = 8;
-            main_content.add(defaultTicketsLabel);
+            main_content.add(defaultTicketsLabel, gbc);
             SpinnerModel defaultTicketsModel = new SpinnerNumberModel( Settings.getInstance().core.defaultMachineTickets, 0, 9999999, 1); // Start, Min, Max, Step
             JSpinner defaultTicketsSpinner = new JSpinner(defaultTicketsModel);
             gbc.gridx = 1;
-            main_content.add(defaultTicketsSpinner);
+            gbc.gridy = 8;
+            main_content.add(defaultTicketsSpinner, gbc);
 
             // Machine state selector
             JLabel defaultStateField = new JLabel("Default Machine Status:");
@@ -220,6 +223,7 @@ public class Settings{
 
             JButton exitButton = new JButton("Cancel");
             gbc.gridx = 0;
+            gbc.gridy = 10;
             exitButton.addActionListener(_scnd);
             main_content.add(exitButton, gbc);
 
