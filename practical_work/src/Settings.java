@@ -203,7 +203,7 @@ public class Settings{
                 Settings.getInstance().core.minimumPlayerAge        = (int) minAgeSpinner.getValue();
                 Settings.getInstance().core.defaultMachineTickets   = (int) defaultTicketsSpinner.getValue();
                 Settings.getInstance().core.defaultMachineState     = (MACHINE_STATE) state_box.getSelectedItem();
-                System.out.println(STR."Settings Updated: Main Dir:\{tfgameDir.getText()}, PDir:\{tfplayerDir.getText()}, GDir:\{tfgameDir.getText()}, GMDir:\{tfmachineDir.getText()}\nMaxAge:\{maxAgeSpinner.getValue()}, MinAge:\{minAgeSpinner.getValue()}\nDefaultTickets:\{defaultTicketsSpinner.getValue()}, DefaultState:\{state_box.getSelectedItem()}");
+                System.out.println(STR."Settings Updated: Main Dir:\{tfmainDir.getText()}, PDir:\{tfplayerDir.getText()}, GDir:\{tfgameDir.getText()}, GMDir:\{tfmachineDir.getText()}\nMaxAge:\{maxAgeSpinner.getValue()}, MinAge:\{minAgeSpinner.getValue()}\nDefaultTickets:\{defaultTicketsSpinner.getValue()}, DefaultState:\{state_box.getSelectedItem()}");
                 Database.getInstance().saveSettings(Main.SETTINGS_FILE);
                 Database.getInstance().loadSettings(Main.SETTINGS_FILE);
                 exit_mode[0] = 1;
